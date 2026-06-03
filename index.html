@@ -3,1191 +3,434 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>BARBOARDS LIVE — MLB</title>
+<title>Game Day Squares</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --navy:#0a1730;
-    --navy2:#06101f;
-    --panel:#0e2142;
-    --panel2:#0a1a36;
-    --line:#1f3a66;
-    --grass:#1f7a36;
-    --dirt:#b07640;
-    --chalk:#eef3fb;
-    --muted:#8fa6cf;
-    --gold:#ffd23f;
-    --gold2:#e0a900;
-    --green:#2fd07a;
-    --red:#ff5a5a;
-    --over:#2fd07a;
-    --under:#ff8a3a;
-    --display:"Arial Black","Franklin Gothic Bold","Helvetica Neue",Impact,sans-serif;
-    --mono:"DejaVu Sans Mono","SF Mono",ui-monospace,Menlo,Consolas,monospace;
+    --primary:#2e8b57;--primary-dark:#1f6b41;--accent:#ffcf33;--accent-dark:#e3ab00;
+    --cream:#fff7e8;--ink:#21303a;--ink-soft:#5a6b75;--card:#ffffff;--line:#e7e0cf;
+    --good:#37b24d;--bad:#e8553e;--shadow:0 14px 36px rgba(20,30,25,.18);
+    --display:"Fredoka","Baloo 2",system-ui,sans-serif;--body:"Nunito",system-ui,"Segoe UI",sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{
-    font-family:"Inter","Segoe UI",Arial,system-ui,sans-serif;
-    background:
-      radial-gradient(1400px 800px at 50% -10%, rgba(120,170,255,.10), transparent 60%),
-      radial-gradient(1200px 900px at 50% 120%, rgba(0,0,0,.6), transparent 60%),
-      linear-gradient(180deg,var(--navy) 0%, var(--navy2) 100%);
-    color:var(--chalk);
-    min-height:100%;
-    overflow-x:hidden;
-  }
-  .mono{font-family:var(--mono)}
-  .up{text-transform:uppercase;letter-spacing:.04em}
-  .pos{color:var(--green)}
-  .neg{color:var(--red)}
+  body{font-family:var(--body);color:var(--ink);min-height:100%;background:var(--bg,linear-gradient(180deg,#dff3e6,#bfe6cd));-webkit-font-smoothing:antialiased}
+  body.theme-mlb{--primary:#2e8b57;--primary-dark:#1f6b41;--accent:#ffcf33;--accent-dark:#e3ab00;--bg:repeating-linear-gradient(64deg,#2f9159 0 70px,#2b8753 70px 140px)}
+  body.theme-nfl{--primary:#2f7d3a;--primary-dark:#205528;--accent:#f4b740;--accent-dark:#d39a1c;--bg:linear-gradient(180deg,#2f7d3a,#256330),repeating-linear-gradient(90deg,rgba(255,255,255,.12) 0 3px,transparent 3px 64px)}
+  body.theme-nba{--primary:#c5772f;--primary-dark:#9a5a20;--accent:#ffcf33;--accent-dark:#e3ab00;--bg:repeating-linear-gradient(90deg,#c97f37 0 90px,#c2772f 90px 180px)}
+  body.theme-soccer{--primary:#2e8b57;--primary-dark:#1f6b41;--accent:#ffffff;--accent-dark:#dfe7e0;--bg:repeating-linear-gradient(90deg,#2f9159 0 90px,#299052 90px 180px)}
+  body.themed::before{content:"";position:fixed;inset:0;background:var(--bg);z-index:-2}
+  body.themed::after{content:"";position:fixed;inset:0;background:radial-gradient(1200px 700px at 50% -10%,rgba(255,255,255,.18),transparent 60%),radial-gradient(1000px 800px at 50% 120%,rgba(0,0,0,.28),transparent 60%);z-index:-1;pointer-events:none}
 
-  /* ============ TV BOARD LAYOUT ============ */
-  #board{
-    display:none;
-    width:100%;height:100vh;overflow:hidden;
-    padding:16px 20px 12px;
-    flex-direction:column;gap:12px;
-  }
-  #board.active{display:flex}
+  .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px 14px 36px}
+  .screen{display:none}.screen.active{display:block}
 
-  .topbar{
-    display:flex;align-items:center;gap:16px;
-  }
-  .brand{
-    display:flex;align-items:center;gap:12px;
-  }
-  .brand .logo{
-    width:46px;height:46px;border-radius:10px;flex:0 0 auto;
-    background:linear-gradient(180deg,#fff0a8,var(--gold) 45%,var(--gold2));
-    display:flex;align-items:center;justify-content:center;font-size:26px;
-    box-shadow:0 4px 0 #7a5a00, 0 8px 18px rgba(0,0,0,.5);
-  }
-  .brand .bt{font-family:var(--display);font-size:24px;letter-spacing:1px;line-height:1}
-  .brand .bt .live{color:var(--gold)}
-  .brand .bs{font-size:11px;color:var(--muted);letter-spacing:3px;text-transform:uppercase}
+  .topbar{width:100%;max-width:1240px;display:flex;align-items:center;gap:14px;margin:0 auto 14px}
+  .logo{width:54px;height:54px;border-radius:16px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:30px;background:var(--cream);box-shadow:var(--shadow);border:3px solid rgba(0,0,0,.08)}
+  .title{font-family:var(--display);font-weight:700;line-height:1;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18)}
+  .title .t1{font-size:30px}.title .t2{font-size:13px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--cream)}
   .topbar .spacer{flex:1}
-  .livechip{
-    display:inline-flex;align-items:center;gap:8px;
-    background:rgba(255,90,90,.14);border:1px solid rgba(255,90,90,.5);
-    color:#ffd1d1;border-radius:999px;padding:6px 14px;font-weight:800;
-    font-size:13px;letter-spacing:2px;text-transform:uppercase;
-  }
-  .livechip .dot{width:9px;height:9px;border-radius:50%;background:var(--red);box-shadow:0 0 0 0 rgba(255,90,90,.7);animation:pulse 1.6s infinite}
-  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,90,90,.6)}70%{box-shadow:0 0 0 9px rgba(255,90,90,0)}100%{box-shadow:0 0 0 0 rgba(255,90,90,0)}}
+  .roomtag{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;padding:8px 10px 8px 16px;box-shadow:var(--shadow)}
+  .roomtag .rl{text-align:right;line-height:1.1}.roomtag .rl .l{font-size:11px;color:var(--ink-soft);font-weight:800;letter-spacing:2px;text-transform:uppercase}
+  .roomtag .rl .c{font-family:var(--display);font-size:26px;font-weight:700;color:var(--ink);letter-spacing:3px}
+  .roomtag .qr{width:54px;height:54px;background:#fff;border-radius:10px;padding:3px}.roomtag .qr img,.roomtag .qr canvas{display:block;width:100%;height:100%}
 
-  .joinchip{
-    display:flex;align-items:center;gap:12px;
-    background:var(--panel);border:1px solid var(--line);border-radius:12px;
-    padding:7px 8px 7px 16px;
-  }
-  .joinchip .jt{text-align:right;line-height:1.15}
-  .joinchip .jt .l{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
-  .joinchip .jt .c{font-family:var(--display);font-size:24px;letter-spacing:3px;color:var(--gold)}
-  .joinchip .qr{width:58px;height:58px;background:#fff;border-radius:8px;padding:4px;display:flex;align-items:center;justify-content:center}
-  .joinchip .qr img,.joinchip .qr canvas{display:block;width:100%;height:100%}
+  .card{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:22px;max-width:1240px;margin:0 auto}
+  .panel{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:16px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:var(--display);font-weight:600;font-size:18px;border:none;cursor:pointer;border-radius:16px;padding:13px 22px;color:#1c2a16;background:linear-gradient(180deg,#ffe89a,var(--accent) 55%,var(--accent-dark));box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .08s}
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+  .btn.big{font-size:23px;padding:17px 30px}.btn.wide{width:100%}
+  .btn.primary{background:linear-gradient(180deg,#5fcf86,var(--primary) 60%,var(--primary-dark));color:#fff;text-shadow:0 1px 0 rgba(0,0,0,.25)}
+  .btn.soft{background:#eef1ee;color:var(--ink);box-shadow:0 4px 0 rgba(0,0,0,.1)}.btn.soft:active{box-shadow:0 1px 0 rgba(0,0,0,.1)}
+  .btn.danger{background:linear-gradient(180deg,#ff9a86,var(--bad));color:#fff}
+  .btn:disabled{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
+  .btn.sm{font-size:14px;padding:8px 14px;border-radius:12px}
 
-  .grid{
-    flex:1;display:grid;gap:12px;
-    grid-template-columns: 1fr 1fr 1fr 0.92fr;
-    grid-template-rows:auto minmax(0,1fr);
-    grid-template-areas:
-      "score score score props"
-      "diamond odds social props";
-    min-height:0;
-  }
-  .panel{
-    background:linear-gradient(180deg, rgba(255,255,255,.03), transparent 30%), linear-gradient(180deg,var(--panel),var(--panel2));
-    border:1px solid var(--line);border-radius:14px;padding:16px 18px;
-    box-shadow:0 18px 40px rgba(0,0,0,.4), inset 0 0 50px rgba(0,0,0,.25);
-    min-height:0;display:flex;flex-direction:column;overflow:hidden;
-  }
-  .panel h3{
-    font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);
-    margin-bottom:12px;font-weight:800;display:flex;align-items:center;gap:8px;
-  }
-  .panel h3 .tag{margin-left:auto;font-size:10px;color:var(--gold);letter-spacing:2px}
+  .pickmid{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;width:100%;padding:6px 0 20px}
+  .backbtn{flex:0 0 auto;width:48px;height:48px;border-radius:14px;border:none;cursor:pointer;background:var(--card);color:var(--ink);font-size:24px;font-weight:900;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;margin-right:4px}
+  .backbtn:hover{color:var(--primary-dark)} .backbtn:active{transform:translateY(2px)}
+  .hero{text-align:center;color:#fff;margin:0 0 26px}
+  .hero h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,8vw,78px);text-shadow:0 5px 0 rgba(0,0,0,.2);line-height:1}
+  .hero p{font-size:clamp(16px,2.2vw,22px);margin-top:12px;color:var(--cream);font-weight:700}
+  .sportgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:1080px;margin:0 auto;width:100%}
+  .sportcard{background:var(--card);border-radius:26px;box-shadow:var(--shadow);padding:40px 18px;cursor:pointer;text-align:center;transition:transform .1s;border:4px solid transparent}
+  .sportcard:hover{transform:translateY(-6px);border-color:var(--accent)} .sportcard:active{transform:translateY(0)}
+  .sportcard .ic{font-size:96px;line-height:1}.sportcard .nm{font-family:var(--display);font-weight:700;font-size:32px;margin-top:14px}.sportcard .dz{font-size:16px;color:var(--ink-soft);font-weight:700;margin-top:2px}
 
-  /* Scoreboard */
-  #pScore{grid-area:score}
-  .sb{display:flex;align-items:stretch;gap:18px}
-  .sb .teams{flex:1;display:flex;flex-direction:column;gap:8px;justify-content:center}
-  .teamrow{display:flex;align-items:center;gap:14px}
-  .teamrow .badge{
-    width:54px;height:54px;border-radius:12px;flex:0 0 auto;
-    display:flex;align-items:center;justify-content:center;
-    font-family:var(--display);font-size:20px;color:#fff;
-    box-shadow:inset 0 0 0 2px rgba(255,255,255,.18), 0 4px 10px rgba(0,0,0,.4);
-  }
-  .teamrow .nm{flex:1;min-width:0}
-  .teamrow .nm .city{font-size:13px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;line-height:1}
-  .teamrow .nm .team{font-family:var(--display);font-size:26px;line-height:1.05;letter-spacing:.5px}
-  .teamrow .rec{font-size:12px;color:var(--muted);margin-left:6px}
-  .teamrow .score{font-family:var(--display);font-size:46px;line-height:.9;min-width:54px;text-align:right}
-  .teamrow.batting .team::after{content:"▾";color:var(--gold);font-size:16px;margin-left:8px;vertical-align:middle}
+  .guide{background:linear-gradient(180deg,#fffdf6,#fff7e6);border:3px solid var(--accent);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow)}
+  .guide h3{font-family:var(--display);font-weight:700;font-size:22px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .guide ol{list-style:none;counter-reset:step;display:flex;flex-direction:column;gap:10px}
+  .guide ol li{counter-increment:step;display:flex;gap:12px;align-items:flex-start;font-size:15.5px;font-weight:700}
+  .guide ol li::before{content:counter(step);flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:var(--primary);color:#fff;font-family:var(--display);display:flex;align-items:center;justify-content:center;font-size:17px}
+  .guide ol li b{color:var(--primary-dark)}
+  .guide .hint{margin-top:12px;font-size:14px;color:var(--ink-soft);font-weight:700}
 
-  .linescore{border-left:1px solid var(--line);padding-left:16px;display:flex;flex-direction:column;justify-content:center;overflow-x:auto}
-  table.ls{border-collapse:collapse;font-family:var(--mono);font-size:13px}
-  table.ls th,table.ls td{padding:3px 7px;text-align:center;min-width:22px}
-  table.ls thead th{color:var(--muted);font-size:11px;border-bottom:1px solid var(--line)}
-  table.ls td.lbl{text-align:left;font-family:var(--display);font-size:14px;color:var(--chalk);min-width:46px}
-  table.ls td.tot{font-weight:800;color:#fff}
-  table.ls td.rhe{color:var(--gold)}
-  table.ls .now{background:rgba(255,210,63,.16);border-radius:4px}
+  label.lab{display:block;font-family:var(--display);font-weight:600;font-size:14px;color:var(--ink-soft);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px}
+  input.tin{width:100%;padding:13px;border-radius:14px;border:3px solid var(--line);background:#fff;color:var(--ink);font-size:17px;font-weight:800;outline:none}
+  input.tin:focus{border-color:var(--primary)}
+  .setup-row{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:14px}.setup-row .fld{flex:1;min-width:160px}
 
-  /* Diamond + count */
-  #pField{grid-area:diamond}
-  .field-inner{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0}
-  .diawrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;position:relative}
-  .diamond{position:relative;width:min(100%,260px);aspect-ratio:1/1}
-  .base{
-    position:absolute;width:24%;height:24%;background:#22325a;border:2px solid var(--line);
-    transform:rotate(45deg);transition:background .25s, box-shadow .25s;
-  }
-  .base.on{background:var(--gold);border-color:#fff3b0;box-shadow:0 0 18px rgba(255,210,63,.8)}
-  .base.first{right:2%;top:38%}
-  .base.second{left:38%;top:2%}
-  .base.third{left:2%;top:38%}
-  .base.home{left:38%;bottom:2%;background:#13233f}
-  .runner-name{position:absolute;font-size:10px;color:var(--gold);font-weight:800;white-space:nowrap;transform:translateX(-50%)}
-  .rn-1{right:-4%;top:34%;transform:none}
-  .rn-2{left:50%;top:-14%;transform:translateX(-50%)}
-  .rn-3{left:-4%;top:34%;text-align:right}
+  /* board layout */
+  .main{display:grid;grid-template-columns:1fr 340px;gap:16px;width:100%;max-width:1240px;margin:0 auto;align-items:start}
+  .stack{display:flex;flex-direction:column;gap:14px}
+  @media(max-width:980px){.main{grid-template-columns:1fr}}
 
-  .countbar{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap}
-  .cnt{display:flex;align-items:center;gap:7px}
-  .cnt .lab{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase}
-  .pip{width:14px;height:14px;border-radius:50%;background:#1a2c52;border:1px solid var(--line)}
-  .pip.b.on{background:#4fd0ff;border-color:#9fe6ff}
-  .pip.s.on{background:var(--gold);border-color:#fff3b0}
-  .pip.o.on{background:var(--red);border-color:#ffb3b3}
+  /* squares grid */
+  .gridcard{background:var(--card);border-radius:22px;box-shadow:var(--shadow);padding:16px}
+  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:16px;margin-bottom:8px;color:var(--homec,var(--ink))}
+  .gridrow{display:flex;gap:8px;align-items:center;justify-content:center}
+  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:18px;color:var(--awayc,var(--ink));flex:0 0 auto}
+  .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
+  .cell{border-radius:7px;background:#f1f4f1;border:2px solid #e3e8e3;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:1.05;padding:1px;position:relative}
+  .cell.hdr{background:transparent;border:none;font-family:var(--display);font-weight:700;font-size:clamp(15px,1.8vw,28px)}
+  .cell.hdr.top{color:var(--homec,var(--ink))}.cell.hdr.left{color:var(--awayc,var(--ink))}
+  .cell.corner{background:transparent;border:none}
+  .cell.owned{color:#fff} .cell.qmark{color:#b9c2b9;font-size:15px}
+  .cell.live{box-shadow:0 0 0 3px var(--accent),0 0 16px rgba(255,207,51,.7);z-index:2;animation:lp 1.3s infinite}
+  .cell.won{box-shadow:0 0 0 3px var(--good)} .cell .wtag{position:absolute;top:0;right:2px;font-size:10px}
+  @keyframes lp{0%,100%{box-shadow:0 0 0 3px var(--accent),0 0 8px rgba(255,207,51,.5)}50%{box-shadow:0 0 0 3px var(--accent),0 0 20px rgba(255,207,51,.95)}}
 
-  .matchup{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
-  .matchup b{color:var(--chalk);font-weight:700}
-  .matchup .ab{display:flex;flex-direction:column;gap:2px}
-  .matchup .ab .role{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--gold)}
+  /* scoreboard mini */
+  .scoremini{display:flex;gap:12px}
+  .tcol{flex:1;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:12px;text-align:center;border-top:7px solid var(--tc,#888)}
+  .tcol .nm{font-family:var(--display);font-weight:700;font-size:24px}
+  .tcol .sc{font-family:var(--display);font-weight:700;font-size:58px;line-height:1}
+  .tcol .dig{font-size:14px;color:var(--ink-soft);font-weight:800}
+  .scorebtns{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+  .scorebtns .sbtn{font-family:var(--display);font-weight:600;font-size:14px;border:none;border-radius:10px;padding:7px 11px;cursor:pointer;background:var(--primary);color:#fff;box-shadow:0 3px 0 var(--primary-dark)}
+  .scorebtns .sbtn.minus{background:#eceee9;color:var(--ink);box-shadow:0 3px 0 #cdd2cb}.scorebtns .sbtn:active{transform:translateY(2px)}
+  .nowwin{background:linear-gradient(180deg,#fffdf6,#fff4dd);border:3px solid var(--accent);border-radius:14px;padding:11px;text-align:center;margin-top:6px}
+  .nowwin .l{font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--ink-soft)}
+  .nowwin .v{font-family:var(--display);font-weight:700;font-size:28px;color:var(--primary-dark)}
 
-  /* Odds + WE */
-  #pOdds{grid-area:odds}
-  .we{margin-bottom:14px}
-  .we .we-head{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
-  .we-bar{height:26px;border-radius:8px;overflow:hidden;display:flex;border:1px solid var(--line);position:relative}
-  .we-bar .away{background:linear-gradient(180deg,#3a6df0,#274fb0);transition:width .8s cubic-bezier(.4,0,.2,1)}
-  .we-bar .home{background:linear-gradient(180deg,#ff7a3a,#d8531a);transition:width .8s cubic-bezier(.4,0,.2,1)}
-  .we-bar .pct{position:absolute;top:0;height:100%;display:flex;align-items:center;font-weight:800;font-size:13px;padding:0 9px;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.5)}
-  .we-bar .pct.l{left:0}.we-bar .pct.r{right:0}
+  .checks{display:flex;flex-direction:column;gap:8px}
+  .chk{display:flex;align-items:center;gap:10px;background:#f6f8f5;border-radius:14px;padding:9px 12px}
+  .chk.done{background:#e8f9ec}
+  .chk .ck{flex:1}.chk .ck .lab{font-family:var(--display);font-weight:700;font-size:19px}.chk .ck .win{font-size:15px;color:var(--primary-dark);font-weight:800}.chk .ck .sub{font-size:14px;color:var(--ink-soft);font-weight:700}
+  .lbcard h3{font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:10px}
 
-  .odds-table{display:flex;flex-direction:column;gap:10px;flex:1}
-  .market{background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
-  .market .mh{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:7px}
-  .market .ml-row{display:flex;gap:8px}
-  .odd{
-    flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
-    background:#0c1c39;border:1px solid var(--line);border-radius:8px;padding:8px 4px;position:relative;
-  }
-  .odd .who{font-size:12px;font-weight:800;color:var(--chalk)}
-  .odd .price{font-family:var(--mono);font-size:18px;font-weight:800}
-  .odd .mv{position:absolute;top:5px;right:7px;font-size:11px}
-  .odd.fav{box-shadow:inset 0 0 0 1px rgba(255,210,63,.5)}
-  .sparkwrap{margin-top:8px}
-  .sparkwrap svg{width:100%;height:34px;display:block}
+  /* phone */
+  .phone-wrap{max-width:460px;margin:0 auto}
+  .pgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:8px}
+  .pcell{aspect-ratio:1/1;border-radius:5px;background:#f1f4f1;border:2px solid #e3e8e3;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#7a8a7a;overflow:hidden;cursor:pointer}
+  .pcell.mine{color:#fff}.pcell.taken{opacity:.9;cursor:not-allowed}.pcell.sel{box-shadow:0 0 0 2px var(--accent);background:#fff7df}.pcell.live{box-shadow:0 0 0 2px var(--accent)}
+  .legend{display:flex;gap:14px;font-size:12px;color:var(--ink-soft);margin-top:10px;flex-wrap:wrap;font-weight:800}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
 
-  /* Social consensus */
-  #pSocial{grid-area:social}
-  .consensus{display:flex;flex-direction:column;gap:14px}
-  .cmkt .ch{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px}
-  .cmkt .ch .lft{color:#7fb0ff;font-weight:800}
-  .cmkt .ch .rgt{color:#ffb07f;font-weight:800}
-  .cbar{height:22px;border-radius:7px;overflow:hidden;display:flex;border:1px solid var(--line);position:relative}
-  .cbar .l{background:linear-gradient(180deg,#3a6df0,#274fb0);transition:width .6s}
-  .cbar .r{background:linear-gradient(180deg,#ff7a3a,#d8531a);transition:width .6s}
-  .cbar .v{position:absolute;top:0;height:100%;display:flex;align-items:center;font-size:12px;font-weight:800;padding:0 8px;color:#fff}
-  .cbar .v.l{left:0}.cbar .v.r{right:0}
-  .cmeta{font-size:11px;color:var(--muted);margin-top:4px;display:flex;justify-content:space-between}
-
-  .lb{margin-top:auto;border-top:1px solid var(--line);padding-top:12px}
-  .lb h4{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-  .lbrow{display:flex;align-items:center;gap:10px;padding:5px 0;font-size:13px;border-bottom:1px dashed rgba(255,255,255,.06)}
-  .lbrow .rk{width:20px;color:var(--muted);font-family:var(--mono)}
-  .lbrow .al{flex:1;font-weight:700;display:flex;align-items:center;gap:6px}
-  .lbrow .un{font-family:var(--mono);font-weight:800}
-  .lbrow.me{background:rgba(255,210,63,.08);border-radius:6px;padding-left:6px}
-
-  /* Props */
-  #pProps{grid-area:props}
-  .prop{background:rgba(0,0,0,.18);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:9px}
-  .prop .pn{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
-  .prop .pn .name{font-weight:800;font-size:14px}
-  .prop .pn .tm{font-size:11px;color:var(--muted)}
-  .prop .pl{font-size:12px;color:var(--muted);margin-bottom:7px}
-  .prop .pl b{color:var(--chalk)}
-  .prop .ou{display:flex;gap:8px}
-  .prop .ou .o{flex:1;text-align:center;border:1px solid var(--line);border-radius:7px;padding:6px 2px;font-size:12px}
-  .prop .ou .o .lab{color:var(--muted);font-size:10px;letter-spacing:1px;text-transform:uppercase}
-  .prop .ou .o .pr{font-family:var(--mono);font-weight:800;font-size:15px}
-  .prop .ou .over .pr{color:var(--over)}
-  .prop .ou .under .pr{color:var(--under)}
-  .prop .prog{height:5px;border-radius:3px;background:#0c1c39;margin-top:8px;overflow:hidden}
-  .prop .prog>i{display:block;height:100%;background:var(--gold);transition:width .5s}
-
-  /* feed ticker */
-  .feed{margin-top:10px;border-top:1px solid var(--line);padding-top:8px;max-height:96px;overflow:hidden}
-  .feed .fitem{font-size:12px;color:var(--muted);padding:3px 0;display:flex;gap:7px;align-items:baseline;animation:fade .4s}
-  .feed .fitem .ic{font-size:13px}
-  .feed .fitem b{color:var(--chalk)}
-  .feed .fitem.big{color:var(--gold);font-weight:700}
-
-  /* Big play toast */
-  #toast{position:fixed;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:200}
-  #toast.show{display:flex}
-  #toast .card{
-    font-family:var(--display);font-size:clamp(48px,11vw,120px);color:var(--gold);
-    text-shadow:0 0 30px rgba(255,210,63,.6), 0 8px 0 #7a5a00, 0 16px 30px rgba(0,0,0,.6);
-    animation:pop .5s cubic-bezier(.2,1.5,.4,1);letter-spacing:3px;text-align:center;
-  }
+  #toast{position:fixed;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:200}#toast.show{display:flex}
+  #toast .c{font-family:var(--display);font-weight:700;font-size:clamp(36px,8vw,86px);color:#fff;text-align:center;text-shadow:0 4px 0 var(--primary-dark),0 12px 30px rgba(0,0,0,.4);animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
   @keyframes pop{0%{transform:scale(.4);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-  /* host controls */
-  #ctl{position:fixed;left:14px;bottom:12px;z-index:130;display:flex;gap:8px;opacity:.25;transition:opacity .2s}
-  #ctl:hover{opacity:1}
-  #ctl button{
-    background:var(--panel);border:1px solid var(--line);color:var(--chalk);
-    border-radius:8px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:1px;
-  }
-  #ctl button:hover{border-color:var(--gold);color:var(--gold)}
-
-  /* ============ PHONE ============ */
-  #phone{display:none;min-height:100vh;padding:18px 16px 40px;max-width:520px;margin:0 auto;flex-direction:column;gap:14px}
-  #phone.active{display:flex}
-  .pcard{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 14px 30px rgba(0,0,0,.4)}
-  .pcard h2{font-family:var(--display);font-size:22px;letter-spacing:1px;margin-bottom:4px}
-  .pcard .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
-  .ph-score{display:flex;justify-content:space-around;align-items:center;text-align:center;margin:6px 0 4px}
-  .ph-score .t{flex:1}
-  .ph-score .t .ab{font-family:var(--display);font-size:18px}
-  .ph-score .t .sc{font-family:var(--display);font-size:40px}
-  .ph-score .mid{color:var(--muted);font-size:12px;line-height:1.4}
-  .field-label{text-align:center;font-size:12px;color:var(--muted);margin-top:6px}
-  .seg{display:flex;gap:8px;margin-bottom:12px}
-  .seg button{flex:1;background:#0c1c39;border:1px solid var(--line);color:var(--chalk);border-radius:10px;padding:11px;font-weight:800;font-size:14px;cursor:pointer}
-  .seg button.sel{background:linear-gradient(180deg,#fff0a8,var(--gold) 45%,var(--gold2));color:#2a1a00;border-color:#fff3b0}
-  .pickrow{display:flex;gap:10px;margin-bottom:12px}
-  .pick{flex:1;background:#0c1c39;border:2px solid var(--line);border-radius:12px;padding:14px 8px;text-align:center;cursor:pointer;transition:border-color .15s}
-  .pick.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,210,63,.18)}
-  .pick .who{font-weight:800;font-size:15px}
-  .pick .pr{font-family:var(--mono);font-size:20px;font-weight:800;margin-top:3px}
-  .chips{display:flex;gap:8px;margin-bottom:14px}
-  .chip{flex:1;background:#0c1c39;border:1px solid var(--line);border-radius:999px;padding:11px 4px;text-align:center;font-weight:800;cursor:pointer}
-  .chip.sel{background:var(--green);color:#04210f;border-color:#9af0c0}
-  .pbtn{width:100%;padding:15px;border-radius:12px;border:none;cursor:pointer;font-family:var(--display);font-size:20px;letter-spacing:1px;
-    background:linear-gradient(180deg,#fff0a8,var(--gold) 45%,var(--gold2));color:#2a1a00;box-shadow:0 5px 0 #7a5a00}
-  .pbtn:active{transform:translateY(3px);box-shadow:0 2px 0 #7a5a00}
-  .pbtn:disabled{opacity:.4;box-shadow:none}
-  .balance{display:flex;justify-content:space-between;align-items:center;background:#0c1c39;border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:14px}
-  .balance .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:2px}
-  .balance .v{font-family:var(--display);font-size:26px;color:var(--gold)}
-  .mybets{margin-top:6px}
-  .mybets .mb{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,.08)}
-  .mybets .mb .st{font-weight:800;font-family:var(--mono)}
-  .mybets .mb .st.win{color:var(--green)}.mybets .mb .st.loss{color:var(--red)}.mybets .mb .st.open{color:var(--muted)}
-  input.namein{width:100%;padding:13px;border-radius:10px;border:2px solid var(--line);background:#0a1a36;color:var(--chalk);font-size:16px;font-weight:700;outline:none}
-  input.namein:focus{border-color:var(--gold)}
-
-  .note{font-size:12px;color:var(--muted);text-align:center;margin-top:8px;line-height:1.5}
-  .toast-mini{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--green);color:#04210f;font-weight:800;padding:12px 22px;border-radius:999px;box-shadow:0 8px 20px rgba(0,0,0,.4);z-index:300;display:none}
-  .toast-mini.show{display:block;animation:fade .3s}
-
-  @media (max-width:1100px){
-    #board{height:auto;overflow:visible}
-    .panel{overflow:visible}
-    .grid{grid-template-columns:1fr 1fr;grid-template-rows:auto;grid-template-areas:"score score" "diamond odds" "social props"}
+  .toast-mini{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--primary);color:#fff;font-weight:800;padding:13px 24px;border-radius:999px;box-shadow:var(--shadow);z-index:300;display:none;font-size:16px}.toast-mini.show{display:block}
+  #ctl{position:fixed;left:14px;bottom:12px;z-index:130;display:flex;gap:8px}#ctl button{background:var(--card);border:none;color:var(--ink);border-radius:12px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
+  /* TV: hide host controls + go BIG for across-the-room legibility */
+  body.tv .hostonly{display:none!important} body.tv #ctl{display:none}
+  body.tv .wrap{padding:22px 26px 36px}
+  body.tv .topbar,body.tv .main{max-width:1880px}
+  body.tv .main{grid-template-columns:1.85fr 1fr;gap:22px}
+  body.tv .logo{width:66px;height:66px;font-size:38px}
+  body.tv .title .t1{font-size:40px}
+  body.tv .title .t2{font-size:16px}
+  body.tv .roomtag .rl .c{font-size:36px}
+  body.tv .roomtag .qr{width:76px;height:76px}
+  body.tv .sqgrid{width:min(100%,75vh)}
+  body.tv .cell{font-size:19px;border-radius:9px}
+  body.tv .cell.hdr{font-size:clamp(22px,2.4vw,42px)}
+  body.tv .axislabel{font-size:28px;margin-bottom:12px}
+  body.tv .axisleft{font-size:28px}
+  body.tv .tcol{padding:16px}
+  body.tv .tcol .nm{font-size:32px}
+  body.tv .tcol .sc{font-size:78px}
+  body.tv .tcol .dig{font-size:18px}
+  body.tv .nowwin .l{font-size:16px}
+  body.tv .nowwin .v{font-size:36px}
+  body.tv .chk .ck .lab{font-size:26px}
+  body.tv .chk .ck .win{font-size:19px}
+  body.tv .chk .ck .sub{font-size:17px}
+  body.tv .lbcard h3{font-size:32px}
+  /* Shorter TVs (720p): keep it big but fit without scrolling */
+  @media (max-height:840px){
+    body.tv .wrap{padding:10px 20px 12px}
+    body.tv .topbar{margin-bottom:10px}
+    body.tv .panel{padding:12px}
+    body.tv .sqgrid{width:min(100%,62vh)}
+    body.tv .gridcard{padding:12px}
+    body.tv .cell{font-size:13px}
+    body.tv .cell.hdr{font-size:clamp(15px,1.6vw,26px)}
+    body.tv .title .t1{font-size:30px}
+    body.tv .axislabel{font-size:22px;margin-bottom:8px}
+    body.tv .axisleft{font-size:22px}
+    body.tv .tcol{padding:12px}
+    body.tv .tcol .nm{font-size:24px}
+    body.tv .tcol .sc{font-size:50px}
+    body.tv .tcol .dig{font-size:14px}
+    body.tv .nowwin .v{font-size:26px}
+    body.tv .chk{padding:7px 10px}
+    body.tv .chk .ck .lab{font-size:19px}
+    body.tv .chk .ck .win{font-size:15px}
+    body.tv .lbcard h3{font-size:24px}
   }
 </style>
 </head>
 <body>
-
-<!-- TV BOARD -->
-<div id="board">
-  <div class="topbar">
-    <div class="brand">
-      <div class="logo">⚾</div>
-      <div>
-        <div class="bt">BARBOARDS <span class="live">LIVE</span></div>
-        <div class="bs">MLB · Second Screen</div>
-      </div>
-    </div>
-    <div class="livechip"><span class="dot"></span> Live</div>
-    <div class="spacer"></div>
-    <div class="joinchip">
-      <div class="jt">
-        <div class="l">Bet from your phone</div>
-        <div class="c" id="roomCode">— —</div>
-      </div>
-      <div class="qr" id="boardQr"></div>
-    </div>
-  </div>
-
-  <div class="grid">
-    <!-- SCOREBOARD -->
-    <section class="panel" id="pScore">
-      <div class="sb">
-        <div class="teams" id="teamsBox"></div>
-        <div class="linescore" id="lineScore"></div>
-      </div>
-    </section>
-
-    <!-- ODDS + WIN EXPECTANCY -->
-    <section class="panel" id="pOdds">
-      <h3>Live Odds <span class="tag" id="oddsTag">— updating —</span></h3>
-      <div class="we">
-        <div class="we-head"><span id="weAwayLab">AWAY</span><span>Win Probability</span><span id="weHomeLab">HOME</span></div>
-        <div class="we-bar">
-          <div class="away" id="weAway" style="width:50%"></div>
-          <div class="home" id="weHome" style="width:50%"></div>
-          <div class="pct l" id="weAwayPct">50%</div>
-          <div class="pct r" id="weHomePct">50%</div>
-        </div>
-      </div>
-      <div class="odds-table" id="oddsTable"></div>
-      <div class="sparkwrap"><svg id="spark" viewBox="0 0 300 34" preserveAspectRatio="none"></svg></div>
-    </section>
-
-    <!-- DIAMOND -->
-    <section class="panel" id="pField">
-      <h3>On the Field <span class="tag" id="inningTag">—</span></h3>
-      <div class="field-inner">
-        <div class="diawrap">
-          <div class="diamond">
-            <div class="base second" id="b2"></div>
-            <div class="base third" id="b3"></div>
-            <div class="base first" id="b1"></div>
-            <div class="base home"></div>
-            <div class="runner-name rn-1" id="rn1"></div>
-            <div class="runner-name rn-2" id="rn2"></div>
-            <div class="runner-name rn-3" id="rn3"></div>
-          </div>
-        </div>
-        <div class="countbar">
-          <div class="cnt"><span class="lab">B</span><span class="pip b" id="b_0"></span><span class="pip b" id="b_1"></span><span class="pip b" id="b_2"></span></div>
-          <div class="cnt"><span class="lab">S</span><span class="pip s" id="s_0"></span><span class="pip s" id="s_1"></span></div>
-          <div class="cnt"><span class="lab">O</span><span class="pip o" id="o_0"></span><span class="pip o" id="o_1"></span></div>
-        </div>
-        <div class="matchup">
-          <div class="ab"><span class="role">At Bat</span><b id="atBat">—</b></div>
-          <div class="ab" style="text-align:right;align-items:flex-end"><span class="role">Pitching</span><b id="pitching">—</b></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- SOCIAL CONSENSUS + LEADERBOARD -->
-    <section class="panel" id="pSocial">
-      <h3>Bar Consensus <span class="tag" id="betCount">0 bets</span></h3>
-      <div class="consensus" id="consensus"></div>
-      <div class="lb">
-        <h4>House Leaderboard</h4>
-        <div id="leaderboard"></div>
-      </div>
-    </section>
-
-    <!-- PROPS + FEED -->
-    <section class="panel" id="pProps">
-      <h3>Player Props</h3>
-      <div id="propsBox"></div>
-      <div class="feed" id="feed"></div>
-    </section>
-  </div>
-</div>
-
-<div id="toast"><div class="card" id="toastText"></div></div>
-
-<div id="ctl">
-  <button onclick="Board.newGame()">↻ New Game</button>
-  <button onclick="Board.togglePause()" id="pauseBtn">⏸ Pause</button>
-  <button onclick="Board.fast()">⏩ Speed</button>
-</div>
-
-<!-- PHONE -->
-<div id="phone"></div>
+<div class="wrap" id="root"></div>
+<div id="toast"><div class="c" id="toastText"></div></div>
 <div class="toast-mini" id="miniToast"></div>
+<div id="ctl" class="hostonly"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 "use strict";
-
 /* =====================================================================
-   BARBOARDS LIVE — MLB second-screen board.
-   Self-contained: a realistic simulated live game drives the scoreboard,
-   diamond, win-expectancy meter, live odds, player props, the bar
-   "consensus" social-betting panel and the leaderboard.
-   Phones join via QR (?play&room=CODE) over Supabase to place social bets.
-   Reuses the Pluckers Trivia/Bingo Supabase project + `sessions` table.
+   GAME DAY SQUARES — clean, kid/teen-friendly squares party game.
+   Pick a sport -> the board re-themes. Players claim squares from their
+   phones; the HOST enters the real score they're watching and awards a
+   winner each period. Pluckers-style Host screen + TV screen. No money.
    ===================================================================== */
+const SUPABASE_URL="https://yfatjubmmnykwopnuoyk.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_KcWaVrtqXLfIt80bHliCCw_V9kLdvVV";
+const LIVE_TABLE="sessions";const HOST_RESUME_KEY="gameday-squares-host";
+const live={role:"off",code:null,sb:null,channel:null,lastPush:0};
+function liveConfigured(){return SUPABASE_URL&&SUPABASE_ANON_KEY&&typeof window.supabase!=="undefined";}
+function liveClient(){if(!live.sb)live.sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);return live.sb;}
+function makeRoomCode(){const c="ABCDEFGHJKMNPQRSTUVWXYZ23456789";let s="";for(let i=0;i<4;i++)s+=c[Math.floor(Math.random()*c.length)];return s;}
+function joinUrl(){return location.origin+location.pathname+"?play&room="+encodeURIComponent(live.code||"");}
+function tvUrl(){return location.origin+location.pathname+"?tv&room="+encodeURIComponent(live.code||"");}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+const $=id=>document.getElementById(id);
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
-// ---- Supabase (shared project, same `sessions` table as trivia/bingo) ----
-const SUPABASE_URL      = "https://yfatjubmmnykwopnuoyk.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_KcWaVrtqXLfIt80bHliCCw_V9kLdvVV";
-const LIVE_TABLE        = "sessions";
-const HOST_RESUME_KEY   = "barboards-mlb-host";
-const PLAYER_KEY_PREFIX = "barboards-mlb-player-";
-
-const live = { role: "off", code: null, sb: null, channel: null, lastPush: 0 };
-function liveConfigured(){ return SUPABASE_URL && SUPABASE_ANON_KEY && typeof window.supabase !== "undefined"; }
-function liveClient(){ if(!live.sb) live.sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY); return live.sb; }
-function makeRoomCode(){ const c="ABCDEFGHJKMNPQRSTUVWXYZ23456789"; let s=""; for(let i=0;i<4;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
-function playBaseUrl(){ return location.origin + location.pathname + "?play"; }
-function joinUrl(){ return playBaseUrl() + "&room=" + encodeURIComponent(live.code||""); }
-function escapeHtml(s){ return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
-const $ = id => document.getElementById(id);
-
-// ---- Team data (fictional rosters — this is a simulated feed) ----
-const TEAMS = [
-  { abbr:"NYK", city:"New York",    name:"Empire",   color:"#1b3a8c", rec:"71-48" },
-  { abbr:"LAW", city:"Los Angeles", name:"Waves",    color:"#0a6cc4", rec:"74-45" },
-  { abbr:"CHI", city:"Chicago",     name:"Gusts",    color:"#cf2030", rec:"63-56" },
-  { abbr:"HOU", city:"Houston",     name:"Comets",   color:"#e07a1a", rec:"68-51" },
-  { abbr:"ATL", city:"Atlanta",     name:"Hammers",  color:"#b21d3a", rec:"66-53" },
-  { abbr:"SEA", city:"Seattle",     name:"Tide",     color:"#0c8a6a", rec:"60-59" },
-  { abbr:"BOS", city:"Boston",      name:"Reds",     color:"#b3252e", rec:"64-55" },
-  { abbr:"SF",  city:"San Francisco",name:"Fog",     color:"#e58a26", rec:"62-57" },
-];
-const FIRST=["Marcus","Diego","Tyler","Kenji","Andre","Cole","Rafael","Mason","Ivan","Luis","Owen","Tariq","Bryce","Jaylen","Hugo","Sam","Nico","Devon","Eli","Carlos"];
-const LAST =["Vega","Brooks","Tanaka","Okafor","Russo","Sanders","Mendez","Castillo","Park","Flores","Whitaker","Nakamura","Greer","Diaz","Hollis","Pierce","Romano","Ellis","Khan","Bauer"];
-
-function pick(a){ return a[Math.floor(Math.random()*a.length)]; }
-function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
-
-function makeLineup(teamAbbr){
-  const used=new Set(); const out=[];
-  for(let i=0;i<9;i++){
-    let nm; do{ nm = pick(FIRST)+" "+pick(LAST); }while(used.has(nm)); used.add(nm);
-    out.push({ name:nm, team:teamAbbr, num: 1+Math.floor(Math.random()*70), hits:0, ab:0, hr:0, tb:0, k:0 });
-  }
-  return out;
-}
-
-/* =====================================================================
-   GAME STATE  (board owns this; phones mirror from the snapshot)
-   ===================================================================== */
-let G = null;     // full game object
-function freshGame(){
-  const idx = shuffle(TEAMS.map((_,i)=>i)).slice(0,2);
-  const away = {...TEAMS[idx[0]]}, home = {...TEAMS[idx[1]]};
-  return {
-    away, home,
-    lineups: { away: makeLineup(away.abbr), home: makeLineup(home.abbr) },
-    pitchers: { away: pick(FIRST)+" "+pick(LAST), home: pick(FIRST)+" "+pick(LAST) },
-    pcount: { away: 0, home: 0 },
-    batIdx: { away: 0, home: 0 },
-    inning: 1, half: "top", outs: 0, balls: 0, strikes: 0,
-    bases: { first:null, second:null, third:null },   // store runner name or null
-    awayScore: 0, homeScore: 0,
-    lineAway: [], lineHome: [],          // runs per inning
-    rhe: { aH:0, aE:0, hH:0, hE:0 },
-    over: false, started: true,
-    weHist: [],                          // win-prob history (home) for sparkline
-    feed: [],                            // play-by-play
-  };
-}
-
-// ---- Odds / consensus / leaderboard (board-owned, derived) ----
-let ODDS = null;
-let CONSENSUS = null;
-let PROPS = [];
-let LEADERBOARD = [];
-const SETTLED = { /* unused placeholder for future per-bet settlement */ };
-
-/* =====================================================================
-   WIN EXPECTANCY  (simplified leverage model → home win probability)
-   ===================================================================== */
-function homeWinProb(g){
-  const diff = g.homeScore - g.awayScore;                // + favors home
-  // innings remaining (each half ~ 0.5 inning), more weight late
-  const half = g.half==="top"?0:0.5;
-  const inningsElapsed = (g.inning-1) + half + (g.outs/6);
-  const inningsLeft = Math.max(0.15, 9 - inningsElapsed);
-  // base-out leverage: small nudge toward the batting team
-  const baseRunners = (g.bases.first?1:0)+(g.bases.second?1.4:0)+(g.bases.third?1.7:0);
-  const battingHome = g.half==="bottom";
-  const leverage = (baseRunners - g.outs*0.6) * 0.018 / Math.sqrt(inningsLeft+0.5);
-  const battingNudge = battingHome ? leverage : -leverage;
-  // logistic on run diff, scaled by remaining game (a lead late = more certain).
-  // k grows as fewer innings remain so the curve isn't absurdly steep early.
-  const k = 1.05 / Math.sqrt(inningsLeft);
-  let p = 1/(1+Math.exp(-(diff*k)));
-  p += battingNudge;
-  if(g.over){ p = diff>0?0.999:(diff<0?0.001:0.5); }
-  return Math.min(0.985, Math.max(0.015, p));
-}
-
-function amlFromProb(p){
-  // fair American odds from probability, with a touch of vig baked in
-  p = Math.min(0.97, Math.max(0.03, p));
-  const v = p*1.045;                      // hold
-  if(v>=0.5) return -Math.round((v/(1-v))*100/5)*5;
-  return Math.round(((1-v)/v)*100/5)*5;
-}
-function fmtAml(n){ return (n>0?"+":"")+n; }
-
-function recomputeOdds(g){
-  const hp = homeWinProb(g);
-  const ap = 1-hp;
-  const homeML = amlFromProb(hp), awayML = amlFromProb(ap);
-  // run line: shift prob by ~1.5 runs of equivalent
-  const rlShift = 0.5/Math.sqrt(Math.max(1,9-(g.inning-1)));
-  const homeRlProb = Math.max(0.05, hp - rlShift);
-  const awayRlProb = Math.max(0.05, ap - rlShift);
-  // total: live total drifts down as game progresses & with current pace
-  const runs = g.awayScore+g.homeScore;
-  const inningsElapsed = Math.max(0.34,(g.inning-1)+(g.half==="bottom"?0.5:0)+(g.outs/6));
-  const inningsLeft = Math.max(0, 9 - inningsElapsed);
-  const LEAGUE_RPI = 0.95;                         // ~8.5 runs / 9 innings, both teams
-  const pace = runs/inningsElapsed;
-  const paceWeight = Math.min(1, inningsElapsed/4); // trust observed pace more as the game unfolds
-  const blendedRate = LEAGUE_RPI*(1-paceWeight) + pace*paceWeight;
-  let total = Math.round((runs + blendedRate*inningsLeft)*2)/2;
-  if(!isFinite(total) || total<=0) total = 8.5;
-  total = Math.max(runs+0.5, total);
-
-  const prev = ODDS;
-  ODDS = {
-    home:{ team:g.home.abbr, ml:homeML, rl:-1.5, rlOdds:amlFromProb(homeRlProb) },
-    away:{ team:g.away.abbr, ml:awayML, rl:1.5,  rlOdds:amlFromProb(awayRlProb) },
-    total:{ line: total, over:-110, under:-110 },
-    hp, ap,
-  };
-  // movement flags
-  if(prev){
-    ODDS.home.mv = Math.sign(homeML - prev.home.ml);
-    ODDS.away.mv = Math.sign(awayML - prev.away.ml);
-    ODDS.total.mv = Math.sign(total - prev.total.line);
-  }
-}
-function recordWE(){
-  if(!ODDS) return;
-  G.weHist.push(Math.round(ODDS.hp*100));
-  if(G.weHist.length>60) G.weHist.shift();
-}
-
-/* =====================================================================
-   PLAYER PROPS
-   ===================================================================== */
-function initProps(g){
-  const cands = [
-    {p:g.lineups.away[2], t:g.away.abbr}, {p:g.lineups.away[3], t:g.away.abbr},
-    {p:g.lineups.home[2], t:g.home.abbr}, {p:g.lineups.home[3], t:g.home.abbr},
-  ];
-  PROPS = cands.map(c=>{
-    const kind = pick(["Hits","Total Bases","Home Run"]);
-    let line = kind==="Hits"?1.5 : kind==="Total Bases"?1.5 : 0.5;
-    return { ref:c.p, team:c.t, kind, line, over:-130, under:+105 };
-  });
-}
-function recomputeProps(){
-  PROPS.forEach(pr=>{
-    const v = pr.kind==="Hits"?pr.ref.hits : pr.kind==="Total Bases"?pr.ref.tb : pr.ref.hr;
-    const remaining = Math.max(0, pr.line - v + 0.5);
-    // shorten the over as the player approaches/clears the line
-    if(v>pr.line){ pr.over=-100000; pr.under=+100000; pr.done="OVER ✓"; }
-    else {
-      pr.over = -110 - Math.round((1-remaining/(pr.line+0.5))*120);
-      pr.under = +100 + Math.round((1-remaining/(pr.line+0.5))*90);
-      pr.done = null;
-    }
-    pr.cur = v;
-  });
-}
-
-/* =====================================================================
-   CONSENSUS + LEADERBOARD (simulated crowd + real phone bettors)
-   ===================================================================== */
-const HOUSE_NAMES=["BigPapiFan","SharpShooter","DugoutDan","RallyCap","BleacherBob","WalkOffWill","CurveballKate","SeventhInning","TheCloser","FoulBallFran","GrandSlamSam","PinchHitPete"];
-function initSocial(g){
-  CONSENSUS = {
-    moneyline:{ leftLabel:g.away.abbr, rightLabel:g.home.abbr, leftMoney:0,rightMoney:0,leftCount:0,rightCount:0 },
-    total:{ leftLabel:"OVER", rightLabel:"UNDER", leftMoney:0,rightMoney:0,leftCount:0,rightCount:0 },
-    bets:0,
-  };
-  LEADERBOARD = shuffle(HOUSE_NAMES.slice()).slice(0,7).map(n=>({
-    alias:n, units: +(Math.random()*8-2).toFixed(1), wins: Math.floor(Math.random()*6), losses:Math.floor(Math.random()*5), streak: Math.floor(Math.random()*4-1), badge:null, house:true
-  }));
-  resortLeaderboard();
-}
-function resortLeaderboard(){
-  LEADERBOARD.sort((a,b)=>b.units-a.units);
-  LEADERBOARD.forEach((e,i)=>{ e.badge = i===0?"👑":(e.streak>=3?"🔥":null); });
-}
-function applyBet(market, side, units, alias){
-  if(!CONSENSUS) return;
-  const m = market==="moneyline"?CONSENSUS.moneyline:CONSENSUS.total;
-  const left = (market==="moneyline") ? (side===G.away.abbr || side==="away") : (side==="OVER"||side==="over");
-  if(left){ m.leftMoney+=units; m.leftCount++; } else { m.rightMoney+=units; m.rightCount++; }
-  CONSENSUS.bets++;
-  // leaderboard: ensure entry, tiny immediate nudge (full settle on game events)
-  if(alias){
-    let e = LEADERBOARD.find(x=>x.alias===alias);
-    if(!e){ e={alias,units:0,wins:0,losses:0,streak:0,badge:null,house:false}; LEADERBOARD.push(e); }
-    e.open = e.open||[]; e.open.push({market,side,units});
-  }
-  resortLeaderboard();
-}
-function houseBetTick(){
-  // simulated regulars trickle bets in, biased toward the favorite
-  if(!CONSENSUS||!ODDS||G.over) return;
-  if(Math.random()<0.55){
-    const favHome = ODDS.hp>0.5;
-    const sideML = Math.random() < (favHome?0.62:0.38) ? G.home.abbr : G.away.abbr;
-    applyBet("moneyline", sideML, 5+Math.floor(Math.random()*20), null);
-  }
-  if(Math.random()<0.4){
-    applyBet("total", Math.random()<0.5?"OVER":"UNDER", 5+Math.floor(Math.random()*15), null);
-  }
-}
-function settleSocialOnEvent(deltaHome, deltaAway){
-  // when runs score, nudge house leaderboard units to feel alive
-  LEADERBOARD.forEach(e=>{
-    if(e.house){ e.units += (Math.random()*1.2-0.5); }
-  });
-  resortLeaderboard();
-}
-
-/* =====================================================================
-   SIMULATION ENGINE — one "event" per tick (a pitch or a resolved PA)
-   ===================================================================== */
-function curBatter(g){ const s=g.half==="top"?"away":"home"; return g.lineups[s][g.batIdx[s]]; }
-function battingSide(g){ return g.half==="top"?"away":"home"; }
-function pitchingSide(g){ return g.half==="top"?"home":"away"; }
-
-function pushFeed(g, ic, txt, big){
-  g.feed.unshift({ic, txt, big:!!big});
-  if(g.feed.length>14) g.feed.pop();
-}
-
-function advanceRunners(g, batterName, basesToTake, isHR){
-  // returns runs scored. basesToTake: 1 single,2 double,3 triple,4 HR
-  let runs=0;
-  const b=g.bases;
-  const order=[b.third,b.second,b.first];   // who advances first
-  // each existing runner advances basesToTake
-  const newBases={first:null,second:null,third:null};
-  function place(name, fromBase){ // fromBase: 0 batter,1,2,3
-    const dest=fromBase+basesToTake;
-    if(dest>=4){ runs++; return; }
-    if(dest===1) newBases.first=name;
-    else if(dest===2) newBases.second=name;
-    else if(dest===3) newBases.third=name;
-  }
-  if(b.third) place(b.third,3);
-  if(b.second) place(b.second,2);
-  if(b.first) place(b.first,1);
-  if(isHR){ place(batterName,0); /* batter scores -> dest 4 */ }
-  else place(batterName,0);
-  g.bases=newBases;
-  return runs;
-}
-
-function recordRun(g, n){
-  const s=battingSide(g);
-  for(let i=0;i<n;i++){
-    if(s==="away"){ g.awayScore++; } else { g.homeScore++; }
-  }
-  // line score current inning
-  const arr = s==="away"?g.lineAway:g.lineHome;
-  while(arr.length < g.inning) arr.push(0);
-  arr[g.inning-1] += n;
-}
-
-function nextBatter(g){ const s=battingSide(g); g.batIdx[s]=(g.batIdx[s]+1)%9; }
-
-function openInning(g){
-  // Make sure the batting team's current-inning line-score cell exists (as 0).
-  const s=battingSide(g);
-  const arr = s==="away"?g.lineAway:g.lineHome;
-  while(arr.length < g.inning) arr.push(0);
-}
-
-function endGame(g){
-  g.over=true;
-  const wAbbr = g.homeScore>g.awayScore?g.home.abbr:g.away.abbr;
-  const hi=Math.max(g.homeScore,g.awayScore), lo=Math.min(g.homeScore,g.awayScore);
-  pushFeed(g,"🏆",`FINAL — ${wAbbr} wins ${hi}-${lo}`, true);
-  bigPlay("FINAL");
-}
-
-function halfInningChange(g){
-  const leavingHalf=g.half, leavingInning=g.inning;
-  // Regulation = 9 innings. Decide whether the game is over at this boundary.
-  if(leavingHalf==="top" && leavingInning>=9 && g.homeScore>g.awayScore){ endGame(g); return; }      // home already ahead → no bottom
-  if(leavingHalf==="bottom" && leavingInning>=9 && g.homeScore!==g.awayScore){ endGame(g); return; }  // full inning done, decided
-  // Otherwise advance to the next half/inning.
-  g.outs=0; g.balls=0; g.strikes=0; g.bases={first:null,second:null,third:null};
-  if(g.half==="top") g.half="bottom";
-  else { g.half="top"; g.inning++; }
-  openInning(g);
-  pushFeed(g,"🔁",`${leavingHalf==="top"?"Middle":"End"} of ${leavingInning} — ${g.away.abbr} ${g.awayScore}, ${g.home.abbr} ${g.homeScore}`);
-}
-
-function checkWalkoff(g){
-  if(g.inning>=9 && g.half==="bottom" && g.homeScore>g.awayScore){ endGame(g); return true; }
-  return false;
-}
-
-// A plate appearance just completed: reset count, advance the order,
-// and roll the half-inning over if that was the third out.
-function endPA(g){
-  g.balls=0; g.strikes=0;
-  nextBatter(g);
-  if(g.outs>=3) halfInningChange(g);
-}
-
-// The ball was put in play — decide out vs hit and apply it.
-function resolveInPlay(g){
-  const batter=curBatter(g);
-  const r=Math.random();
-  let kind;
-  if(r<0.68) kind = Math.random()<0.5?"groundout":"flyout";
-  else if(r<0.88) kind="single";
-  else if(r<0.945) kind="double";
-  else if(r<0.96) kind="triple";
-  else kind="HR";
-
-  const prevHome=g.homeScore, prevAway=g.awayScore;
-  if(kind==="groundout"||kind==="flyout"){
-    g.outs++;
-    pushFeed(g,"•",`${batter.name} ${kind==="groundout"?"grounds out":"flies out"}`);
-  } else {
-    batter.hits++;
-    const bn = kind==="single"?1:kind==="double"?2:kind==="triple"?3:4;
-    batter.tb += bn; if(kind==="HR") batter.hr++;
-    const runs = advanceRunners(g, batter.name, bn, kind==="HR");
-    if(runs>0) recordRun(g, runs);
-    const map={single:"singles",double:"doubles",triple:"triples",HR:"homers"};
-    if(kind==="HR"){ pushFeed(g,"💣",`${batter.name} HOME RUN${runs>1?" ("+runs+"-run)":""}!`, true); bigPlay("HOME RUN!"); }
-    else pushFeed(g, kind==="triple"?"⚡":"🟢", `${batter.name} ${map[kind]}${runs>0?` — ${runs} in`:""}`, runs>0);
-  }
-  if(g.homeScore!==prevHome||g.awayScore!==prevAway) settleSocialOnEvent(g.homeScore-prevHome,g.awayScore-prevAway);
-  if(checkWalkoff(g)) return;
-  endPA(g);
-}
-
-// One pitch per tick → a real ball/strike count and watchable pace.
-// Returns true when a plate appearance resolved.
-function simPitch(g){
-  if(g.over) return false;
-  const batter=curBatter(g);
-  const r=Math.random();
-  if(r<0.36){                                   // BALL
-    g.balls++;
-    if(g.balls>=4){
-      const b=g.bases, prevHome=g.homeScore;
-      if(!b.first) b.first=batter.name;
-      else if(!b.second){ b.second=b.first; b.first=batter.name; }
-      else if(!b.third){ b.third=b.second; b.second=b.first; b.first=batter.name; }
-      else { b.third=b.second; b.second=b.first; b.first=batter.name; recordRun(g,1); }
-      pushFeed(g,"🅱️",`${batter.name} walks`);
-      if(g.homeScore!==prevHome) settleSocialOnEvent(g.homeScore-prevHome,0);
-      if(checkWalkoff(g)) return true;
-      endPA(g); return true;
-    }
-    return false;
-  } else if(r<0.64){                            // STRIKE
-    g.strikes++;
-    if(g.strikes>=3){ g.outs++; batter.k++; pushFeed(g,"❌",`${batter.name} strikes out`); endPA(g); return true; }
-    return false;
-  } else if(r<0.80){                            // FOUL
-    if(g.strikes<2) g.strikes++;
-    return false;
-  } else {                                      // IN PLAY
-    resolveInPlay(g);
-    return true;
-  }
-}
-
-/* =====================================================================
-   BIG PLAY TOAST
-   ===================================================================== */
-let toastTimer=null;
-function bigPlay(text){
-  if(live.role!=="host" && !isPhoneMode) {} // only board shows
-  if(isPhoneMode) return;
-  $("toastText").textContent=text;
-  $("toast").classList.add("show");
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>$("toast").classList.remove("show"), 2200);
-}
-
-/* =====================================================================
-   RENDER — TV BOARD
-   ===================================================================== */
-function renderBoard(){
-  if(!G) return;
-  const g=G;
-  // teams + scores
-  const batSide=battingSide(g);
-  $("teamsBox").innerHTML = [["away",g.away,g.awayScore],["home",g.home,g.homeScore]].map(([side,t,sc])=>{
-    const batting = side===batSide && !g.over;
-    return `<div class="teamrow ${batting?'batting':''}">
-      <div class="badge" style="background:${t.color}">${t.abbr}</div>
-      <div class="nm"><div class="city">${escapeHtml(t.city)}</div><div class="team">${escapeHtml(t.name)}<span class="rec">${t.rec}</span></div></div>
-      <div class="score">${sc}</div>
-    </div>`;
-  }).join("");
-
-  // line score
-  const maxInn=Math.max(9,g.inning);
-  let head="<tr><th></th>";
-  for(let i=1;i<=maxInn;i++) head+=`<th class="${i===g.inning&&!g.over?'now':''}">${i}</th>`;
-  head+="<th>R</th><th>H</th><th>E</th></tr>";
-  function row(t,arr,score,h,e){
-    let r=`<td class="lbl">${t.abbr}</td>`;
-    for(let i=1;i<=maxInn;i++){ const v=arr[i-1]; r+=`<td class="${i===g.inning&&!g.over?'now':''}">${v==null?(i<g.inning||(i===g.inning)?'':''):v}</td>`; }
-    r+=`<td class="tot">${score}</td><td class="rhe">${h}</td><td class="rhe">${e}</td>`;
-    return "<tr>"+r+"</tr>";
-  }
-  const aH=g.lineups.away.reduce((s,p)=>s+p.hits,0), hH=g.lineups.home.reduce((s,p)=>s+p.hits,0);
-  $("lineScore").innerHTML=`<table class="ls"><thead>${head}</thead><tbody>${row(g.away,g.lineAway,g.awayScore,aH,g.rhe.aE)}${row(g.home,g.lineHome,g.homeScore,hH,g.rhe.hE)}</tbody></table>`;
-
-  // inning tag
-  const arrow = g.half==="top"?"▲":"▼";
-  $("inningTag").textContent = g.over?"FINAL":`${arrow} ${g.inning}`;
-  $("inningTag").style.color = g.over?"var(--gold)":"";
-
-  // diamond
-  $("b1").classList.toggle("on", !!g.bases.first);
-  $("b2").classList.toggle("on", !!g.bases.second);
-  $("b3").classList.toggle("on", !!g.bases.third);
-  $("rn1").textContent = g.bases.first?lastNm(g.bases.first):"";
-  $("rn2").textContent = g.bases.second?lastNm(g.bases.second):"";
-  $("rn3").textContent = g.bases.third?lastNm(g.bases.third):"";
-  // count
-  for(let i=0;i<3;i++) $("b_"+i).classList.toggle("on", g.balls>i);
-  for(let i=0;i<2;i++) $("s_"+i).classList.toggle("on", g.strikes>i);
-  for(let i=0;i<2;i++) $("o_"+i).classList.toggle("on", g.outs>i);
-  // matchup
-  const b=curBatter(g);
-  $("atBat").textContent = g.over?"—":`${b.name} · #${b.num}`;
-  $("pitching").textContent = g.over?"—":`${g.pitchers[pitchingSide(g)]}`;
-
-  renderOdds(); renderConsensus(); renderLeaderboard(); renderProps(); renderFeed();
-}
-function lastNm(full){ return full.split(" ").slice(-1)[0]; }
-
-function renderOdds(){
-  if(!ODDS) return;
-  $("weAwayLab").textContent=G.away.abbr; $("weHomeLab").textContent=G.home.abbr;
-  const hp=Math.round(ODDS.hp*100), ap=100-hp;
-  $("weAway").style.width=ap+"%"; $("weHome").style.width=hp+"%";
-  $("weAwayPct").textContent=ap+"%"; $("weHomePct").textContent=hp+"%";
-
-  const mv = m => m>0?'<span class="mv pos">▲</span>':m<0?'<span class="mv neg">▼</span>':"";
-  const a=ODDS.away, h=ODDS.home, t=ODDS.total;
-  $("oddsTable").innerHTML = `
-    <div class="market"><div class="mh">Moneyline</div><div class="ml-row">
-      <div class="odd ${a.ml<h.ml?'fav':''}">${mv(a.mv)}<div class="who">${a.team}</div><div class="price">${fmtAml(a.ml)}</div></div>
-      <div class="odd ${h.ml<a.ml?'fav':''}">${mv(h.mv)}<div class="who">${h.team}</div><div class="price">${fmtAml(h.ml)}</div></div>
-    </div></div>
-    <div class="market"><div class="mh">Run Line</div><div class="ml-row">
-      <div class="odd"><div class="who">${a.team} ${a.rl>0?'+':''}${a.rl}</div><div class="price">${fmtAml(a.rlOdds)}</div></div>
-      <div class="odd"><div class="who">${h.team} ${h.rl}</div><div class="price">${fmtAml(h.rlOdds)}</div></div>
-    </div></div>
-    <div class="market"><div class="mh">Total ${mv(t.mv)}</div><div class="ml-row">
-      <div class="odd"><div class="who">Over ${t.line}</div><div class="price" style="color:var(--over)">${fmtAml(t.over)}</div></div>
-      <div class="odd"><div class="who">Under ${t.line}</div><div class="price" style="color:var(--under)">${fmtAml(t.under)}</div></div>
-    </div></div>`;
-  $("oddsTag").textContent = G.over?"closed":"live";
-  drawSpark();
-}
-function drawSpark(){
-  const svg=$("spark"); const h=G.weHist; if(!h||h.length<2){ svg.innerHTML=""; return; }
-  const W=300,H=34, n=h.length;
-  const pts=h.map((v,i)=>`${(i/(n-1))*W},${H-(v/100)*H}`).join(" ");
-  svg.innerHTML=`<defs><linearGradient id="sg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ff7a3a"/><stop offset="1" stop-color="#3a6df0"/></linearGradient></defs>
-    <line x1="0" y1="${H/2}" x2="${W}" y2="${H/2}" stroke="#1f3a66" stroke-dasharray="3 4"/>
-    <polyline points="${pts}" fill="none" stroke="url(#sg)" stroke-width="2.4"/>`;
-}
-
-function renderConsensus(){
-  if(!CONSENSUS) return;
-  $("betCount").textContent = CONSENSUS.bets+" bets";
-  function bar(m){
-    const lm=m.leftMoney,rm=m.rightMoney,lc=m.leftCount,rc=m.rightCount;
-    const mt=lm+rm, ct=lc+rc;
-    const mp=mt>0?lm/mt:0.5, cp=ct>0?lc/ct:0.5;
-    const lp=Math.round((mp*0.6+cp*0.4)*100), rp=100-lp;
-    return `<div class="cmkt">
-      <div class="ch"><span class="lft">${m.leftLabel}</span><span class="rgt">${m.rightLabel}</span></div>
-      <div class="cbar"><div class="l" style="width:${lp}%"></div><div class="r" style="width:${rp}%"></div>
-        <div class="v l">${lp}%</div><div class="v r">${rp}%</div></div>
-      <div class="cmeta"><span>${lc} bets</span><span>$${Math.round(lm+rm)} wagered</span><span>${rc} bets</span></div>
-    </div>`;
-  }
-  $("consensus").innerHTML = bar(CONSENSUS.moneyline)+bar(CONSENSUS.total);
-}
-
-function renderLeaderboard(){
-  const rows=LEADERBOARD.slice(0,7).map((e,i)=>`
-    <div class="lbrow ${e.alias===myAlias?'me':''}">
-      <span class="rk">${i+1}</span>
-      <span class="al">${escapeHtml(e.alias)} ${e.badge||""}</span>
-      <span class="un ${e.units>=0?'pos':'neg'}">${e.units>=0?'+':''}${e.units.toFixed(1)}u</span>
-    </div>`).join("");
-  $("leaderboard").innerHTML=rows;
-}
-
-function renderProps(){
-  $("propsBox").innerHTML = PROPS.map(pr=>{
-    const cur=pr.cur||0, prog=Math.min(100, (cur/(pr.line+0.5))*100);
-    const ouHtml = pr.done
-      ? `<div class="o" style="flex:1;color:var(--green);font-weight:800">${pr.done}</div>`
-      : `<div class="o over"><div class="lab">Over ${pr.line}</div><div class="pr">${fmtAml(pr.over)}</div></div>
-         <div class="o under"><div class="lab">Under ${pr.line}</div><div class="pr">${fmtAml(pr.under)}</div></div>`;
-    return `<div class="prop">
-      <div class="pn"><span class="name">${escapeHtml(pr.ref.name)}</span><span class="tm">${pr.team}</span></div>
-      <div class="pl">${pr.kind} · current <b>${cur}</b></div>
-      <div class="ou">${ouHtml}</div>
-      <div class="prog"><i style="width:${prog}%"></i></div>
-    </div>`;
-  }).join("");
-}
-
-function renderFeed(){
-  $("feed").innerHTML = G.feed.slice(0,5).map(f=>`<div class="fitem ${f.big?'big':''}"><span class="ic">${f.ic}</span><span>${escapeHtml(f.txt)}</span></div>`).join("");
-}
-
-/* =====================================================================
-   BOARD CONTROLLER
-   ===================================================================== */
-let tickTimer=null, paused=false, speed=1;
-const Board = {
-  start(){
-    G=freshGame(); openInning(G); recomputeOdds(G); recordWE(); initProps(G); initSocial(G);
-    pushFeed(G,"⚾",`${G.away.city} ${G.away.name} at ${G.home.city} ${G.home.name} — first pitch`);
-    renderBoard(); this.loop();
-  },
-  loop(){
-    clearTimeout(tickTimer);
-    if(G.over){
-      // Kiosk: rest on the final for a bit, then auto-start the next game.
-      tickTimer=setTimeout(()=>{ if(paused) this.loop(); else this.newGame(); }, 11000);
-      return;
-    }
-    tickTimer=setTimeout(()=>{
-      if(!paused){
-        const resolved = simPitch(G);
-        recomputeOdds(G); recomputeProps();
-        if(resolved){ recordWE(); houseBetTick(); }
-        renderBoard(); pushStateThrottled();
-      }
-      this.loop();
-    }, (1150/speed) + Math.random()*650);
-  },
-  newGame(){ this.start(); pushState(true); },
-  togglePause(){ paused=!paused; $("pauseBtn").textContent = paused?"▶ Resume":"⏸ Pause"; },
-  fast(){ speed = speed>=4?1:speed*2; },
+const THEMES={
+  mlb:{key:"mlb",name:"Baseball",emoji:"⚾",teams:["Sluggers","Bombers"],colors:["#1b5fb0","#c8302e"],scoreBtns:[{lab:"+1 Run",v:1}],checks:["End 3rd","End 6th","Final"]},
+  nfl:{key:"nfl",name:"Football",emoji:"🏈",teams:["Bolts","Maulers"],colors:["#0b3d91","#1f8a3b"],scoreBtns:[{lab:"TD +7",v:7},{lab:"FG +3",v:3},{lab:"+2",v:2},{lab:"+1",v:1}],checks:["Q1","Halftime","Q3","Final"]},
+  nba:{key:"nba",name:"Basketball",emoji:"🏀",teams:["Hoops","Dunkers"],colors:["#6a2bd1","#e07a1a"],scoreBtns:[{lab:"+1",v:1},{lab:"+2",v:2},{lab:"3PT +3",v:3}],checks:["Q1","Halftime","Q3","Final"]},
+  soccer:{key:"soccer",name:"Soccer",emoji:"⚽",teams:["Strikers","United"],colors:["#1f8a3b","#c8302e"],scoreBtns:[{lab:"⚽ Goal",v:1}],checks:["Halftime","Final"]},
 };
+const SPORT_ORDER=["mlb","nfl","nba","soccer"];
+function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");}
 
-/* =====================================================================
-   LIVE SYNC
-   ===================================================================== */
-function snapshot(){
-  return {
-    room_code: live.code,
-    state: G && G.over ? "final" : "playing",
-    round_idx: 0,
-    question_idx: G? (G.inning*2+(G.half==="bottom"?1:0)) : 0,
-    rounds: {
-      kind:"mlb-betting",
-      game: G ? {
-        away:G.away, home:G.home, awayScore:G.awayScore, homeScore:G.homeScore,
-        inning:G.inning, half:G.half, outs:G.outs, balls:G.balls, strikes:G.strikes,
-        bases:G.bases, over:G.over,
-        atBat: G.over?null:{name:curBatter(G).name,num:curBatter(G).num},
-        pitching: G.over?null:G.pitchers[pitchingSide(G)],
-        feed: G.feed.slice(0,4),
-      } : null,
-      odds: ODDS, consensus: CONSENSUS, leaderboard: LEADERBOARD.slice(0,8), props: PROPS.map(p=>({name:p.ref.name,team:p.team,kind:p.kind,line:p.line,over:p.over,under:p.under,cur:p.cur,done:p.done})),
-    },
-    updated_at: new Date().toISOString()
-  };
-}
-async function pushState(force){
-  if(live.role!=="host"||!live.code) return;
-  try{ await liveClient().from(LIVE_TABLE).upsert(snapshot()); }catch(e){}
-  live.lastPush=Date.now();
-}
-function pushStateThrottled(){
-  if(live.role!=="host") return;
-  if(Date.now()-live.lastPush > 1800) pushState();
-}
+const params=new URLSearchParams(location.search);
+const isPhone=params.has("play"),isTV=params.has("tv"),isDemo=params.has("demo"),isHost=!isPhone&&!isTV;
 
-async function goLive(){
-  if(!liveConfigured()){ console.warn("Supabase not configured — board runs offline."); return; }
-  live.role="host"; live.code=makeRoomCode();
-  try{ await liveClient().from(LIVE_TABLE).upsert(snapshot()); }catch(e){}
-  openChannel(live.code);
-  try{ localStorage.setItem(HOST_RESUME_KEY, JSON.stringify({code:live.code,t:Date.now()})); }catch(e){}
-  showRoom();
-}
-function showRoom(){
-  $("roomCode").textContent = live.code || "— —";
-  if(live.code && window.QRCode){
-    $("boardQr").innerHTML="";
-    new QRCode($("boardQr"), { text:joinUrl(), width:50, height:50, correctLevel:QRCode.CorrectLevel.M });
-  }
-}
-function openChannel(code){
-  const sb=liveClient();
-  if(live.channel){ try{ sb.removeChannel(live.channel); }catch(e){} }
-  live.channel = sb.channel("mlb-"+code, { config:{ broadcast:{ self:false } } })
-    .on("postgres_changes", { event:"*", schema:"public", table:LIVE_TABLE, filter:"room_code=eq."+code },
-        (payload)=>{ if(payload.new && live.role!=="host") applyRemote(payload.new); })
-    .on("broadcast", { event:"bet" }, (msg)=>{
-        if(live.role==="host" && msg && msg.payload){
-          applyBet(msg.payload.market, msg.payload.side, msg.payload.units, msg.payload.alias);
-          renderConsensus(); renderLeaderboard(); pushState();
-          flashFeedBet(msg.payload);
-        }
-    }).subscribe();
-}
-function flashFeedBet(p){
-  pushFeed(G,"💵",`${escapeHtml(p.alias)} bet ${p.units}u on ${escapeHtml(p.side)}`);
-  renderFeed();
-}
+let S=null;
+function freshState(themeKey){const th=THEMES[themeKey];return {kind:"sports-squares",theme:themeKey,phase:"claim",
+  away:{name:th.teams[0],color:th.colors[0]},home:{name:th.teams[1],color:th.colors[1]},maxPer:10,
+  grid:Array.from({length:100},()=>({owner:null,color:null})),rowDigits:null,colDigits:null,score:{away:0,home:0},
+  checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};}
+function curTheme(){return THEMES[(S&&S.theme)||"mlb"];}
+function liveCell(st){st=st||S;if(!st||!st.rowDigits||!st.colDigits)return -1;const r=st.rowDigits.indexOf(st.score.away%10),c=st.colDigits.indexOf(st.score.home%10);if(r<0||c<0)return -1;return r*10+c;}
+function shortName(n){return n.length>7?n.slice(0,7):n;}
 
-/* =====================================================================
-   PHONE MODE
-   ===================================================================== */
-const params = new URLSearchParams(location.search);
-const isPhoneMode = params.has("play");
-let myAlias = (()=>{ try{ return localStorage.getItem("barboards-mlb-alias")||""; }catch(e){ return ""; } })();
-const phone = { joined:false, name:myAlias, market:"moneyline", side:null, units:25, balance:1000, bets:[], remote:null };
+/* ---- HOST ---- */
+const Host={
+  chooseSport(k){S=freshState(k);applyThemeClass(k);renderHost();},
+  openRoom(){S.away.name=($("awayName")?$("awayName").value.trim():"")||S.away.name;S.home.name=($("homeName")?$("homeName").value.trim():"")||S.home.name;
+    S.maxPer=Math.max(1,Math.min(100,+($("maxPer")?$("maxPer").value:10)||10));goLive();renderHost();},
+  draw(){if(S.phase==="final")return;S.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]);S.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]);S.phase="locked";bigToast("🎲 Numbers Drawn!");renderHost();pushState(true);},
+  score(side,v){S.score[side]=Math.max(0,S.score[side]+v);renderHost();pushStateThrottled();},
+  award(ci){if(S.phase!=="locked"){mini("Draw the numbers first!");return;}const idx=liveCell();const chk=S.checks[ci];chk.done=true;chk.idx=idx;chk.winner=idx>=0?(S.grid[idx].owner||null):null;
+    bigToast((chk.winner?chk.winner.toUpperCase():"NO WINNER")+" 🏆");
+    if(chk.winner&&live.channel){try{live.channel.send({type:"broadcast",event:"win",payload:{winner:chk.winner,label:chk.lab}});}catch(e){}}
+    if(S.checks.every(c=>c.done))S.phase="final";renderHost();pushState(true);},
+  reset(){if(!confirm("Start a fresh board? Clears all claimed squares."))return;const t=S.theme;const a=S.away,h=S.home,m=S.maxPer;S=freshState(t);S.away=a;S.home=h;S.maxPer=m;renderHost();pushState(true);},
+  backToPick(){S=null;
+    if(live.channel&&live.sb){try{live.sb.removeChannel(live.channel);}catch(e){}}
+    live.role="off";live.code=null;live.channel=null;
+    try{localStorage.removeItem(HOST_RESUME_KEY);}catch(e){}
+    renderHost();},
+};
+function hostApplyClaim(p){if(!S||S.phase!=="claim")return;const owned=S.grid.filter(o=>o.owner===p.alias).length;let budget=Math.max(0,S.maxPer-owned);
+  (p.cells||[]).forEach(i=>{if(budget<=0)return;if(i>=0&&i<100&&!S.grid[i].owner){S.grid[i]={owner:p.alias,color:p.color};budget--;}});renderHost();pushState();}
 
-function renderPhone(){
-  const el=$("phone");
-  if(!phone.name){
-    el.innerHTML = `<div class="pcard">
-      <h2>⚾ BarBoards Live</h2>
-      <div class="sub">Pick a handle to join the bar's betting board.</div>
-      <input class="namein" id="nameIn" maxlength="14" placeholder="Your handle…" value="${escapeHtml(phone.name)}">
-      <div style="height:14px"></div>
-      <button class="pbtn" onclick="phoneSetName()">JOIN</button>
-      <div class="note">You'll get <b>1,000 play units</b> to bet on the live game shown on the TV. No real money — bragging rights only.</div>
-    </div>`;
-    return;
-  }
+/* ---- RENDER (host & tv share) ---- */
+function claimedCount(){return S.grid.filter(o=>o.owner).length;}
+function ownersList(){const m={};S.grid.forEach(o=>{if(o.owner)m[o.owner]=(m[o.owner]||0)+1;});return Object.entries(m).map(([name,n])=>({name,n})).sort((a,b)=>b.n-a.n);}
+
+function renderHost(){
+  const root=$("root");
+  if(!S){root.innerHTML=pickSportHTML();document.body.className="themed theme-mlb";$("ctl").innerHTML="";return;}
+  const th=curTheme();
+  document.documentElement.style.setProperty("--awayc",S.away.color);
+  document.documentElement.style.setProperty("--homec",S.home.color);
+  if(S.phase==="claim"&&live.role!=="host"){root.innerHTML=setupHTML(th);wireSetup();return;}
+  root.innerHTML=`${headerHTML(th)}<div class="main"><div class="stack">${gridHTML(th)}</div><div class="stack">${railHTML(th)}</div></div>`;
+  ctlBar();if(live.code)showQR("qrBox",joinUrl(),54);
+}
+function pickSportHTML(){return `<div class="topbar"><div class="logo">▦</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Claim · Watch · Win</div></div></div>
+  <div class="pickmid"><div class="hero"><h1>Pick Your Sport</h1><p>Grab your squares, then watch the game decide the winners! 🎉</p></div>
+  <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard" onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div></div>`;}).join("")}</div>
+  <div style="text-align:center;margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn soft" onclick="window.open('tv-preview.html','_blank')">👀 Preview TV view</button><button class="btn soft" onclick="window.open('phone-preview.html','_blank')">📱 Preview phone view</button></div></div>`;}
+function headerHTML(th){return `<div class="topbar">${!isTV?'<button class="backbtn hostonly" title="Change sport" onclick="Host.backToPick()">⟵</button>':''}<div class="logo">${th.emoji}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">${th.name} · ${isTV?"TV":"Host"}</div></div><div class="spacer"></div>
+  ${live.code?`<div class="roomtag"><div class="rl"><div class="l">Claim on your phone</div><div class="c">${live.code}</div></div><div class="qr" id="qrBox"></div></div>`:""}</div>`;}
+function setupHTML(th){return `${headerHTML(th)}<div class="main"><div class="card">
+   <h3 style="font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:14px">${th.emoji} ${th.name} Squares — Set Up</h3>
+   <div class="setup-row"><div class="fld"><label class="lab">Away team (down the side)</label><input class="tin" id="awayName" maxlength="16" value="${esc(S.away.name)}"></div>
+     <div class="fld"><label class="lab">Home team (across the top)</label><input class="tin" id="homeName" maxlength="16" value="${esc(S.home.name)}"></div></div>
+   <div class="setup-row"><div class="fld"><label class="lab">Max squares per player</label><input class="tin" id="maxPer" type="number" min="1" max="100" value="10"></div></div>
+   <button class="btn primary big wide" onclick="Host.openRoom()">Open the Board ▸</button>
+   <div style="margin-top:12px"><button class="btn soft" onclick="Host.backToPick()">⟵ Pick a different sport</button></div>
+   </div>${guideHTML(th)}</div>`;}
+function guideHTML(th){return `<div class="guide hostonly"><h3>👋 Host Guide</h3><ol>
+  <li>Pick a sport and name the two teams.</li>
+  <li>Players scan the <b>QR code</b> and tap squares to <b>claim</b> them.</li>
+  <li>Once the board's full enough, tap <b>Draw Numbers</b> 🎲.</li>
+  <li>Watch the real game and tap the <b>score buttons</b> to keep score.</li>
+  <li>The glowing square is <b>winning right now</b> (last digit of each score).</li>
+  <li>At the end of each period, tap <b>Award</b> — that square's owner wins! 🏆</li>
+  </ol><div class="hint">Put this on the TV with <b>Open TV View</b>; run the buttons from your phone or laptop.</div></div>`;}
+function gridHTML(th){
+  const lc=liveCell();let cells=`<div class="cell corner"></div>`;
+  for(let c=0;c<10;c++)cells+=`<div class="cell hdr top">${S.colDigits?S.colDigits[c]:"?"}</div>`;
+  for(let r=0;r<10;r++){cells+=`<div class="cell hdr left">${S.rowDigits?S.rowDigits[r]:"?"}</div>`;
+    for(let c=0;c<10;c++){const i=r*10+c,o=S.grid[i];const wc=S.checks.find(ch=>ch.done&&ch.idx===i);
+      const cls=["cell"];if(o.owner)cls.push("owned");if(S.phase==="locked"&&i===lc)cls.push("live");if(wc)cls.push("won");
+      const st=o.owner?`style="background:${o.color}"`:"";const lab=o.owner?esc(shortName(o.owner)):(S.phase==="claim"?'<span class="qmark">+</span>':"");
+      cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}}
+  return `<div class="gridcard"><div class="axislabel">${esc(S.home.name)} ▸ (across)</div>
+    <div class="gridrow"><div class="axisleft">${esc(S.away.name)} ▸</div><div class="sqgrid">${cells}</div></div></div>`;
+}
+function railHTML(th){
+  const lc=liveCell();const nowName=S.phase==="claim"?"— draw numbers —":(lc>=0?(S.grid[lc].owner||"(open square)"):"—");
+  function tcol(side){const t=S[side];const sb=th.scoreBtns.map(b=>`<button class="sbtn" onclick="Host.score('${side}',${b.v})">${b.lab}</button>`).join("")+`<button class="sbtn minus" onclick="Host.score('${side}',-1)">−1</button>`;
+    return `<div class="tcol" style="--tc:${t.color}"><div class="nm">${esc(t.name)}</div><div class="sc">${S.score[side]}</div><div class="dig">last digit ${S.score[side]%10}</div><div class="scorebtns hostonly">${sb}</div></div>`;}
+  const pot=claimedCount();
+  const checks=S.checks.map((ch,ci)=>`<div class="chk ${ch.done?'done':''}"><div class="ck"><div class="lab">${esc(ch.lab)}</div>${ch.done?`<div class="win">${ch.winner?('🏆 '+esc(ch.winner)):'no winner'}</div>`:`<div class="sub">winning: ${esc(nowName)}</div>`}</div>${ch.done?'':`<button class="btn sm hostonly" onclick="Host.award(${ci})">Award</button>`}</div>`).join("");
+  let ctlBtns="";
+  if(S.phase==="claim")ctlBtns=`<button class="btn primary wide" onclick="Host.draw()">🎲 Draw Numbers</button><div style="margin-top:8px"><button class="btn soft sm" onclick="window.open(tvUrl(),'_blank')">📺 Open TV View</button> <button class="btn soft sm" onclick="Host.reset()">Clear</button></div>`;
+  else ctlBtns=`<button class="btn soft sm" onclick="Host.reset()">↻ New Board</button> <button class="btn soft sm" onclick="window.open(tvUrl(),'_blank')">📺 TV View</button>`;
+  return `${S.phase==="claim"?guideHTML(th):""}
+    <div class="panel"><div class="scoremini">${tcol("away")}${tcol("home")}</div>
+      <div class="nowwin"><div class="l">Winning Square</div><div class="v">${esc(nowName)}</div></div></div>
+    <div class="panel lbcard"><h3>🏆 Payouts <span style="float:right;color:var(--ink-soft);font-size:14px">${pot}/100</span></h3><div class="checks">${checks}</div></div>
+    <div class="panel hostonly" style="text-align:center">${ctlBtns}</div>`;
+}
+function ctlBar(){if(isTV){$("ctl").innerHTML="";return;}$("ctl").innerHTML=S?`<button onclick="Host.backToPick()">⟵ Sport</button>`:"";}
+
+let toastT=null;
+function bigToast(t){if(isPhone)return;$("toastText").textContent=t;$("toast").classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>$("toast").classList.remove("show"),2000);}
+function mini(t){const e=$("miniToast");e.textContent=t;e.classList.add("show");clearTimeout(window.__mt);window.__mt=setTimeout(()=>e.classList.remove("show"),1800);}
+function showQR(id,url,size){const b=$(id);if(!b||!window.QRCode)return;b.innerHTML="";new QRCode(b,{text:url,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});}
+function wireSetup(){}
+
+/* ---- SYNC ---- */
+function snapshot(){return {room_code:live.code,state:S?S.phase:"claim",round_idx:0,question_idx:S?claimedCount():0,rounds:S,updated_at:new Date().toISOString()};}
+async function pushState(){if(live.role!=="host"||!live.code)return;try{await liveClient().from(LIVE_TABLE).upsert(snapshot());}catch(e){}live.lastPush=Date.now();}
+function pushStateThrottled(){if(live.role!=="host")return;if(Date.now()-live.lastPush>900)pushState();else{clearTimeout(window.__pt);window.__pt=setTimeout(pushState,900);}}
+async function goLive(){if(!liveConfigured()){live.role="host";live.code="LOCAL";return;}live.role="host";live.code=makeRoomCode();try{await liveClient().from(LIVE_TABLE).upsert(snapshot());}catch(e){}openChannel(live.code);try{localStorage.setItem(HOST_RESUME_KEY,JSON.stringify({code:live.code,t:Date.now()}));}catch(e){}}
+function openChannel(code){const sb=liveClient();if(live.channel){try{sb.removeChannel(live.channel);}catch(e){}}
+  live.channel=sb.channel("squares-"+code,{config:{broadcast:{self:false}}})
+    .on("postgres_changes",{event:"*",schema:"public",table:LIVE_TABLE,filter:"room_code=eq."+code},(p)=>{if(p.new&&live.role!=="host")applyRemote(p.new);})
+    .on("broadcast",{event:"claim"},(m)=>{if(live.role==="host"&&m&&m.payload)hostApplyClaim(m.payload);})
+    .on("broadcast",{event:"win"},(m)=>{if(live.role==="player"&&m&&m.payload)phoneWin(m.payload);})
+    .subscribe();}
+
+/* ---- PHONE ---- */
+const PLAYER_COLORS=["#3a6df0","#2fb35e","#e0772a","#c455bf","#e3a90f","#1ba6bd","#e8553e","#8a6bff","#3fae84","#d98a1e"];
+let myName=(()=>{try{return localStorage.getItem("gameday-squares-name")||"";}catch(e){return"";}})();
+const phone={name:myName,color:null,sel:new Set(),remote:null};
+function phoneColor(){if(!phone.color){let h=0;for(const c of(phone.name||"x"))h=(h*31+c.charCodeAt(0))>>>0;phone.color=PLAYER_COLORS[h%PLAYER_COLORS.length];}return phone.color;}
+function renderPhone(){const root=$("root");
+  if(!phone.name){root.innerHTML=`<div class="phone-wrap"><div class="topbar"><div class="logo">▦</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Join the board</div></div></div>
+    <div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:6px">What's your name?</h3>
+    <p style="color:var(--ink-soft);font-weight:700;margin-bottom:14px">Tap squares to claim them. If your square is winning when a period ends, you win! 🏆</p>
+    <input class="tin" id="nm" maxlength="14" placeholder="Your name…" value="${esc(phone.name)}"><button class="btn primary big wide" style="margin-top:14px" onclick="phoneSetName()">Join ▸</button></div></div>`;return;}
   const r=phone.remote;
-  const gameCard = r && r.game ? phoneGameCard(r) : `<div class="pcard"><h2>Waiting for the game…</h2><div class="sub">Make sure the TV board is live and you scanned its QR code. Room <b>${escapeHtml(live.code||"?")}</b>.</div></div>`;
-  el.innerHTML = `
-    ${gameCard}
-    ${r && r.game ? phoneBetCard(r) : ""}
-    <div class="pcard">
-      <div class="balance"><span class="l">Your Units</span><span class="v">${phone.balance}</span></div>
-      <h2 style="font-size:16px">Your Bets</h2>
-      <div class="mybets" id="myBets">${renderMyBets()}</div>
-    </div>`;
-  attachPhoneHandlers();
+  if(!r){root.innerHTML=`<div class="phone-wrap"><div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:22px">Waiting for the board…</h3><p style="color:var(--ink-soft);font-weight:700;margin-top:8px">Scan the TV's QR. Room <b>${esc(live.code||"?")}</b>.</p></div></div>`;return;}
+  applyThemeClass(r.theme);document.body.classList.remove("tv");
+  const th=THEMES[r.theme];const mine=r.grid.filter(o=>o.owner===phone.name).length;const lc=liveCell(r);const canClaim=r.phase==="claim";const budget=r.maxPer-mine;
+  let cells="";for(let i=0;i<100;i++){const o=r.grid[i];const cls=["pcell"];if(o.owner===phone.name)cls.push("mine");else if(o.owner)cls.push("taken");if(phone.sel.has(i))cls.push("sel");if(r.phase==="locked"&&i===lc)cls.push("live");
+    cells+=`<div class="${cls.join(" ")}" ${o.owner?`style="background:${o.color}"`:""} data-i="${i}"></div>`;}
+  root.innerHTML=`<div class="phone-wrap"><div class="topbar"><div class="logo">${th.emoji}</div><div class="title"><div class="t1">${esc(r.away.name)} vs ${esc(r.home.name)}</div><div class="t2">${r.phase==="final"?"Final":r.phase==="locked"?"Live":"Claiming"} · ${r.score.away}–${r.score.home}</div></div></div>
+    <div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:19px">${canClaim?`Tap to claim — you have ${mine}`:`Your squares · ${mine}`}</h3>
+      <p style="color:var(--ink-soft);font-weight:700;margin:4px 0 4px">${canClaim?`Up to ${r.maxPer} each (${budget} left)`:"Board locked — good luck! 🍀"}</p>
+      <div class="pgrid" id="pGrid">${cells}</div>
+      <div class="legend"><span><i style="background:${phoneColor()}"></i>You</span><span><i style="background:#f1f4f1;border:1px solid #e3e8e3"></i>Open</span><span><i style="background:#9fb0c8"></i>Taken</span>${r.phase==="locked"?'<span><i style="background:var(--accent)"></i>Winning now</span>':''}</div>
+      ${canClaim?`<button class="btn primary big wide" style="margin-top:12px" id="claimBtn" ${phone.sel.size?"":"disabled"}>Claim ${phone.sel.size||""} Square${phone.sel.size===1?"":"s"}</button>`:""}</div></div>`;
+  if(canClaim){document.querySelectorAll("#pGrid .pcell").forEach(c=>{const i=+c.dataset.i;if(r.grid[i].owner)return;c.onclick=()=>{if(phone.sel.has(i))phone.sel.delete(i);else{if(phone.sel.size>=budget){mini(`Max ${r.maxPer} squares`);return;}phone.sel.add(i);}renderPhone();};});const cb=$("claimBtn");if(cb)cb.onclick=phoneClaim;}
 }
-function phoneGameCard(r){
-  const g=r.game;
-  return `<div class="pcard">
-    <div class="ph-score">
-      <div class="t"><div class="ab" style="color:${g.away.color}">${g.away.abbr}</div><div class="sc">${g.awayScore}</div></div>
-      <div class="mid">${g.over?"FINAL":(g.half==="top"?"▲":"▼")+" "+g.inning}<br>${g.over?"":g.outs+" out"}</div>
-      <div class="t"><div class="ab" style="color:${g.home.color}">${g.home.abbr}</div><div class="sc">${g.homeScore}</div></div>
-    </div>
-    <div class="field-label">${g.over?"Game over":(g.atBat? "At bat: <b>"+escapeHtml(g.atBat.name)+"</b>":"")}</div>
-  </div>`;
-}
-function phoneBetCard(r){
-  if(r.game.over || !r.odds) return `<div class="pcard"><div class="sub">Betting is closed — game ${r.game.over?"final":"loading"}.</div></div>`;
-  const o=r.odds;
-  const mlSel = phone.market==="moneyline";
-  const opts = mlSel
-    ? [{side:o.away.team, price:o.away.ml},{side:o.home.team, price:o.home.ml}]
-    : [{side:"OVER", price:o.total.over, lab:`Over ${o.total.line}`},{side:"UNDER", price:o.total.under, lab:`Under ${o.total.line}`}];
-  return `<div class="pcard">
-    <h2 style="font-size:18px">Place a Bet</h2>
-    <div class="seg">
-      <button class="${mlSel?'sel':''}" data-mkt="moneyline">Moneyline</button>
-      <button class="${!mlSel?'sel':''}" data-mkt="total">Total</button>
-    </div>
-    <div class="pickrow">
-      ${opts.map(op=>`<div class="pick ${phone.side===op.side?'sel':''}" data-side="${op.side}">
-        <div class="who">${op.lab||op.side}</div><div class="pr">${fmtAml(op.price)}</div></div>`).join("")}
-    </div>
-    <div class="chips">
-      ${[10,25,50,100].map(u=>`<div class="chip ${phone.units===u?'sel':''}" data-units="${u}">${u}</div>`).join("")}
-    </div>
-    <button class="pbtn" id="placeBtn" ${phone.side?"":"disabled"}>BET ${phone.units}u ${phone.side?"on "+escapeHtml(phone.side):""}</button>
-  </div>`;
-}
-function renderMyBets(){
-  if(!phone.bets.length) return `<div class="note" style="text-align:left">No bets yet — pick a side above.</div>`;
-  return phone.bets.slice().reverse().map(b=>`<div class="mb"><span>${escapeHtml(b.side)} · ${b.units}u</span><span class="st ${b.status}">${b.status==="open"?"OPEN":b.status==="win"?"WON":"LOST"}</span></div>`).join("");
-}
-function attachPhoneHandlers(){
-  document.querySelectorAll("[data-mkt]").forEach(b=>b.onclick=()=>{ phone.market=b.dataset.mkt; phone.side=null; renderPhone(); });
-  document.querySelectorAll("[data-side]").forEach(b=>b.onclick=()=>{ phone.side=b.dataset.side; renderPhone(); });
-  document.querySelectorAll("[data-units]").forEach(b=>b.onclick=()=>{ phone.units=+b.dataset.units; renderPhone(); });
-  const pb=$("placeBtn"); if(pb) pb.onclick=phonePlaceBet;
-}
-function phoneSetName(){
-  const v=$("nameIn").value.trim().slice(0,14); if(!v) return;
-  phone.name=v; myAlias=v; try{ localStorage.setItem("barboards-mlb-alias", v); }catch(e){}
-  renderPhone();
-}
-function phonePlaceBet(){
-  if(!phone.side || phone.units>phone.balance) return;
-  phone.balance-=phone.units;
-  phone.bets.push({market:phone.market, side:phone.side, units:phone.units, status:"open"});
-  // broadcast to host
-  if(live.channel){
-    try{ live.channel.send({ type:"broadcast", event:"bet", payload:{ alias:phone.name, market:phone.market, side:phone.side, units:phone.units } }); }catch(e){}
-  }
-  miniToast(`Bet placed: ${phone.units}u on ${phone.side}`);
-  phone.side=null;
-  renderPhone();
-}
-function miniToast(t){
-  const el=$("miniToast"); el.textContent=t; el.classList.add("show");
-  setTimeout(()=>el.classList.remove("show"), 1800);
-}
-function applyRemote(row){
-  const r=row.rounds; if(!r||r.kind!=="mlb-betting") return;
-  phone.remote=r;
-  renderPhone();
-}
-async function joinRoom(code){
-  live.role="player"; live.code=code;
-  if(!liveConfigured()){ renderPhone(); return; }
-  const sb=liveClient();
-  try{ const { data } = await sb.from(LIVE_TABLE).select("*").eq("room_code",code).maybeSingle(); if(data) applyRemote(data); }catch(e){}
-  openChannel(code);
-  renderPhone();
-}
+function phoneSetName(){const v=$("nm").value.trim().slice(0,14);if(!v)return;phone.name=v;try{localStorage.setItem("gameday-squares-name",v);}catch(e){}renderPhone();}
+function phoneClaim(){if(!phone.sel.size)return;const cells=Array.from(phone.sel);if(live.channel){try{live.channel.send({type:"broadcast",event:"claim",payload:{alias:phone.name,color:phoneColor(),cells}});}catch(e){}}mini(`Claiming ${cells.length} square${cells.length===1?"":"s"}…`);phone.sel.clear();renderPhone();}
+function phoneWin(p){if(p.winner===phone.name){mini(`🏆 You won ${p.label}!`);const e=$("miniToast");setTimeout(()=>{e.classList.add("show");},50);}}
+function applyRemote(row){const r=row.rounds;if(!r||r.kind!=="sports-squares")return;phone.remote=r;if(isTV){S=r;renderTV();}else renderPhone();}
+async function joinAsViewer(code){live.role=isTV?"tv":"player";live.code=code;if(!liveConfigured())return;const sb=liveClient();try{const {data}=await sb.from(LIVE_TABLE).select("*").eq("room_code",code).maybeSingle();if(data)applyRemote(data);}catch(e){}openChannel(code);}
+
+/* ---- TV ---- */
+function renderTV(){if(!S){$("root").innerHTML=`<div class="card" style="max-width:520px;margin:60px auto;text-align:center"><h3 style="font-family:var(--display);font-weight:700;font-size:26px">📺 TV View</h3><p style="color:var(--ink-soft);font-weight:700;margin-top:8px">Waiting for the host. Room <b>${esc(live.code||"?")}</b>.</p></div>`;return;}
+  applyThemeClass(S.theme);document.documentElement.style.setProperty("--awayc",S.away.color);document.documentElement.style.setProperty("--homec",S.home.color);const th=curTheme();
+  $("root").innerHTML=`${headerHTML(th)}<div class="main"><div class="stack">${gridHTML(th)}</div><div class="stack">${railHTML(th)}</div></div>`;
+  if(live.code)showQR("qrBox",joinUrl(),54);}
 
 /* =====================================================================
-   BOOT
+   TV PREVIEW — self-running demo (no host, no Supabase, no room).
+   Rotates through every sport: claims squares, draws numbers, keeps score
+   so the winning square moves, and awards each checkpoint. tv-preview.html
+   wraps this so you can preview what a TV shows.
    ===================================================================== */
-function boot(){
-  if(isPhoneMode){
-    $("phone").classList.add("active");
-    const code=(params.get("room")||"").toUpperCase();
-    live.code=code;
-    renderPhone();
-    if(code) joinRoom(code);
-    return;
+function startTVDemo(){
+  document.body.classList.add("tv");
+  const names=["Mia","Leo","Ava","Max","Zoe","Sam","Eli","Nia","Kai","Ria"];
+  let sportI=0, step=0, awarded=0;
+  function newGame(){
+    const key=SPORT_ORDER[sportI++ % SPORT_ORDER.length];
+    S=freshState(key); applyThemeClass(key); document.body.classList.add("tv");
+    const order=shuffle(Array.from({length:100},(_,i)=>i));
+    order.slice(0,78).forEach((idx,k)=>{ const ni=k%names.length; S.grid[idx]={owner:names[ni],color:PLAYER_COLORS[ni%PLAYER_COLORS.length]}; });
+    S.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); S.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]);
+    S.phase="locked"; S.score={away:0,home:0}; awarded=0;
+    document.documentElement.style.setProperty("--awayc",S.away.color);
+    document.documentElement.style.setProperty("--homec",S.home.color);
+    renderTV();
   }
-  // BOARD
-  $("board").classList.add("active");
-  Board.start();
-  goLive();
+  function scoreVal(){ const b=THEMES[S.theme].scoreBtns; return b[Math.floor(Math.random()*b.length)].v; }
+  newGame();
+  setInterval(()=>{
+    if(!S) return; step++;
+    if(Math.random()<0.7) S.score[Math.random()<0.5?"away":"home"]+=scoreVal();
+    if(step%8===0 && awarded<S.checks.length){ const idx=liveCell(); const chk=S.checks[awarded]; chk.done=true; chk.idx=idx; chk.winner=idx>=0?(S.grid[idx].owner||null):null; awarded++; }
+    if(awarded>=S.checks.length && step%6===0) newGame();
+    renderTV();
+  }, 2200);
 }
-// Debug hook (harmless): lets the dev console fast-simulate / inspect.
-window.__dbg = { simPitch, homeWinProb, recomputeOdds, freshGame, openInning,
-  getG:()=>G, getODDS:()=>ODDS };
 
-window.addEventListener("DOMContentLoaded", boot);
+/* PHONE PREVIEW — self-running demo of the player's phone (no host/room). */
+function startPhoneDemo(){
+  phone.name="You";
+  const others=["Mia","Leo","Ava","Max","Zoe"];
+  let sportI=0, step=0;
+  function newGame(){
+    const key=SPORT_ORDER[sportI++ % SPORT_ORDER.length]; const th=THEMES[key];
+    const grid=Array.from({length:100},()=>({owner:null,color:null}));
+    const order=shuffle(Array.from({length:100},(_,i)=>i));
+    order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length]};});
+    phone.remote={kind:"sports-squares",theme:key,phase:"claim",away:{name:th.teams[0],color:th.colors[0]},home:{name:th.teams[1],color:th.colors[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
+    phone.sel=new Set(); renderPhone();
+  }
+  function freeCells(){return phone.remote.grid.map((o,i)=>o.owner?null:i).filter(i=>i!==null);}
+  function scoreVal(){const b=THEMES[phone.remote.theme].scoreBtns;return b[Math.floor(Math.random()*b.length)].v;}
+  newGame();
+  setInterval(()=>{
+    const r=phone.remote; if(!r) return; step++;
+    if(r.phase==="claim"){
+      if(phone.sel.size<4 && Math.random()<0.75){ const free=freeCells().filter(i=>!phone.sel.has(i)); if(free.length)phone.sel.add(free[Math.floor(Math.random()*free.length)]); }
+      else { phone.sel.forEach(i=>{ if(!r.grid[i].owner) r.grid[i]={owner:"You",color:phoneColor()}; }); phone.sel=new Set(); }
+      if(Math.random()<0.5){ const free=freeCells(); if(free.length){const ni=Math.floor(Math.random()*others.length); r.grid[free[Math.floor(Math.random()*free.length)]]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length]};} }
+      if(step%6===0){ r.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); r.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); r.phase="locked"; }
+    } else {
+      if(Math.random()<0.7) r.score[Math.random()<0.5?"away":"home"]+=scoreVal();
+      if(step%11===0) newGame();
+    }
+    renderPhone();
+  }, 1900);
+}
+
+window.__dbg={THEMES,getS:()=>S,Host,freshState,liveCell};
+function boot(){
+  if(isPhone){applyThemeClass("mlb");document.body.classList.remove("tv");if(isDemo){startPhoneDemo();return;}const code=(params.get("room")||"").toUpperCase();live.code=code;renderPhone();if(code)joinAsViewer(code);return;}
+  if(isTV){applyThemeClass("mlb");if(isDemo){startTVDemo();return;}const code=(params.get("room")||"").toUpperCase();live.code=code;renderTV();if(code)joinAsViewer(code);return;}
+  document.body.classList.add("themed","theme-mlb");renderHost();
+}
+window.addEventListener("DOMContentLoaded",boot);
 </script>
 </body>
 </html>
