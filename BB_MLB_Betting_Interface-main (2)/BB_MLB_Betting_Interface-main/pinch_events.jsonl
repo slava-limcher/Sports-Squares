@@ -1,0 +1,1 @@
+{"received_at":"2026-04-28T00:07:10.863849Z","x_webhook_id":"d9ec7e58-9876-45a4-a57f-c88932434c45","event_type":"mlb.batter.hit","kind":"detected","new_id":129,"replaced_id":88,"slot":2,"team_side":"away","reason":"single replacement, attributed","prev_ids":[88],"new_ids":[129]}
