@@ -175,6 +175,19 @@
   .winfx .sub{font-weight:800;color:#8a6500}
   .winfx.show{animation:winpop 2.6s ease forwards}
   @keyframes winpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}10%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}18%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
+  /* Full-screen "YOU WON!" takeover on the winning player's phone */
+  .youwon{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;
+    background:radial-gradient(circle at 50% 38%,rgba(34,118,62,.92),rgba(8,14,24,.96))}
+  .youwon.show{animation:ywfade 5.2s ease forwards}
+  .youwon .yw-trophy{font-size:130px;line-height:1;filter:drop-shadow(0 10px 16px rgba(0,0,0,.5));animation:ywbounce 1s ease-in-out infinite}
+  .youwon .yw-big{font-family:var(--display);font-weight:700;font-size:clamp(54px,16vw,92px);color:#ffd34d;line-height:1;margin-top:10px;text-shadow:0 5px 0 rgba(0,0,0,.35);animation:ywpop .6s cubic-bezier(.2,1.4,.4,1) both}
+  .youwon .yw-sub{font-family:var(--display);font-weight:700;font-size:clamp(20px,6vw,30px);color:#fff;margin-top:12px;background:rgba(255,255,255,.14);padding:6px 18px;border-radius:999px}
+  .youwon .yw-tap{color:rgba(255,255,255,.8);font-weight:800;margin-top:26px;font-size:15px;letter-spacing:1px;text-transform:uppercase;animation:ywblink 1.4s ease-in-out infinite}
+  @keyframes ywfade{0%{opacity:0}5%{opacity:1}92%{opacity:1}100%{opacity:0}}
+  @keyframes ywbounce{0%,100%{transform:translateY(0) scale(1) rotate(-4deg)}50%{transform:translateY(-22px) scale(1.08) rotate(4deg)}}
+  @keyframes ywpop{0%{transform:scale(.4);opacity:0}70%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+  @keyframes ywblink{0%,100%{opacity:.45}50%{opacity:1}}
+  @media(prefers-reduced-motion:reduce){.youwon .yw-trophy,.youwon .yw-big,.youwon .yw-tap{animation:none!important}}
   /* subtle living background sheen (ambient motion) */
   body.boardview .wrap::before{content:"";position:fixed;inset:-30%;z-index:-1;pointer-events:none;opacity:.05;
     background:repeating-linear-gradient(115deg,#fff 0 3px,transparent 3px 120px);animation:ambient 34s linear infinite}
@@ -627,7 +640,7 @@ function fxAfterRender(state){
   // newly awarded checks -> confetti + winner card
   const cur=(G.checks||[]).map(c=>c.done?(c.lab+"|"+(c.winner||"")):"");
   const prev=_fx.done||[];
-  if(prev.length){(G.checks||[]).forEach((c,i)=>{ if(c.done && cur[i]!==prev[i]){ if(isPhone){ if(c.winner===phone.name) celebrate(c); } else celebrate(c); } });}
+  if(prev.length){(G.checks||[]).forEach((c,i)=>{ if(c.done && cur[i]!==prev[i]){ if(isPhone){ if(c.winner===phone.name) phoneCelebrate(c.lab); } else celebrate(c); } });}
   _fx.done=cur;
 }
 function celebrate(chk){
@@ -638,6 +651,21 @@ function celebrate(chk){
   card.innerHTML=`<div class="ttl">🏆 ${esc(chk.lab)}</div><div class="who">${esc(chk.winner)}</div><div class="sub">wins this one!</div>`;
   card.classList.remove("show");void card.offsetWidth;card.classList.add("show");
   clearTimeout(window.__winfxT);window.__winfxT=setTimeout(()=>card.classList.remove("show"),2600);
+}
+// Full-screen "YOU WON!" takeover for the winning player's phone (deduped per award).
+function phoneCelebrate(label){
+  label=label||"";
+  const now=Date.now();
+  if(window.__ywLabel===label && now-(window.__ywTs||0)<6000) return; // already celebrating this win
+  window.__ywLabel=label; window.__ywTs=now;
+  confettiBurst(); setTimeout(confettiBurst,450); setTimeout(confettiBurst,1000);
+  try{ if(navigator.vibrate) navigator.vibrate([0,70,50,70,50,220]); }catch(e){}
+  let o=$("youwon"); if(!o){o=document.createElement("div");o.id="youwon";o.className="youwon";document.body.appendChild(o);}
+  o.innerHTML=`<div class="yw-trophy">🏆</div><div class="yw-big">YOU WON!</div>${label?`<div class="yw-sub">${esc(label)}</div>`:""}<div class="yw-tap">tap to keep playing</div>`;
+  const close=()=>{o.classList.remove("show");o.style.pointerEvents="none";};
+  o.onclick=close;
+  o.classList.remove("show");void o.offsetWidth;o.classList.add("show");o.style.pointerEvents="auto";
+  clearTimeout(window.__ywT);window.__ywT=setTimeout(close,5200);
 }
 function confettiBurst(){
   const wrap=document.createElement("div");wrap.className="confetti";
@@ -781,7 +809,7 @@ function renderPhone(){const root=$("root");
 }
 function phoneSetName(){const v=$("nm").value.trim().slice(0,14);if(!v)return;phone.name=v;try{localStorage.setItem("gameday-squares-name",v);}catch(e){}renderPhone();}
 function phoneClaim(){if(!phone.sel.size)return;const cells=Array.from(phone.sel);if(live.channel){try{live.channel.send({type:"broadcast",event:"claim",payload:{alias:phone.name,color:phoneColor(),cells}});}catch(e){}}mini(`Claiming ${cells.length} square${cells.length===1?"":"s"}…`);phone.sel.clear();renderPhone();}
-function phoneWin(p){if(p.winner===phone.name){mini(`🏆 You won ${p.label}!`);const e=$("miniToast");setTimeout(()=>{e.classList.add("show");},50);}}
+function phoneWin(p){if(p.winner===phone.name){phoneCelebrate(p.label);}}
 function applyRemote(row){const r=row.rounds;if(!r||r.kind!=="sports-squares")return;phone.remote=r;if(isTV){S=r;renderTV();}else renderPhone();}
 async function joinAsViewer(code){live.role=isTV?"tv":"player";live.code=code;if(!liveConfigured())return;const sb=liveClient();try{const {data}=await sb.from(LIVE_TABLE).select("*").eq("room_code",code).maybeSingle();if(data)applyRemote(data);}catch(e){}openChannel(code);}
 
