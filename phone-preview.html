@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Game Day Squares — Phone Preview</title>
+<style>
+  html,body{margin:0;min-height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;background:radial-gradient(900px 600px at 50% 0%,#13294f,#06101f);display:flex;align-items:center;justify-content:center;font-family:"Nunito",system-ui,sans-serif}
+  .frame{width:390px;max-width:94vw;height:844px;max-height:94vh;border-radius:46px;background:#04101e;padding:14px;box-shadow:0 30px 80px rgba(0,0,0,.6),inset 0 0 0 2px #1f3a66;border:2px solid #0b1c38}
+  .frame iframe{width:100%;height:100%;border:0;border-radius:34px;display:block;background:#bfe6cd}
+  .cap{position:fixed;top:18px;left:0;right:0;text-align:center;color:#cfe0ff;font-weight:800;letter-spacing:2px;text-transform:uppercase;font-size:13px;opacity:.8}
+</style>
+</head>
+<body>
+  <div class="cap">📱 What players see on their phone</div>
+  <!-- Self-running demo (?play&demo): no host, no Supabase, no room. Auto-plays
+       and rotates through every sport. Uses the directory URL so the query
+       survives clean-URL hosts. -->
+  <div class="frame"><iframe src="./?play&demo" title="Phone preview" allowfullscreen></iframe></div>
+</body>
+</html>
