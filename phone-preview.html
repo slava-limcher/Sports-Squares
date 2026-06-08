@@ -16,6 +16,7 @@
   <!-- Self-running demo (?play&demo): no host, no Supabase, no room. Auto-plays
        and rotates through every sport. Uses the directory URL so the query
        survives clean-URL hosts. -->
-  <div class="frame"><iframe src="./?play&demo" title="Phone preview" allowfullscreen></iframe></div>
+  <div class="frame"><iframe id="f" title="Phone preview" allowfullscreen></iframe></div>
+  <script>var s=new URLSearchParams(location.search).get('sport');document.getElementById('f').src='./?play&demo'+(s?'&sport='+encodeURIComponent(s):'');</script>
 </body>
 </html>

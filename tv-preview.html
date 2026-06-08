@@ -8,8 +8,9 @@
 </head>
 <body>
   <!-- Shows exactly what a TV displays: runs in demo mode (?tv&demo) with no
-       host, no Supabase and no room code. It auto-plays and rotates through
-       every sport so you can preview the look. -->
-  <iframe src="./?tv&demo" title="TV preview" allowfullscreen></iframe>
+       host, no Supabase and no room code. With no ?sport it rotates through
+       every sport; with ?sport=nba (etc.) it locks to that one sport. -->
+  <iframe id="f" title="TV preview" allowfullscreen></iframe>
+  <script>var s=new URLSearchParams(location.search).get('sport');document.getElementById('f').src='./?tv&demo'+(s?'&sport='+encodeURIComponent(s):'');</script>
 </body>
 </html>

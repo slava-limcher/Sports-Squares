@@ -94,9 +94,11 @@
   .hero h1{font-family:var(--display);font-weight:700;font-size:clamp(44px,8vw,78px);text-shadow:0 5px 0 rgba(0,0,0,.2);line-height:1}
   .hero p{font-size:clamp(16px,2.2vw,22px);margin-top:12px;color:var(--cream);font-weight:700}
   .sportgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;max-width:1080px;margin:0 auto;width:100%}
-  .sportcard{background:var(--card);border-radius:26px;box-shadow:var(--shadow);padding:40px 18px;cursor:pointer;text-align:center;transition:transform .1s;border:4px solid transparent}
+  .sportcard{background:var(--card);border-radius:26px;box-shadow:var(--shadow);padding:28px 18px 22px;cursor:pointer;text-align:center;transition:transform .1s;border:4px solid transparent}
   .sportcard:hover{transform:translateY(-6px);border-color:var(--accent)} .sportcard:active{transform:translateY(0)}
-  .sportcard .ic{font-size:96px;line-height:1}.sportcard .nm{font-family:var(--display);font-weight:700;font-size:32px;margin-top:14px}.sportcard .dz{font-size:16px;color:var(--ink-soft);font-weight:700;margin-top:2px}
+  .sportcard .ic{font-size:84px;line-height:1}.sportcard .nm{font-family:var(--display);font-weight:700;font-size:30px;margin-top:12px}.sportcard .dz{font-size:15px;color:var(--ink-soft);font-weight:700;margin-top:2px}
+  .cardprev{display:flex;gap:8px;justify-content:center;margin-top:14px}
+  .cardprev .btn.sm{font-size:13px;padding:7px 12px}
 
   .guide{background:linear-gradient(180deg,#fffdf6,#fff7e6);border:3px solid var(--accent);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow)}
   .guide h3{font-family:var(--display);font-weight:700;font-size:22px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -456,6 +458,7 @@ function liveAutoAward(g){
 
 const params=new URLSearchParams(location.search);
 const isPhone=params.has("play"),isTV=params.has("tv"),isDemo=params.has("demo"),isHost=!isPhone&&!isTV;
+const demoSport=(function(){const s=(params.get("sport")||"").toLowerCase();return THEMES[s]?s:null;})();
 
 let S=null;
 // The host walks everyone's phone through these slides with Back / Next.
@@ -483,6 +486,7 @@ function shortName(n){return n.length>7?n.slice(0,7):n;}
 /* ---- HOST ---- */
 const Host={
   chooseSport(k){S=freshState(k);applyThemeClass(k);renderHost();if(THEMES[k].live&&BDL.getKey())Host.loadLiveGames();},
+  previewSport(k,mode){if(!THEMES[k])return;const v=(mode==="phone")?"play":"tv";window.open("./?"+v+"&demo&sport="+encodeURIComponent(k),"_blank");},
   openRoom(){S.away.name=($("awayName")?$("awayName").value.trim():"")||S.away.name;S.home.name=($("homeName")?$("homeName").value.trim():"")||S.home.name;
     S.maxPer=Math.max(1,Math.min(100,+($("maxPer")?$("maxPer").value:10)||10));goLive();
     if(S.live)S.step=1;
@@ -538,8 +542,9 @@ function renderHost(){
 }
 function pickSportHTML(){return `<div class="topbar"><div class="logo">▦</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Claim · Watch · Win</div></div></div>
   <div class="pickmid"><div class="hero"><h1>Pick Your Sport</h1><p>Grab your squares, then watch the game decide the winners! 🎉</p></div>
-  <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard" onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div></div>`;}).join("")}</div>
-  <div style="text-align:center;margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn soft" onclick="window.open('tv-preview.html','_blank')">👀 Preview TV view</button><button class="btn soft" onclick="window.open('phone-preview.html','_blank')">📱 Preview phone view</button></div></div>`;}
+  <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard" onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div><div class="cardprev"><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','tv')">👀 TV</button><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','phone')">📱 Phone</button></div></div>`;}).join("")}</div>
+  <div style="text-align:center;margin-top:10px;color:var(--cream);font-weight:700;font-size:14px">👀 Tap a sport's <b>TV</b> or <b>Phone</b> to preview just that sport — or see them all:</div>
+  <div style="text-align:center;margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn soft" onclick="window.open('tv-preview.html','_blank')">👀 Preview all (TV)</button><button class="btn soft" onclick="window.open('phone-preview.html','_blank')">📱 Preview all (phone)</button></div></div>`;}
 function headerHTML(th){return `<div class="topbar">${!isTV?'<button class="backbtn hostonly" title="Change sport" onclick="Host.backToPick()">⟵</button>':''}<div class="logo">${th.emoji}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">${th.name} · ${isTV?"TV":"Host"}${(live.code&&!isTV)?" · "+live.code:""}</div></div><div class="spacer"></div></div>`;}
 function setupHTML(th){return `${headerHTML(th)}<div class="pickmid"><div class="main"><div class="card setupcard">
    <h3 style="font-family:var(--display);font-weight:700;font-size:40px;margin-bottom:26px">${th.emoji} ${th.name} Squares — Set Up</h3>
@@ -780,7 +785,7 @@ function startTVDemo(){
   const names=["Mia","Leo","Ava","Max","Zoe","Sam","Eli","Nia","Kai","Ria"];
   let sportI=0, step=0, awarded=0;
   function newGame(){
-    const key=SPORT_ORDER[sportI++ % SPORT_ORDER.length];
+    const key=demoSport||SPORT_ORDER[sportI++ % SPORT_ORDER.length];
     S=freshState(key); applyThemeClass(key); document.body.classList.add("tv");
     const order=shuffle(Array.from({length:100},(_,i)=>i));
     order.slice(0,78).forEach((idx,k)=>{ const ni=k%names.length; S.grid[idx]={owner:names[ni],color:PLAYER_COLORS[ni%PLAYER_COLORS.length]}; });
@@ -807,7 +812,7 @@ function startPhoneDemo(){
   const others=["Mia","Leo","Ava","Max","Zoe"];
   let sportI=0, step=0;
   function newGame(){
-    const key=SPORT_ORDER[sportI++ % SPORT_ORDER.length]; const th=THEMES[key];
+    const key=demoSport||SPORT_ORDER[sportI++ % SPORT_ORDER.length]; const th=THEMES[key];
     const grid=Array.from({length:100},()=>({owner:null,color:null}));
     const order=shuffle(Array.from({length:100},(_,i)=>i));
     order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length]};});
