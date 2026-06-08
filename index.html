@@ -356,7 +356,7 @@ const FIELD_SVG={
   }
 };
 function fieldBg(key){const f=FIELD_SVG[key];if(!f)return null;return 'url("data:image/svg+xml,'+encodeURIComponent(f())+'")';}
-function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
+function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
   const bg=fieldBg(key);if(bg)document.body.style.setProperty("--bg",bg);else document.body.style.removeProperty("--bg");}
 
 /* ===== LIVE DATA (balldontlie.io) — browser-direct; key kept in localStorage only ===== */
