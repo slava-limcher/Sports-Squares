@@ -56,6 +56,17 @@
   body.theme-nhl .title .t1,body.theme-nhl .title .t2,body.theme-nhl .brandmini .bt{color:#0a3d62;text-shadow:0 2px 0 rgba(255,255,255,.5)}
   /* "Pick Your Sport" home screen — always the same background, never a sport field */
   body.pick::before{background:radial-gradient(150% 90% at 50% -20%,rgba(255,255,255,.16),transparent 55%),radial-gradient(120% 80% at 50% 120%,rgba(0,0,0,.32),transparent 60%),linear-gradient(155deg,#1f6b41,#2e8b57 42%,#1f8a8f);background-size:cover;background-repeat:no-repeat;background-position:center}
+  /* Go-Live link modal (Pluckers-style) */
+  .modalbd{position:fixed;inset:0;background:rgba(8,14,24,.62);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px}
+  .modalbox{background:var(--card);border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.5);max-width:560px;width:100%;max-height:94vh;overflow:auto;padding:26px 28px;text-align:center}
+  .modalbox h2{font-family:var(--display);font-weight:700;font-size:26px;margin:2px 0}
+  .ll-tag{font-weight:800;color:var(--bad);letter-spacing:2px;font-size:14px}
+  .ll-code{font-family:var(--display);font-weight:700;font-size:60px;letter-spacing:8px;color:var(--primary-dark);line-height:1;margin:4px 0 8px}
+  .ll-row{display:flex;gap:8px;margin:10px 0}
+  .ll-row input{flex:1;min-width:0;padding:12px;border-radius:12px;border:2px solid var(--line);font-size:13px;font-weight:700;color:var(--ink);background:#fff}
+  .ll-qr{width:200px;height:200px;margin:10px auto 4px;background:#fff;border-radius:14px;padding:8px}
+  .ll-qr img,.ll-qr canvas{width:100%;height:100%;display:block}
+  .ll-lbl{color:var(--ink-soft);font-weight:800;margin:14px 0 2px;font-size:14px}
 
   .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px 14px 36px}
   .screen{display:none}.screen.active{display:block}
@@ -487,11 +498,14 @@ function shortName(n){return n.length>7?n.slice(0,7):n;}
 const Host={
   chooseSport(k){S=freshState(k);applyThemeClass(k);renderHost();if(THEMES[k].live&&BDL.getKey())Host.loadLiveGames();},
   previewSport(k,mode){if(!THEMES[k])return;const v=(mode==="phone")?"play":"tv";window.open("./?"+v+"&demo&sport="+encodeURIComponent(k),"_blank");},
+  copyLink(id,btn){const el=$(id);if(!el)return;el.select();let ok=false;try{ok=document.execCommand("copy");}catch(e){}if(navigator.clipboard){navigator.clipboard.writeText(el.value).catch(()=>{});ok=true;}if(btn){const t=btn.textContent;btn.textContent="✓ Copied";setTimeout(()=>{btn.textContent=t;},1400);}},
+  closeLiveLink(){const m=$("liveLink");if(m)m.style.display="none";},
   openRoom(){S.away.name=($("awayName")?$("awayName").value.trim():"")||S.away.name;S.home.name=($("homeName")?$("homeName").value.trim():"")||S.home.name;
     S.maxPer=Math.max(1,Math.min(100,+($("maxPer")?$("maxPer").value:10)||10));goLive();
     if(S.live)S.step=1;
     renderHost();
-    if(S.live)startLivePoll();},
+    if(S.live)startLivePoll();
+    showLiveLink();},
   async loadLiveGames(){const k=BDL.getKey();if(!k)return;
     const box=$("liveList");if(box)box.innerHTML='<div style="padding:10px;color:var(--ink-soft);font-weight:700">Loading today\'s games…</div>';
     try{const raw=await BDL.schedule(S.theme);const ord={live:0,pre:1,final:2};_liveGames=raw.map(g=>normGame(S.theme,g)).filter(Boolean).sort((a,b)=>ord[a.state]-ord[b.state]);renderHost();}
@@ -552,7 +566,7 @@ function setupHTML(th){return `${headerHTML(th)}<div class="pickmid"><div class=
      <div class="fld"><label class="lab">Home team (across the top)</label><input class="tin" id="homeName" maxlength="16" value="${esc(S.home.name)}"></div></div>
    <div class="setup-row"><div class="fld"><label class="lab">Max squares per player</label><input class="tin" id="maxPer" type="number" min="1" max="100" value="10"></div></div>
    ${th.live?liveSetupHTML(th):""}
-   <button class="btn primary big wide" style="margin-top:16px" onclick="Host.openRoom()">${S.live?"Open the Board (Live) ▸":"Open the Board ▸"}</button>
+   <button class="btn primary big wide" style="margin-top:16px" onclick="Host.openRoom()">${S.live?"🔴 Go Live · Auto-Score ▸":"🔴 Go Live ▸"}</button>
    <div style="margin-top:12px"><button class="btn soft" onclick="Host.backToPick()">⟵ Pick a different sport</button></div>
    </div>${guideHTML(th)}</div></div>`;}
 function liveSetupHTML(th){
@@ -653,12 +667,12 @@ function railHTML(th){
   const liveStatus=()=>{const stMap={pre:"Waiting for game to start…",live:"🔴 LIVE — auto-scoring",final:"🏁 Final"};const per=(S.liveState==="live"&&S.livePeriod)?(" · period "+S.livePeriod):"";
     return `<div class="panel hostonly"><div style="text-align:center"><span class="livebadge"><span class="dot"></span>Live · ${esc(THEMES[S.live.sport].name)}</span></div>
       <div class="hint" style="margin-top:10px;text-align:center;font-size:15px">${S.liveErr?('<span style="color:var(--bad)">'+esc(S.liveErr)+'</span>'):(esc(stMap[S.liveState]||"Connecting…")+per)}</div>
-      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn soft sm" onclick="window.open(tvUrl(),'_blank')">📺 TV View</button><button class="btn soft sm" onclick="Host.clearLive()">Stop live</button><button class="btn soft sm" onclick="Host.reset()">New</button></div></div>`;};
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center"><button class="btn soft sm" onclick="showLiveLink()">🔗 Live Link</button><button class="btn soft sm" onclick="window.open(tvUrl(),'_blank')">📺 TV View</button><button class="btn soft sm" onclick="Host.clearLive()">Stop live</button><button class="btn soft sm" onclick="Host.reset()">New</button></div></div>`;};
   const stepper=`<div class="slidebar"><button class="btn soft sm" onclick="Host.back()" ${st===0?'disabled':''}>◂ Back</button>
       <div class="slidenow">Step ${st+1}/5 · ${esc(meta.name)}</div>
       ${meta.next?`<button class="btn primary" onclick="Host.next()">${esc(meta.next)}</button>`:`<button class="btn primary" onclick="Host.reset()">↻ New Board</button>`}</div>
     <div class="hint" style="margin-top:8px">${esc(meta.hint)}</div>
-    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn soft sm" onclick="window.open(tvUrl(),'_blank')">📺 TV View</button><button class="btn soft sm" onclick="Host.reset()">Clear</button></div>`;
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn soft sm" onclick="showLiveLink()">🔗 Live Link</button><button class="btn soft sm" onclick="window.open(tvUrl(),'_blank')">📺 TV View</button><button class="btn soft sm" onclick="Host.reset()">Clear</button></div>`;
   return `<div class="panel"><div class="scoremini">${tcol("away")}${tcol("home")}</div>
       <div class="nowwin"><div class="l">Winning Square</div><div class="v">${esc(nowName)}</div></div></div>
     <div class="panel lbcard"><h3>🏆 Payouts <span style="float:right;color:var(--ink-soft);font-size:14px">${pot}/100</span></h3><div class="checks">${checks}</div></div>
@@ -670,6 +684,27 @@ let toastT=null;
 function bigToast(t){if(isPhone)return;$("toastText").textContent=t;$("toast").classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>$("toast").classList.remove("show"),2000);}
 function mini(t){const e=$("miniToast");e.textContent=t;e.classList.add("show");clearTimeout(window.__mt);window.__mt=setTimeout(()=>e.classList.remove("show"),1800);}
 function showQR(id,url,size){const b=$(id);if(!b||!window.QRCode)return;b.innerHTML="";new QRCode(b,{text:url,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});}
+// Pluckers-style "You're Live" panel: shows the uploaded room URL (copyable) + Open TV View + join QR.
+function showLiveLink(){
+  if(live.role!=="host"||!live.code)return;
+  const local=(!liveConfigured()||live.code==="LOCAL");
+  let m=$("liveLink");if(!m){m=document.createElement("div");m.id="liveLink";m.className="modalbd";m.onclick=(e)=>{if(e.target===m)Host.closeLiveLink();};document.body.appendChild(m);}
+  m.innerHTML=`<div class="modalbox">
+    <div class="ll-tag">🔴 YOU'RE LIVE</div>
+    <h2>Room Code</h2>
+    <div class="ll-code">${esc(live.code)}</div>
+    ${local?`<div style="color:var(--bad);font-weight:700;font-size:13px;margin:0 0 8px">⚠ Live sync isn't connecting right now — this link only works on this device.</div>`:""}
+    <div class="ll-lbl">📺 Open this on your TV</div>
+    <div class="ll-row"><input id="llTv" readonly value="${esc(tvUrl())}" onfocus="this.select()"><button class="btn sm" onclick="Host.copyLink('llTv',this)">📋 Copy</button></div>
+    <button class="btn primary big wide" onclick="window.open(tvUrl(),'_blank')">📺 Open TV View</button>
+    <div class="ll-lbl">📱 Players scan to join (or enter the code)</div>
+    <div class="ll-qr" id="llQr"></div>
+    <div class="ll-row"><input id="llJoin" readonly value="${esc(joinUrl())}" onfocus="this.select()"><button class="btn sm" onclick="Host.copyLink('llJoin',this)">📋 Copy</button></div>
+    <button class="btn soft wide" style="margin-top:14px" onclick="Host.closeLiveLink()">Done ✓</button>
+  </div>`;
+  m.style.display="flex";
+  showQR("llQr",joinUrl(),300);
+}
 // Size the board to fit its container (no page scroll) — reliable JS sizing.
 function fitBoard(){
   const grid=document.querySelector('.sqgrid'); if(!grid) return;
