@@ -54,6 +54,8 @@
   body.theme-mlb::before,body.theme-nfl::before,body.theme-nba::before,body.theme-nhl::before{background-size:100% 100%;background-repeat:no-repeat;background-position:center}
   body.theme-mlb.boardview .wrap::before,body.theme-nfl.boardview .wrap::before,body.theme-nba.boardview .wrap::before,body.theme-nhl.boardview .wrap::before{display:none}
   body.theme-nhl .title .t1,body.theme-nhl .title .t2,body.theme-nhl .brandmini .bt{color:#0a3d62;text-shadow:0 2px 0 rgba(255,255,255,.5)}
+  /* "Pick Your Sport" home screen — always the same background, never a sport field */
+  body.pick::before{background:radial-gradient(150% 90% at 50% -20%,rgba(255,255,255,.16),transparent 55%),radial-gradient(120% 80% at 50% 120%,rgba(0,0,0,.32),transparent 60%),linear-gradient(155deg,#1f6b41,#2e8b57 42%,#1f8a8f);background-size:cover;background-repeat:no-repeat;background-position:center}
 
   .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:16px 14px 36px}
   .screen{display:none}.screen.active{display:block}
@@ -523,7 +525,7 @@ function ownersList(){const m={};S.grid.forEach(o=>{if(o.owner)m[o.owner]=(m[o.o
 
 function renderHost(){
   const root=$("root");
-  if(!S){root.innerHTML=pickSportHTML();document.body.className="themed theme-mlb";$("ctl").innerHTML="";return;}
+  if(!S){root.innerHTML=pickSportHTML();document.body.className="themed theme-mlb pick";document.body.style.removeProperty("--bg");$("ctl").innerHTML="";return;}
   const th=curTheme();
   document.documentElement.style.setProperty("--awayc",S.away.color);
   document.documentElement.style.setProperty("--homec",S.home.color);
