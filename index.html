@@ -24,8 +24,6 @@
     --bg:radial-gradient(150% 90% at 50% -35%,rgba(255,255,255,.14),transparent 55%),radial-gradient(130% 85% at 50% 140%,rgba(0,0,0,.5),transparent 60%),linear-gradient(90deg,#1e4d27 0 6.5%,transparent 6.5% 93.5%,#1e4d27 93.5%),repeating-linear-gradient(90deg,rgba(255,255,255,.62) 0 4px,transparent 4px 220px),repeating-linear-gradient(90deg,rgba(255,255,255,.34) 0 3px,transparent 3px 110px),repeating-linear-gradient(90deg,#2f7a37 0 110px,#28692f 110px 220px),linear-gradient(180deg,#2f7a37,#21552a)}
   body.theme-nba{--primary:#c5772f;--primary-dark:#9a5a20;--accent:#ffcf33;--accent-dark:#e3ab00;
     --bg:radial-gradient(130% 75% at 50% -12%,rgba(255,238,205,.4),transparent 55%),radial-gradient(130% 80% at 50% 135%,rgba(0,0,0,.5),transparent 60%),repeating-linear-gradient(90deg,rgba(0,0,0,.06) 0 2px,transparent 2px 78px),linear-gradient(180deg,#d18a45,#9c5b27)}
-  body.theme-soccer{--primary:#2e8b57;--primary-dark:#1f6b41;--accent:#ffffff;--accent-dark:#dfe7e0;
-    --bg:radial-gradient(150% 90% at 50% -35%,rgba(255,255,255,.2),transparent 55%),radial-gradient(130% 80% at 50% 135%,rgba(0,0,0,.45),transparent 60%),repeating-linear-gradient(90deg,#2f9159 0 92px,#2a814f 92px 184px)}
   body.theme-nhl{--primary:#0a3d62;--primary-dark:#072a45;--accent:#74c0e8;--accent-dark:#3a9bd0;
     --bg:radial-gradient(120% 70% at 50% -10%,rgba(255,255,255,.5),transparent 52%),radial-gradient(130% 90% at 50% 135%,rgba(0,0,0,.45),transparent 60%),radial-gradient(60% 40% at 50% 38%,rgba(255,255,255,.16),transparent 60%),linear-gradient(180deg,#2c6f9c,#194e74 58%,#123f60)}
   /* live-game setup */
@@ -360,9 +358,8 @@ const THEMES={
   nfl:{key:"nfl",name:"Football",emoji:"🏈",teams:["Bolts","Maulers"],colors:["#0b3d91","#1f8a3b"],scoreBtns:[{lab:"TD +7",v:7},{lab:"FG +3",v:3},{lab:"+2",v:2},{lab:"+1",v:1}],checks:["Q1","Halftime","Q3","Final"],live:true,liveMarks:[1,2,3,"final"]},
   nba:{key:"nba",name:"Basketball",emoji:"🏀",teams:["Hoops","Dunkers"],colors:["#6a2bd1","#e07a1a"],scoreBtns:[{lab:"+1",v:1},{lab:"+2",v:2},{lab:"3PT +3",v:3}],checks:["Q1","Halftime","Q3","Final"],live:true,liveMarks:[1,2,3,"final"]},
   nhl:{key:"nhl",name:"Hockey",emoji:"🏒",teams:["Ice","Storm"],colors:["#0a3d62","#9c1f2e"],scoreBtns:[{lab:"🏒 Goal",v:1}],checks:["End 1st","End 2nd","Final"],live:true,liveMarks:[1,2,"final"]},
-  soccer:{key:"soccer",name:"Soccer",emoji:"⚽",teams:["Strikers","United"],colors:["#1f8a3b","#c8302e"],scoreBtns:[{lab:"⚽ Goal",v:1}],checks:["Halftime","Final"],live:false},
 };
-const SPORT_ORDER=["mlb","nfl","nba","nhl","soccer"];
+const SPORT_ORDER=["mlb","nfl","nba","nhl"];
 /* ===== Top-down sport surfaces, drawn as SVG and applied via --bg ===== */
 const FIELD_SVG={
   nfl(){
@@ -428,7 +425,7 @@ function normGame(sport,g){
 }
 function computeWinProb(sport,as,hs,period,state){
   if(state==="final"){const d=hs-as;return d>0?0.985:d<0?0.015:0.5;}
-  const T={mlb:9,nfl:4,nba:4,nhl:3,soccer:2}[sport]||4;
+  const T={mlb:9,nfl:4,nba:4,nhl:3}[sport]||4;
   const elapsed=Math.min(T,Math.max(0.4,period||0.4));const rem=Math.max(0.05,(T-elapsed)/T);
   const k=0.55/Math.sqrt(rem);let p=1/(1+Math.exp(-((hs-as)*k)));
   return Math.max(0.02,Math.min(0.98,p));
