@@ -114,6 +114,15 @@
   .sportcard .ic{font-size:84px;line-height:1}.sportcard .nm{font-family:var(--display);font-weight:700;font-size:30px;margin-top:12px}.sportcard .dz{font-size:15px;color:var(--ink-soft);font-weight:700;margin-top:2px}
   .cardprev{display:flex;gap:8px;justify-content:center;margin-top:14px}
   .cardprev .btn.sm{font-size:13px;padding:7px 12px}
+  /* Mini-field sport cards: each card shows that sport's field/court/rink */
+  .sportcard.fieldcard{position:relative;overflow:hidden;background:#0e1b34;border-color:rgba(255,255,255,.14)}
+  .sportcard.fieldcard::before{content:"";position:absolute;inset:0;z-index:0;background-image:var(--fieldimg);background-size:cover;background-position:center}
+  .sportcard.fieldcard::after{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(10,18,36,.12) 0%,rgba(10,18,36,.5) 52%,rgba(10,18,36,.92) 100%)}
+  .sportcard.fieldcard>*{position:relative;z-index:2}
+  .sportcard.fieldcard .ic{filter:drop-shadow(0 5px 12px rgba(0,0,0,.55))}
+  .sportcard.fieldcard .nm{color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+  .sportcard.fieldcard .dz{color:rgba(255,255,255,.92);text-shadow:0 1px 5px rgba(0,0,0,.85)}
+  .sportcard.fieldcard:hover{border-color:var(--accent)}
 
   .guide{background:linear-gradient(180deg,#fffdf6,#fff7e6);border:3px solid var(--accent);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow)}
   .guide h3{font-family:var(--display);font-weight:700;font-size:22px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -572,7 +581,7 @@ function renderHost(){
 }
 function pickSportHTML(){return `<div class="topbar"><div class="logo">▦</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Claim · Watch · Win</div></div></div>
   <div class="pickmid"><div class="hero"><h1>Pick Your Sport</h1><p>Grab your squares, then watch the game decide the winners! 🎉</p></div>
-  <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard" onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div><div class="cardprev"><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','tv')">👀 TV</button><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','phone')">📱 Phone</button></div></div>`;}).join("")}</div>
+  <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard fieldcard" style='--fieldimg:${fieldBg(k)}' onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div><div class="cardprev"><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','tv')">👀 TV</button><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','phone')">📱 Phone</button></div></div>`;}).join("")}</div>
   <div style="text-align:center;margin-top:10px;color:var(--cream);font-weight:700;font-size:14px">👀 Tap a sport's <b>TV</b> or <b>Phone</b> to preview just that sport — or see them all:</div>
   <div style="text-align:center;margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn soft" onclick="window.open('tv-preview.html','_blank')">👀 Preview all (TV)</button><button class="btn soft" onclick="window.open('phone-preview.html','_blank')">📱 Preview all (phone)</button></div></div>`;}
 function headerHTML(th){return `<div class="topbar">${!isTV?'<button class="backbtn hostonly" title="Change sport" onclick="Host.backToPick()">⟵</button>':''}<div class="logo">${th.emoji}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">${th.name} · ${isTV?"TV":"Host"}${(live.code&&!isTV)?" · "+live.code:""}</div></div><div class="spacer"></div></div>`;}
