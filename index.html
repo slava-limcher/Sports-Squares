@@ -53,7 +53,13 @@
   body.theme-mlb.boardview .wrap::before,body.theme-nfl.boardview .wrap::before,body.theme-nba.boardview .wrap::before,body.theme-nhl.boardview .wrap::before{display:none}
   body.theme-nhl .title .t1,body.theme-nhl .title .t2,body.theme-nhl .brandmini .bt{color:#0a3d62;text-shadow:0 2px 0 rgba(255,255,255,.5)}
   /* "Pick Your Sport" home screen — always the same background, never a sport field */
-  body.pick::before{background:radial-gradient(150% 90% at 50% -20%,rgba(255,255,255,.16),transparent 55%),radial-gradient(120% 80% at 50% 120%,rgba(0,0,0,.32),transparent 60%),linear-gradient(155deg,#1f6b41,#2e8b57 42%,#1f8a8f);background-size:cover;background-repeat:no-repeat;background-position:center}
+  body.pick::before{background:
+    radial-gradient(680px 440px at 15% -9%,rgba(150,196,255,.34),transparent 72%),
+    radial-gradient(680px 440px at 85% -9%,rgba(150,196,255,.34),transparent 72%),
+    radial-gradient(130% 62% at 50% 120%,rgba(110,220,160,.16),transparent 60%),
+    repeating-linear-gradient(90deg,rgba(255,255,255,.045) 0 3px,transparent 3px 132px),
+    linear-gradient(180deg,#0b1630 0%,#13244a 55%,#163a3e 100%);
+    background-size:cover;background-repeat:no-repeat;background-position:center}
   /* Go-Live link modal (Pluckers-style) */
   .modalbd{position:fixed;inset:0;background:rgba(8,14,24,.62);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px}
   .modalbox{background:var(--card);border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.5);max-width:560px;width:100%;max-height:94vh;overflow:auto;padding:26px 28px;text-align:center}
