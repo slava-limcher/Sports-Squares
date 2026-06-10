@@ -404,7 +404,10 @@ const CARD_SVG={
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" preserveAspectRatio="none"><defs><linearGradient id="fsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14213e"/><stop offset="0.55" stop-color="#22406a"/><stop offset="1" stop-color="#2c5a86"/></linearGradient><linearGradient id="ffld" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c7333"/><stop offset="1" stop-color="#3fab51"/></linearGradient></defs><rect width="1200" height="600" fill="url(#fsky)"/><ellipse cx="300" cy="36" rx="330" ry="190" fill="#ffffff" opacity="0.12"/><ellipse cx="900" cy="36" rx="330" ry="190" fill="#ffffff" opacity="0.12"/><path d="M120 560 L1080 560 L760 300 L440 300 Z" fill="url(#ffld)"/><path d="M440 300 L760 300 L784 322 L416 322 Z" fill="#21512a"/><g stroke="#ffffff" stroke-opacity="0.55" stroke-width="3" fill="none">${yl}</g><path d="M120 560 L440 300 M1080 560 L760 300" stroke="#ffffff" stroke-opacity="0.6" stroke-width="4" fill="none"/><g stroke="#f2c513" stroke-width="5" fill="none" stroke-linecap="round"><line x1="600" y1="300" x2="600" y2="270"/><line x1="580" y1="270" x2="620" y2="270"/><line x1="580" y1="270" x2="580" y2="247"/><line x1="620" y1="270" x2="620" y2="247"/></g></svg>`;
   }
 };
-function cardBg(key){const f=CARD_SVG[key];return f?'url("data:image/svg+xml,'+encodeURIComponent(f())+'")':fieldBg(key);}
+function cardBg(key){const f=CARD_SVG[key]||FIELD_SVG[key];if(!f)return null;
+  // Cards crop-to-fit (keep aspect) instead of stretching, so the art never looks squished.
+  const svg=f().replace('preserveAspectRatio="none"','preserveAspectRatio="xMidYMid slice"');
+  return 'url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';}
 function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
   const bg=fieldBg(key);if(bg)document.body.style.setProperty("--bg",bg);else document.body.style.removeProperty("--bg");}
 
