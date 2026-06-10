@@ -383,10 +383,10 @@ const FIELD_SVG={
     let yl="";[0.08,0.18,0.28,0.38,0.48,0.58,0.68,0.78,0.92].forEach(f=>{const xn=(60+1080*f).toFixed(1),xf=(155+890*f).toFixed(1);yl+=`<line x1="${xn}" y1="588" x2="${xf}" y2="350"/>`;});
     const tube=(x1,y1,x2,y2,grad,hx,hy)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="url(#${grad})" stroke-width="16" stroke-linecap="round"/><line x1="${(x1+hx).toFixed(1)}" y1="${(y1+hy).toFixed(1)}" x2="${(x2+hx).toFixed(1)}" y2="${(y2+hy).toFixed(1)}" stroke="#fff6cc" stroke-width="3.5" stroke-linecap="round" opacity="0.85"/>`;
     const gp=(bx,sdx)=>`<ellipse cx="${bx+sdx}" cy="552" rx="86" ry="15" fill="#04110a" opacity="0.42" filter="url(#sblur)"/>`
-      +tube(bx,232,bx,420,'gmetal',-5,0)
-      +tube(bx-34,420,bx+34,420,'gmetalV',0,-5)
-      +tube(bx-34,420,bx-34,548,'gmetal',-5,0)
-      +tube(bx+34,420,bx+34,548,'gmetal',-5,0);
+      +tube(bx,548,bx,360,'gmetal',-5,0)
+      +tube(bx-34,360,bx+34,360,'gmetalV',0,-5)
+      +tube(bx-34,360,bx-34,232,'gmetal',-5,0)
+      +tube(bx+34,360,bx+34,232,'gmetal',-5,0);
     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" preserveAspectRatio="none"><defs><linearGradient id="fsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14213e"/><stop offset="0.6" stop-color="#21406a"/><stop offset="1" stop-color="#2c5a86"/></linearGradient><linearGradient id="ffld" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2b7232"/><stop offset="1" stop-color="#46b95a"/></linearGradient><linearGradient id="gmetal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffe375"/><stop offset="0.45" stop-color="#f2c513"/><stop offset="1" stop-color="#bd9106"/></linearGradient><linearGradient id="gmetalV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe375"/><stop offset="0.5" stop-color="#f2c513"/><stop offset="1" stop-color="#bd9106"/></linearGradient><filter id="sblur" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="7"/></filter></defs><rect width="1200" height="600" fill="url(#fsky)"/><ellipse cx="300" cy="20" rx="380" ry="200" fill="#ffffff" opacity="0.13"/><ellipse cx="900" cy="20" rx="380" ry="200" fill="#ffffff" opacity="0.13"/><path d="M20 600 L1180 600 L1050 345 L150 345 Z" fill="url(#ffld)"/><path d="M150 345 L320 345 L300 600 L20 600 Z" fill="#21512a"/><path d="M1050 345 L880 345 L900 600 L1180 600 Z" fill="#21512a"/><g stroke="#ffffff" stroke-opacity="0.5" stroke-width="3" fill="none">${yl}</g><path d="M20 600 L150 345 M1180 600 L1050 345" stroke="#ffffff" stroke-opacity="0.55" stroke-width="4" fill="none"/>${gp(120,52)}${gp(1080,-52)}</svg>`;
   },
   mlb(){
