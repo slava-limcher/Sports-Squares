@@ -396,6 +396,15 @@ const FIELD_SVG={
   }
 };
 function fieldBg(key){const f=FIELD_SVG[key];if(!f)return null;return 'url("data:image/svg+xml,'+encodeURIComponent(f())+'")';}
+// Optional per-sport CARD art (picker cards only) — distinct from the in-game field background.
+const CARD_SVG={
+  nfl(){
+    let yl="";const lines=[0.16,0.33,0.5,0.67,0.84];
+    lines.forEach(t=>{const y=(560-260*t).toFixed(1),lx=(120+320*t).toFixed(1),rx=(1080-320*t).toFixed(1);yl+=`<line x1="${lx}" y1="${y}" x2="${rx}" y2="${y}"/>`;});
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" preserveAspectRatio="none"><defs><linearGradient id="fsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#14213e"/><stop offset="0.55" stop-color="#22406a"/><stop offset="1" stop-color="#2c5a86"/></linearGradient><linearGradient id="ffld" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2c7333"/><stop offset="1" stop-color="#3fab51"/></linearGradient></defs><rect width="1200" height="600" fill="url(#fsky)"/><ellipse cx="300" cy="36" rx="330" ry="190" fill="#ffffff" opacity="0.12"/><ellipse cx="900" cy="36" rx="330" ry="190" fill="#ffffff" opacity="0.12"/><path d="M120 560 L1080 560 L760 300 L440 300 Z" fill="url(#ffld)"/><path d="M440 300 L760 300 L784 322 L416 322 Z" fill="#21512a"/><g stroke="#ffffff" stroke-opacity="0.55" stroke-width="3" fill="none">${yl}</g><path d="M120 560 L440 300 M1080 560 L760 300" stroke="#ffffff" stroke-opacity="0.6" stroke-width="4" fill="none"/><g stroke="#f2c513" stroke-width="5" fill="none" stroke-linecap="round"><line x1="600" y1="300" x2="600" y2="270"/><line x1="580" y1="270" x2="620" y2="270"/><line x1="580" y1="270" x2="580" y2="247"/><line x1="620" y1="270" x2="620" y2="247"/></g></svg>`;
+  }
+};
+function cardBg(key){const f=CARD_SVG[key];return f?'url("data:image/svg+xml,'+encodeURIComponent(f())+'")':fieldBg(key);}
 function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
   const bg=fieldBg(key);if(bg)document.body.style.setProperty("--bg",bg);else document.body.style.removeProperty("--bg");}
 
@@ -583,7 +592,7 @@ function renderHost(){
 }
 function pickSportHTML(){return `<div class="topbar"><div class="logo">${BB_LOGO}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Claim · Watch · Win</div></div></div>
   <div class="pickmid"><div class="hero"><h1>Pick Your Sport</h1><p>Grab your squares, then watch the game decide the winners! 🎉</p></div>
-  <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard fieldcard" style='--fieldimg:${fieldBg(k)}' onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div><div class="cardprev"><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','tv')">👀 TV</button><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','phone')">📱 Phone</button></div></div>`;}).join("")}</div>
+  <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard fieldcard" style='--fieldimg:${cardBg(k)}' onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div><div class="cardprev"><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','tv')">👀 TV</button><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','phone')">📱 Phone</button></div></div>`;}).join("")}</div>
   <div style="text-align:center;margin-top:10px;color:var(--cream);font-weight:700;font-size:14px">👀 Tap a sport's <b>TV</b> or <b>Phone</b> to preview just that sport — or see them all:</div>
   <div style="text-align:center;margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn soft" onclick="window.open('tv-preview.html','_blank')">👀 Preview all (TV)</button><button class="btn soft" onclick="window.open('phone-preview.html','_blank')">📱 Preview all (phone)</button></div></div>`;}
 function headerHTML(th){return `<div class="topbar">${!isTV?'<button class="backbtn hostonly" title="Change sport" onclick="Host.backToPick()">⟵</button>':''}<div class="logo">${th.emoji}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">${th.name} · ${isTV?"TV":"Host"}${(live.code&&!isTV)?" · "+live.code:""}</div></div><div class="spacer"></div></div>`;}
