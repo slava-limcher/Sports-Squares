@@ -375,6 +375,8 @@ const THEMES={
   nhl:{key:"nhl",name:"Hockey",emoji:"🏒",teams:["Ice","Storm"],colors:["#0a3d62","#9c1f2e"],scoreBtns:[{lab:"🏒 Goal",v:1}],checks:["End 1st","End 2nd","Final"],live:true,liveMarks:[1,2,"final"]},
 };
 const SPORT_ORDER=["mlb","nfl","nba","nhl"];
+// BarBoards "BB" retro-TV brand mark (inline SVG so it works on the deployed site)
+const BB_LOGO='<svg viewBox="0 0 100 100" width="40" height="40" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#15213c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="45" x2="32" y2="21"/><line x1="50" y1="45" x2="75" y2="11"/><path d="M46 46 L54 46 L52 41 L48 41 Z" fill="#15213c" stroke="none"/><rect x="18" y="46" width="64" height="40" rx="5"/><text x="50" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="30" fill="#15213c" stroke="none">BB</text></svg>';
 /* ===== Top-down sport surfaces, drawn as SVG and applied via --bg ===== */
 const FIELD_SVG={
   nfl(){
@@ -579,7 +581,7 @@ function renderHost(){
   fitBoard(); setTimeout(fitBoard,60);
   fxAfterRender();
 }
-function pickSportHTML(){return `<div class="topbar"><div class="logo">▦</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Claim · Watch · Win</div></div></div>
+function pickSportHTML(){return `<div class="topbar"><div class="logo">${BB_LOGO}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Claim · Watch · Win</div></div></div>
   <div class="pickmid"><div class="hero"><h1>Pick Your Sport</h1><p>Grab your squares, then watch the game decide the winners! 🎉</p></div>
   <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard fieldcard" style='--fieldimg:${fieldBg(k)}' onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div><div class="cardprev"><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','tv')">👀 TV</button><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','phone')">📱 Phone</button></div></div>`;}).join("")}</div>
   <div style="text-align:center;margin-top:10px;color:var(--cream);font-weight:700;font-size:14px">👀 Tap a sport's <b>TV</b> or <b>Phone</b> to preview just that sport — or see them all:</div>
@@ -778,7 +780,7 @@ let myName=(()=>{try{return localStorage.getItem("gameday-squares-name")||"";}ca
 const phone={name:myName,color:null,sel:new Set(),remote:null};
 function phoneColor(){if(!phone.color){let h=0;for(const c of(phone.name||"x"))h=(h*31+c.charCodeAt(0))>>>0;phone.color=PLAYER_COLORS[h%PLAYER_COLORS.length];}return phone.color;}
 function renderPhone(){const root=$("root");
-  if(!phone.name){root.innerHTML=`<div class="phone-wrap"><div class="topbar"><div class="logo">▦</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Join the board</div></div></div>
+  if(!phone.name){root.innerHTML=`<div class="phone-wrap"><div class="topbar"><div class="logo">${BB_LOGO}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Join the board</div></div></div>
     <div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:6px">What's your name?</h3>
     <p style="color:var(--ink-soft);font-weight:700;margin-bottom:14px">Tap squares to claim them. If your square is winning when a period ends, you win! 🏆</p>
     <input class="tin" id="nm" maxlength="14" placeholder="Your name…" value="${esc(phone.name)}"><button class="btn primary big wide" style="margin-top:14px" onclick="phoneSetName()">Join ▸</button></div></div>`;return;}
@@ -921,7 +923,7 @@ function isMobileUA(){const ua=navigator.userAgent||"";return /Mobi|Android|iPho
 function isTouchOnly(){return !!(window.matchMedia&&matchMedia("(pointer:coarse)").matches&&matchMedia("(hover:none)").matches);}
 function canHost(){return params.has("host")||(!isMobileUA()&&!isTVUA()&&!isTouchOnly());}
 function showHostBlocked(){document.body.classList.add("themed","theme-mlb");
-  $("root").innerHTML=`<div class="topbar"><div class="logo">▦</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Hosting</div></div></div>
+  $("root").innerHTML=`<div class="topbar"><div class="logo">${BB_LOGO}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Hosting</div></div></div>
     <div class="pickmid"><div class="card" style="max-width:560px;text-align:center">
       <div style="font-size:64px">💻</div>
       <h1 style="font-family:var(--display);font-weight:700;font-size:32px;margin:6px 0">Host on a computer</h1>
