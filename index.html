@@ -165,14 +165,14 @@
   /* squares grid */
   .gridcard{background:linear-gradient(180deg,#ffffff,#eef2ee);border-radius:22px;padding:16px;position:relative;
     box-shadow:0 26px 50px rgba(0,0,0,.36),0 8px 0 rgba(0,0,0,.13),inset 0 2px 0 rgba(255,255,255,.95),inset 0 0 0 1px rgba(0,0,0,.04)}
-  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:16px;margin-bottom:8px;color:var(--homec,var(--ink))}
+  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin-bottom:8px;color:var(--homec,var(--ink))}
   .gridrow{display:flex;gap:8px;align-items:center;justify-content:center}
-  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:18px;color:var(--awayc,var(--ink));flex:0 0 auto}
+  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));flex:0 0 auto}
   .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
-  .cell{border-radius:7px;background:linear-gradient(180deg,#f8fbf8,#e6ece6);border:1px solid #d4dcd4;display:flex;align-items:center;justify-content:center;font-size:clamp(10px,calc(var(--cell,30px)*0.34),34px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
+  .cell{border-radius:7px;background:linear-gradient(180deg,#f8fbf8,#e6ece6);border:1px solid #d4dcd4;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 3px rgba(0,0,0,.07),0 1px 1px rgba(0,0,0,.05)}
-  .cell.hdr{background:transparent;border:none;box-shadow:none;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,30px)*0.74),110px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
+  .cell.hdr{background:transparent;border:none;box-shadow:none;font-family:var(--display);font-weight:700;font-size:clamp(16px,calc(var(--cell,30px)*0.84),120px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
   .cell.hdr.top{color:var(--homec,var(--ink))}.cell.hdr.left{color:var(--awayc,var(--ink))}
   .cell.corner{background:transparent;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:rgba(0,0,0,.18);text-shadow:0 1px 2px rgba(0,0,0,.45);
@@ -274,8 +274,7 @@
   body.tv .roomtag .qr{width:208px;height:208px}
   body.tv .sqgrid{width:min(100%,60vh)}
   body.tv .cell{border-radius:9px}
-  body.tv .axislabel{font-size:34px;margin-bottom:12px}
-  body.tv .axisleft{font-size:34px}
+  body.tv .axislabel{margin-bottom:12px}
   body.tv .tcol{padding:16px}
   body.tv .tcol .nm{font-size:32px}
   body.tv .tcol .sc{font-size:78px}
@@ -335,8 +334,7 @@
     body.tv .sqgrid{width:min(100%,54vh)}
     body.tv .gridcard{padding:12px}
     body.tv .title .t1{font-size:30px}
-    body.tv .axislabel{font-size:22px;margin-bottom:8px}
-    body.tv .axisleft{font-size:22px}
+    body.tv .axislabel{margin-bottom:8px}
     body.tv .tcol{padding:12px}
     body.tv .tcol .nm{font-size:24px}
     body.tv .tcol .sc{font-size:50px}
@@ -545,7 +543,7 @@ function liveSquareOn(st){return stepOf(st)>=2&&stepOf(st)<4&&!!(st&&st.rowDigit
 function isFinalSt(st){return stepOf(st)>=4;}
 function curTheme(){return THEMES[(S&&S.theme)||"mlb"];}
 function liveCell(st){st=st||S;if(!st||!st.rowDigits||!st.colDigits)return -1;const r=st.rowDigits.indexOf(st.score.away%10),c=st.colDigits.indexOf(st.score.home%10);if(r<0||c<0)return -1;return r*10+c;}
-function shortName(n){return n.length>9?n.slice(0,9):n;}
+function shortName(n){return n.length>8?n.slice(0,8):n;}
 
 /* ---- HOST ---- */
 const Host={
@@ -783,8 +781,9 @@ function fitBoard(){
   const chromeH=30+(aleft?aleft.offsetWidth+8:0);
   const side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)));
   grid.style.width=side+"px"; grid.style.height=side+"px";
-  // publish the per-cell size so square text + drawn numbers scale with the board (readable on big TVs)
-  grid.style.setProperty("--cell", Math.floor((side-40)/11)+"px");
+  // publish the per-cell size on the gridcard so square text, drawn numbers AND the axis
+  // team labels (which live outside the grid) all inherit it and scale with the board.
+  card.style.setProperty("--cell", Math.floor((side-40)/11)+"px");
 }
 let __fitT=null;
 // Re-fit several times + after web fonts load, so the board sizes correctly even when
