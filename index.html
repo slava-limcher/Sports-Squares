@@ -65,6 +65,13 @@
   /* Go-Live link modal (Pluckers-style) */
   .modalbd{position:fixed;inset:0;background:rgba(8,14,24,.62);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px}
   .modalbox{background:var(--card);border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.5);max-width:560px;width:100%;max-height:94vh;overflow:auto;padding:26px 28px;text-align:center}
+  /* In-page preview modal (iframe) — reliable, no popup blocking */
+  .previewbox{background:var(--card);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);width:min(96vw,1120px);max-height:94vh;display:flex;flex-direction:column;gap:10px;padding:14px}
+  .previewbox.phone{width:min(94vw,430px)}
+  .pv-head{display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--display);font-weight:700;color:var(--ink);font-size:18px}
+  .pv-frame{flex:1;border-radius:14px;overflow:hidden;background:#05080f;aspect-ratio:16/9}
+  .pv-frame.pv-phone{aspect-ratio:9/19;max-height:80vh;width:auto;margin:0 auto}
+  .pv-frame iframe{width:100%;height:100%;border:0;display:block}
   .modalbox h2{font-family:var(--display);font-weight:700;font-size:26px;margin:2px 0}
   .ll-tag{font-weight:800;color:var(--bad);letter-spacing:2px;font-size:14px}
   .ll-code{font-family:var(--display);font-weight:700;font-size:60px;letter-spacing:8px;color:var(--accent);line-height:1;margin:4px 0 8px}
@@ -549,7 +556,17 @@ function shortName(n){return n.length>8?n.slice(0,8):n;}
 /* ---- HOST ---- */
 const Host={
   chooseSport(k){S=freshState(k);applyThemeClass(k);renderHost();if(THEMES[k].live&&BDL.getKey())Host.loadLiveGames();},
-  previewSport(k,mode){if(!THEMES[k])return;const v=(mode==="phone")?"play":"tv";window.open("./?"+v+"&demo&sport="+encodeURIComponent(k),"_blank");},
+  previewSport(k,mode){Host.openPreview(mode,k);},
+  openPreview(mode,k){
+    const phone=(mode==="phone"); const v=phone?"play":"tv";
+    const url="./?"+v+"&demo"+((k&&THEMES[k])?"&sport="+encodeURIComponent(k):"");
+    const title=((k&&THEMES[k])?(THEMES[k].emoji+" "+THEMES[k].name):"All sports")+" — "+(phone?"Phone":"TV")+" preview";
+    let m=$("previewModal");
+    if(!m){m=document.createElement("div");m.id="previewModal";m.className="modalbd";m.onclick=(e)=>{if(e.target===m)Host.closePreview();};document.body.appendChild(m);}
+    m.innerHTML=`<div class="previewbox ${phone?'phone':''}"><div class="pv-head"><span>${esc(title)}</span><button class="btn soft sm" onclick="Host.closePreview()">✕ Close</button></div><div class="pv-frame ${phone?'pv-phone':''}"><iframe src="${url}" title="preview" allowfullscreen></iframe></div></div>`;
+    m.style.display="flex";
+  },
+  closePreview(){const m=$("previewModal");if(m){m.innerHTML="";m.style.display="none";}},
   copyLink(id,btn){const el=$(id);if(!el)return;el.select();let ok=false;try{ok=document.execCommand("copy");}catch(e){}if(navigator.clipboard){navigator.clipboard.writeText(el.value).catch(()=>{});ok=true;}if(btn){const t=btn.textContent;btn.textContent="✓ Copied";setTimeout(()=>{btn.textContent=t;},1400);}},
   closeLiveLink(){const m=$("liveLink");if(m)m.style.display="none";},
   openRoom(){S.away.name=($("awayName")?$("awayName").value.trim():"")||S.away.name;S.home.name=($("homeName")?$("homeName").value.trim():"")||S.home.name;
@@ -610,7 +627,7 @@ function pickSportHTML(){return `<div class="topbar"><div class="logo">${BB_LOGO
   <div class="pickmid"><div class="hero"><h1>Pick Your Sport</h1><p>Grab your squares, then watch the game decide the winners! 🎉</p></div>
   <div class="sportgrid">${SPORT_ORDER.map(k=>{const t=THEMES[k];return `<div class="sportcard fieldcard" style='--fieldimg:${cardBg(k)}' onclick="Host.chooseSport('${k}')"><div class="ic">${t.emoji}</div><div class="nm">${t.name}</div><div class="dz">Tap to play</div><div class="cardprev"><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','tv')">👀 TV</button><button class="btn soft sm" onclick="event.stopPropagation();Host.previewSport('${k}','phone')">📱 Phone</button></div></div>`;}).join("")}</div>
   <div style="text-align:center;margin-top:10px;color:var(--cream);font-weight:700;font-size:14px">👀 Tap a sport's <b>TV</b> or <b>Phone</b> to preview just that sport — or see them all:</div>
-  <div style="text-align:center;margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn soft" onclick="window.open('tv-preview.html','_blank')">👀 Preview all (TV)</button><button class="btn soft" onclick="window.open('phone-preview.html','_blank')">📱 Preview all (phone)</button></div></div>`;}
+  <div style="text-align:center;margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="btn soft" onclick="Host.openPreview('tv')">👀 Preview all (TV)</button><button class="btn soft" onclick="Host.openPreview('phone')">📱 Preview all (phone)</button></div></div>`;}
 function headerHTML(th){return `<div class="topbar">${!isTV?'<button class="backbtn hostonly" title="Change sport" onclick="Host.backToPick()">⟵</button>':''}<div class="logo">${th.emoji}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">${th.name} · ${isTV?"TV":"Host"}${(live.code&&!isTV)?" · "+live.code:""}</div></div><div class="spacer"></div></div>`;}
 function setupHTML(th){return `${headerHTML(th)}<div class="pickmid"><div class="main"><div class="card setupcard">
    <h3 style="font-family:var(--display);font-weight:700;font-size:40px;margin-bottom:26px">${th.emoji} ${th.name} Squares — Set Up</h3>
