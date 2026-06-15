@@ -49,7 +49,7 @@
   .tvprops .pchip .pn{color:var(--primary-dark)} .tvprops .pchip .po{color:var(--ink-soft)}
   body.themed::before{content:"";position:fixed;inset:0;background:var(--bg);z-index:-2}
   /* Dark-mode scrim: dims every sport field background so the screen is easy on the eyes (not blinding) */
-  body.themed::after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(9,13,22,.5),rgba(9,13,22,.6)),radial-gradient(1000px 800px at 50% 120%,rgba(0,0,0,.35),transparent 60%);z-index:-1;pointer-events:none}
+  body.themed::after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(9,13,22,.24),rgba(9,13,22,.36)),radial-gradient(1000px 800px at 50% 120%,rgba(0,0,0,.4),transparent 60%);z-index:-1;pointer-events:none}
   /* Top-down SVG fields (set via --bg in JS): stretch to fill, no diagonal sheen over them */
   body.theme-mlb::before,body.theme-nfl::before,body.theme-nba::before,body.theme-nhl::before{background-size:100% 100%;background-repeat:no-repeat;background-position:center}
   body.theme-mlb.boardview .wrap::before,body.theme-nfl.boardview .wrap::before,body.theme-nba.boardview .wrap::before,body.theme-nhl.boardview .wrap::before{display:none}
