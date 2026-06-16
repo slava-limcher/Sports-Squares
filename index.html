@@ -455,7 +455,10 @@ const CARD_SVG={
 function cardBg(key){const f=CARD_SVG[key]||FIELD_SVG[key];if(!f)return null;
   // Cards crop-to-fit (keep aspect) instead of stretching, so the art never looks squished.
   const svg=f().replace('preserveAspectRatio="none"','preserveAspectRatio="xMidYMid slice"');
-  return 'url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';}
+  const uri='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+  // Basketball card uses the real court photo (SVG kept as fallback for the deployed site).
+  if(key==="nba"||key==="ncaab")return 'url("'+COURT_IMG+'"), '+uri;
+  return uri;}
 // College presets reuse the football field / basketball court art.
 FIELD_SVG.ncaaf=FIELD_SVG.nfl; FIELD_SVG.ncaab=FIELD_SVG.nba; CARD_SVG.ncaaf=CARD_SVG.nfl;
 const COURT_VIDEO="court.mp4?v=2";  // basketball video background (local; not committed — see .gitignore)
