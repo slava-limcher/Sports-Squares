@@ -30,6 +30,8 @@
     --bg:radial-gradient(130% 75% at 50% -12%,rgba(255,238,205,.4),transparent 55%),radial-gradient(130% 80% at 50% 135%,rgba(0,0,0,.5),transparent 60%),repeating-linear-gradient(90deg,rgba(0,0,0,.06) 0 2px,transparent 2px 78px),linear-gradient(180deg,#d18a45,#9c5b27)}
   body.theme-nhl{--primary:#0a3d62;--primary-dark:#072a45;--accent:#74c0e8;--accent-dark:#3a9bd0;
     --bg:radial-gradient(120% 70% at 50% -10%,rgba(255,255,255,.5),transparent 52%),radial-gradient(130% 90% at 50% 135%,rgba(0,0,0,.45),transparent 60%),radial-gradient(60% 40% at 50% 38%,rgba(255,255,255,.16),transparent 60%),linear-gradient(180deg,#2c6f9c,#194e74 58%,#123f60)}
+  body.theme-ncaaf{--primary:#2f7d3a;--primary-dark:#205528;--accent:#f4b740;--accent-dark:#d39a1c}
+  body.theme-ncaab{--primary:#c5772f;--primary-dark:#9a5a20;--accent:#ffcf33;--accent-dark:#e3ab00}
   /* live-game setup */
   .liveset{margin-top:18px;border-top:2px dashed var(--line);padding-top:16px}
   .liveset .lab{margin-bottom:8px}
@@ -54,8 +56,8 @@
   /* Dark-mode scrim: dims every sport field background so the screen is easy on the eyes (not blinding) */
   body.themed::after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(9,13,22,.24),rgba(9,13,22,.36)),radial-gradient(1000px 800px at 50% 120%,rgba(0,0,0,.4),transparent 60%);z-index:-1;pointer-events:none}
   /* Top-down SVG fields (set via --bg in JS): stretch to fill, no diagonal sheen over them */
-  body.theme-mlb::before,body.theme-nfl::before,body.theme-nba::before,body.theme-nhl::before{background-size:100% 100%;background-repeat:no-repeat;background-position:center}
-  body.theme-mlb.boardview .wrap::before,body.theme-nfl.boardview .wrap::before,body.theme-nba.boardview .wrap::before,body.theme-nhl.boardview .wrap::before{display:none}
+  body.theme-mlb::before,body.theme-nfl::before,body.theme-nba::before,body.theme-nhl::before,body.theme-ncaaf::before,body.theme-ncaab::before{background-size:100% 100%;background-repeat:no-repeat;background-position:center}
+  body.theme-mlb.boardview .wrap::before,body.theme-nfl.boardview .wrap::before,body.theme-nba.boardview .wrap::before,body.theme-nhl.boardview .wrap::before,body.theme-ncaaf.boardview .wrap::before,body.theme-ncaab.boardview .wrap::before{display:none}
   body.theme-nhl .title .t1,body.theme-nhl .title .t2,body.theme-nhl .brandmini .bt{color:#eaf3fb;text-shadow:0 2px 4px rgba(0,0,0,.5)}
   /* "Pick Your Sport" home screen — always the same background, never a sport field */
   body.pick::before{background:
@@ -392,8 +394,10 @@ const THEMES={
   nfl:{key:"nfl",name:"Football",emoji:"🏈",teams:["Bolts","Maulers"],colors:["#0b3d91","#1f8a3b"],scoreBtns:[{lab:"TD +7",v:7},{lab:"FG +3",v:3},{lab:"+2",v:2},{lab:"+1",v:1}],checks:["Q1","Halftime","Q3","Final"],live:true,liveMarks:[1,2,3,"final"]},
   nba:{key:"nba",name:"Basketball",emoji:"🏀",teams:["Hoops","Dunkers"],colors:["#6a2bd1","#e07a1a"],scoreBtns:[{lab:"+1",v:1},{lab:"+2",v:2},{lab:"3PT +3",v:3}],checks:["Q1","Halftime","Q3","Final"],live:true,liveMarks:[1,2,3,"final"]},
   nhl:{key:"nhl",name:"Hockey",emoji:"🏒",teams:["Ice","Storm"],colors:["#0a3d62","#9c1f2e"],scoreBtns:[{lab:"🏒 Goal",v:1}],checks:["End 1st","End 2nd","Final"],live:true,liveMarks:[1,2,"final"]},
+  ncaaf:{key:"ncaaf",name:"College Football",emoji:"🏈",teams:["Tigers","Wolverines"],colors:["#9e1b32","#14213d"],scoreBtns:[{lab:"TD +7",v:7},{lab:"FG +3",v:3},{lab:"+2",v:2},{lab:"+1",v:1}],checks:["Q1","Halftime","Q3","Final"],live:true,liveMarks:[1,2,3,"final"]},
+  ncaab:{key:"ncaab",name:"College Basketball",emoji:"🏀",teams:["Tar Heels","Blue Devils"],colors:["#13294b","#c8102e"],scoreBtns:[{lab:"+1",v:1},{lab:"+2",v:2},{lab:"3PT +3",v:3}],checks:["Halftime","Final"],live:true,liveMarks:[1,"final"]},
 };
-const SPORT_ORDER=["mlb","nfl","nba","nhl"];
+const SPORT_ORDER=["mlb","nfl","nba","nhl","ncaaf","ncaab"];
 // BarBoards "BB" retro-TV brand mark (inline SVG so it works on the deployed site)
 const BB_LOGO='<svg viewBox="0 0 100 100" width="40" height="40" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#15213c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="45" x2="32" y2="21"/><line x1="50" y1="45" x2="75" y2="11"/><path d="M46 46 L54 46 L52 41 L48 41 Z" fill="#15213c" stroke="none"/><rect x="18" y="46" width="64" height="40" rx="5"/><text x="50" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="30" fill="#15213c" stroke="none">BB</text></svg>';
 /* ===== Top-down sport surfaces, drawn as SVG and applied via --bg ===== */
@@ -432,6 +436,8 @@ function cardBg(key){const f=CARD_SVG[key]||FIELD_SVG[key];if(!f)return null;
   // Cards crop-to-fit (keep aspect) instead of stretching, so the art never looks squished.
   const svg=f().replace('preserveAspectRatio="none"','preserveAspectRatio="xMidYMid slice"');
   return 'url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';}
+// College presets reuse the football field / basketball court art.
+FIELD_SVG.ncaaf=FIELD_SVG.nfl; FIELD_SVG.ncaab=FIELD_SVG.nba; CARD_SVG.ncaaf=CARD_SVG.nfl;
 function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
   const bg=fieldBg(key);if(bg)document.body.style.setProperty("--bg",bg);else document.body.style.removeProperty("--bg");}
 
@@ -440,7 +446,7 @@ function applyThemeClass(key){document.body.className=document.body.className.re
    ⚠️ Don't deploy this file publicly with the key embedded. localStorage overrides it. */
 const BDL_KEY_DEFAULT="377cfcf9-8ed1-4638-a26a-a9da7afce212";
 const BDL={
-  path:{mlb:"mlb",nfl:"nfl",nba:"nba",nhl:"nhl"},
+  path:{mlb:"mlb",nfl:"nfl",nba:"nba",nhl:"nhl",ncaaf:"ncaaf",ncaab:"ncaab"},
   getKey(){try{return localStorage.getItem("bdl-key")||BDL_KEY_DEFAULT;}catch(e){return BDL_KEY_DEFAULT;}},
   setKey(k){try{localStorage.setItem("bdl-key",(k||"").trim());}catch(e){}},
   async req(sport,ep,params){
@@ -453,6 +459,7 @@ const BDL={
   async schedule(sport){
     const n=new Date(),today=n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0")+"-"+String(n.getDate()).padStart(2,"0");
     if(sport==="nfl"){const season=n.getMonth()>=2?n.getFullYear():n.getFullYear()-1;const j=await this.req("nfl","/games",{seasons:[season],per_page:100});return j.data||[];}
+    if(sport==="ncaaf"||sport==="ncaab"){const end=new Date(n.getTime()+10*86400000);const ed=end.getFullYear()+"-"+String(end.getMonth()+1).padStart(2,"0")+"-"+String(end.getDate()).padStart(2,"0");const j=await this.req(sport,"/games",{start_date:today,end_date:ed,per_page:100});return (j.data||[]).slice(0,60);}
     const j=await this.req(sport,"/games",{dates:[today],per_page:100});return j.data||[];
   },
   async one(sport,id){const j=await this.req(sport,"/games/"+id);return j.data||j;}
@@ -468,6 +475,11 @@ function normGame(sport,g){
     away=bdlTeam(g.away_team);home=bdlTeam(g.home_team);
     as=g.away_score||0;hs=g.home_score||0;period=g.period||period;start=g.start_time_utc||g.game_date;
     const gs=(g.game_state||g.status||"").toUpperCase();state=(gs==="OFF"||gs.indexOf("FINAL")>=0)?"final":(gs==="LIVE"||gs==="CRIT")?"live":"pre";
+  }else if(sport==="ncaaf"||sport==="ncaab"){
+    const ct=t=>({name:(t&&(t.college||t.short_display_name||t.name||t.full_name))||"?",abbr:(t&&t.abbreviation)||"?"});
+    away=ct(g.visitor_team);home=ct(g.home_team);
+    as=g.away_score||0;hs=g.home_score||0;period=g.period||period;start=g.date;
+    const st=(g.status||"").toLowerCase();state=/post|final|complete/.test(st)?"final":(period>0?"live":"pre");
   }else{ // nba, nfl
     away=bdlTeam(g.visitor_team||g.away_team);home=bdlTeam(g.home_team);
     as=(g.visitor_team_score!=null?g.visitor_team_score:(g.away_team_score!=null?g.away_team_score:0));
@@ -478,7 +490,7 @@ function normGame(sport,g){
 }
 function computeWinProb(sport,as,hs,period,state){
   if(state==="final"){const d=hs-as;return d>0?0.985:d<0?0.015:0.5;}
-  const T={mlb:9,nfl:4,nba:4,nhl:3}[sport]||4;
+  const T={mlb:9,nfl:4,nba:4,nhl:3,ncaaf:4,ncaab:2}[sport]||4;
   const elapsed=Math.min(T,Math.max(0.4,period||0.4));const rem=Math.max(0.05,(T-elapsed)/T);
   const k=0.55/Math.sqrt(rem);let p=1/(1+Math.exp(-((hs-as)*k)));
   return Math.max(0.02,Math.min(0.98,p));
