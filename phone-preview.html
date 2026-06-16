@@ -17,6 +17,6 @@
        and rotates through every sport. Uses the directory URL so the query
        survives clean-URL hosts. -->
   <div class="frame"><iframe id="f" title="Phone preview" allowfullscreen></iframe></div>
-  <script>var s=new URLSearchParams(location.search).get('sport');document.getElementById('f').src='./?play&demo'+(s?'&sport='+encodeURIComponent(s):'');</script>
+  <script>var s=new URLSearchParams(location.search).get('sport');var base=location.href.split('#')[0].split('?')[0].replace(/[^/]*$/,'index.html');document.getElementById('f').src=base+'?play&demo'+(s?'&sport='+encodeURIComponent(s):'');</script>
 </body>
 </html>

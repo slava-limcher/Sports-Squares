@@ -617,7 +617,10 @@ const Host={
   previewSport(k,mode){Host.openPreview(mode,k);},
   openPreview(mode,k){
     const phone=(mode==="phone"); const v=phone?"play":"tv";
-    const url="./?"+v+"&demo"+((k&&THEMES[k])?"&sport="+encodeURIComponent(k):"");
+    // Build from the CURRENT page URL (strip any query/hash) so the preview loads exactly how
+    // this page did — including file:// (where "./?..." would open a folder listing, not the game).
+    const base=location.href.split('#')[0].split('?')[0];
+    const url=base+"?"+v+"&demo"+((k&&THEMES[k])?"&sport="+encodeURIComponent(k):"");
     const title=((k&&THEMES[k])?(THEMES[k].emoji+" "+THEMES[k].name):"All sports")+" — "+(phone?"Phone":"TV")+" preview";
     let m=$("previewModal");
     if(!m){m=document.createElement("div");m.id="previewModal";m.className="modalbd";m.onclick=(e)=>{if(e.target===m)Host.closePreview();};document.body.appendChild(m);}
