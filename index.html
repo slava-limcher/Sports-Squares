@@ -53,6 +53,8 @@
   .tvprops .pchip{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:6px 12px;font-weight:800;font-size:14px;color:var(--ink);white-space:nowrap}
   .tvprops .pchip .pn{color:var(--primary-dark)} .tvprops .pchip .po{color:var(--ink-soft)}
   body.themed::before{content:"";position:fixed;inset:0;background:var(--bg);z-index:-2}
+  /* Looping video background (basketball themes only); SVG court is the poster/fallback */
+  #bgvid{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;display:none;pointer-events:none}
   /* Dark-mode scrim: dims every sport field background so the screen is easy on the eyes (not blinding) */
   body.themed::after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(9,13,22,.24),rgba(9,13,22,.36)),radial-gradient(1000px 800px at 50% 120%,rgba(0,0,0,.4),transparent 60%);z-index:-1;pointer-events:none}
   /* Top-down SVG fields (set via --bg in JS): stretch to fill, no diagonal sheen over them */
@@ -439,8 +441,15 @@ function cardBg(key){const f=CARD_SVG[key]||FIELD_SVG[key];if(!f)return null;
   return 'url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';}
 // College presets reuse the football field / basketball court art.
 FIELD_SVG.ncaaf=FIELD_SVG.nfl; FIELD_SVG.ncaab=FIELD_SVG.nba; CARD_SVG.ncaaf=CARD_SVG.nfl;
+const COURT_VIDEO="court.mp4";  // basketball video background (local; not committed — see .gitignore)
+function setBgVideo(on){const v=$("bgvid");if(!v)return;
+  if(on){ if(v.getAttribute("src")!==COURT_VIDEO){v.setAttribute("src",COURT_VIDEO);v.setAttribute("poster","data:image/svg+xml,"+encodeURIComponent(FIELD_SVG.nba()));}
+    v.style.display="block"; const p=v.play&&v.play(); if(p&&p.catch)p.catch(()=>{}); }
+  else{ v.style.display="none"; try{v.pause();}catch(e){} }
+}
 function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
-  const bg=fieldBg(key);if(bg)document.body.style.setProperty("--bg",bg);else document.body.style.removeProperty("--bg");}
+  const bg=fieldBg(key);if(bg)document.body.style.setProperty("--bg",bg);else document.body.style.removeProperty("--bg");
+  setBgVideo(key==="nba"||key==="ncaab");}
 
 /* ===== LIVE DATA (balldontlie.io) — browser-direct; key kept in localStorage only ===== */
 /* Default balldontlie key baked in per user request (repo is private).
@@ -629,7 +638,7 @@ function ownersList(){const m={};S.grid.forEach(o=>{if(o.owner)m[o.owner]=(m[o.o
 
 function renderHost(){
   const root=$("root");
-  if(!S){root.innerHTML=pickSportHTML();document.body.className="themed theme-mlb pick";document.body.style.removeProperty("--bg");$("ctl").innerHTML="";return;}
+  if(!S){root.innerHTML=pickSportHTML();document.body.className="themed theme-mlb pick";document.body.style.removeProperty("--bg");setBgVideo(false);$("ctl").innerHTML="";return;}
   const th=curTheme();
   document.documentElement.style.setProperty("--awayc",S.away.color);
   document.documentElement.style.setProperty("--homec",S.home.color);
