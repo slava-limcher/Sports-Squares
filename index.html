@@ -443,7 +443,7 @@ function cardBg(key){const f=CARD_SVG[key]||FIELD_SVG[key];if(!f)return null;
   return 'url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';}
 // College presets reuse the football field / basketball court art.
 FIELD_SVG.ncaaf=FIELD_SVG.nfl; FIELD_SVG.ncaab=FIELD_SVG.nba; CARD_SVG.ncaaf=CARD_SVG.nfl;
-const COURT_VIDEO="court.mp4";  // basketball video background (local; not committed — see .gitignore)
+const COURT_VIDEO="court.mp4?v=2";  // basketball video background (local; not committed — see .gitignore)
 function setBgVideo(on){const v=$("bgvid");if(!v)return;
   if(on){ if(v.getAttribute("src")!==COURT_VIDEO){v.setAttribute("src",COURT_VIDEO);v.setAttribute("poster","data:image/svg+xml,"+encodeURIComponent(FIELD_SVG.nba()));}
     v.style.display="block"; const p=v.play&&v.play(); if(p&&p.catch)p.catch(()=>{}); }
