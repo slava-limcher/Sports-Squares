@@ -279,6 +279,8 @@
 
   /* phone */
   .phone-wrap{max-width:460px;margin:0 auto}
+  /* Phone cards match the TV: semi-transparent + blur so the sport background shows through */
+  .phone-wrap .card{background:linear-gradient(180deg,rgba(32,43,61,.74),rgba(22,30,44,.82));-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.06)}
   .pgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:8px}
   .pcell{aspect-ratio:1/1;border-radius:5px;background:#2a3547;border:2px solid #3a4760;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#8fa0b5;overflow:hidden;cursor:pointer}
   .pcell.mine{color:#fff}.pcell.taken{opacity:.9;cursor:not-allowed}.pcell.sel{box-shadow:0 0 0 2px var(--accent);background:#3a3417}.pcell.live{box-shadow:0 0 0 2px var(--accent)}
