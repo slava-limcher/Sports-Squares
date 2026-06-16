@@ -400,7 +400,9 @@ const THEMES={
   ncaaf:{key:"ncaaf",name:"College Football",emoji:"🏈",teams:["Tigers","Wolverines"],colors:["#9e1b32","#14213d"],scoreBtns:[{lab:"TD +7",v:7},{lab:"FG +3",v:3},{lab:"+2",v:2},{lab:"+1",v:1}],checks:["Q1","Halftime","Q3","Final"],live:true,liveMarks:[1,2,3,"final"]},
   ncaab:{key:"ncaab",name:"College Basketball",emoji:"🏀",teams:["Tar Heels","Blue Devils"],colors:["#13294b","#c8102e"],scoreBtns:[{lab:"+1",v:1},{lab:"+2",v:2},{lab:"3PT +3",v:3}],checks:["Halftime","Final"],live:true,liveMarks:[1,"final"]},
 };
-const SPORT_ORDER=["mlb","nfl","nba","nhl","ncaaf","ncaab"];
+const SPORT_ORDER=["mlb","nfl","nba","nhl"];
+// Football & basketball each pull their pro league + the college league in the live-games list.
+const SUBLEAGUES={nfl:["nfl","ncaaf"],nba:["nba","ncaab"]};
 // BarBoards "BB" retro-TV brand mark (inline SVG so it works on the deployed site)
 const BB_LOGO='<svg viewBox="0 0 100 100" width="40" height="40" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#15213c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="45" x2="32" y2="21"/><line x1="50" y1="45" x2="75" y2="11"/><path d="M46 46 L54 46 L52 41 L48 41 Z" fill="#15213c" stroke="none"/><rect x="18" y="46" width="64" height="40" rx="5"/><text x="50" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="30" fill="#15213c" stroke="none">BB</text></svg>';
 /* ===== Top-down sport surfaces, drawn as SVG and applied via --bg ===== */
