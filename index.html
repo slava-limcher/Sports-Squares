@@ -59,6 +59,8 @@
   body.themed::after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(9,13,22,.24),rgba(9,13,22,.36)),radial-gradient(1000px 800px at 50% 120%,rgba(0,0,0,.4),transparent 60%);z-index:-1;pointer-events:none}
   /* Top-down SVG fields (set via --bg in JS): stretch to fill, no diagonal sheen over them */
   body.theme-mlb::before,body.theme-nfl::before,body.theme-nba::before,body.theme-nhl::before,body.theme-ncaaf::before,body.theme-ncaab::before{background-size:100% 100%;background-repeat:no-repeat;background-position:center}
+  /* Basketball uses a real court PHOTO (1st bg) cover-cropped; the SVG fallback (2nd bg) still stretches */
+  body.theme-nba::before,body.theme-ncaab::before{background-size:cover,100% 100%;background-position:center;background-repeat:no-repeat}
   body.theme-mlb.boardview .wrap::before,body.theme-nfl.boardview .wrap::before,body.theme-nba.boardview .wrap::before,body.theme-nhl.boardview .wrap::before,body.theme-ncaaf.boardview .wrap::before,body.theme-ncaab.boardview .wrap::before{display:none}
   body.theme-nhl .title .t1,body.theme-nhl .title .t2,body.theme-nhl .brandmini .bt{color:#eaf3fb;text-shadow:0 2px 4px rgba(0,0,0,.5)}
   /* "Pick Your Sport" home screen — always the same background, never a sport field */
@@ -462,9 +464,16 @@ function setBgVideo(on){const v=$("bgvid");if(!v)return;
     v.style.display="block"; const p=v.play&&v.play(); if(p&&p.catch)p.catch(()=>{}); }
   else{ v.style.display="none"; try{v.pause();}catch(e){} }
 }
+// Real top-down court photo for basketball (local-only, see .gitignore). The drawn SVG
+// court is listed as a 2nd background so the deployed site — which has no local photo —
+// still falls back to it gracefully.
+const COURT_IMG="court.jpg?v=1";
 function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
-  const bg=fieldBg(key);if(bg)document.body.style.setProperty("--bg",bg);else document.body.style.removeProperty("--bg");
-  setBgVideo(key==="nba"||key==="ncaab");}
+  const isBball=(key==="nba"||key==="ncaab");const svg=fieldBg(key);
+  if(isBball)document.body.style.setProperty("--bg",'url("'+COURT_IMG+'")'+(svg?", "+svg:""));
+  else if(svg)document.body.style.setProperty("--bg",svg);
+  else document.body.style.removeProperty("--bg");
+  setBgVideo(false);}
 
 /* ===== LIVE DATA (balldontlie.io) — browser-direct; key kept in localStorage only ===== */
 /* Default balldontlie key baked in per user request (repo is private).
