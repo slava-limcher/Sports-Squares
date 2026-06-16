@@ -605,9 +605,16 @@ const Host={
     showLiveLink();},
   async loadLiveGames(){const k=BDL.getKey();if(!k)return;
     const box=$("liveList");if(box)box.innerHTML='<div style="padding:10px;color:var(--ink-soft);font-weight:700">Loading today\'s games…</div>';
-    try{const raw=await BDL.schedule(S.theme);const ord={live:0,pre:1,final:2};_liveGames=raw.map(g=>normGame(S.theme,g)).filter(Boolean).sort((a,b)=>ord[a.state]-ord[b.state]);renderHost();}
-    catch(e){if(box)box.innerHTML='<div style="padding:10px;color:var(--bad);font-weight:800">Couldn\'t load games ('+(e.status||e.message)+').</div>';}},
-  pickLiveGame(i){const g=_liveGames[i];if(!g)return;S.live={sport:S.theme,gameId:g.id};S.away.name=g.away.name;S.home.name=g.home.name;renderHost();},
+    const leagues=SUBLEAGUES[S.theme]||[S.theme];
+    try{
+      const lists=await Promise.all(leagues.map(lg=>BDL.schedule(lg).then(raw=>(raw||[]).map(g=>normGame(lg,g)).filter(Boolean)).catch(()=>[])));
+      const ord={live:0,pre:1,final:2};
+      _liveGames=lists.flat().sort((a,b)=>ord[a.state]-ord[b.state]);renderHost();
+    }catch(e){if(box)box.innerHTML='<div style="padding:10px;color:var(--bad);font-weight:800">Couldn\'t load games ('+(e.status||e.message)+').</div>';}},
+  pickLiveGame(i){const g=_liveGames[i];if(!g)return;S.live={sport:g.sport,gameId:g.id};S.away.name=g.away.name;S.home.name=g.home.name;
+    // align the board's checkpoints to the picked league (college basketball = halves, etc.)
+    if(THEMES[g.sport])S.checks=THEMES[g.sport].checks.map(lab=>({lab,done:false,idx:null,winner:null}));
+    renderHost();},
   clearLive(){S.live=null;stopLivePoll();renderHost();},
   next(){const s=S.step;
     if(s===1&&!S.rowDigits){S.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]);S.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]);}
@@ -667,11 +674,11 @@ function setupHTML(th){return `${headerHTML(th)}<div class="pickmid"><div class=
    <div style="margin-top:12px"><button class="btn soft" onclick="Host.backToPick()">⟵ Pick a different sport</button></div>
    </div>${guideHTML(th)}</div></div>`;}
 function liveSetupHTML(th){
-  const list=_liveGames.length?`<div class="gamelist">${_liveGames.map((g,i)=>`<div class="gamerow ${(S.live&&S.live.gameId===g.id)?'sel':''}" onclick="Host.pickLiveGame(${i})"><div class="gnm">${esc(g.away.name)} @ ${esc(g.home.name)}</div><div class="gst ${g.state}">${g.state==='live'?'● Live':g.state==='final'?'Final':'Upcoming'}</div></div>`).join("")}</div>`
+  const list=_liveGames.length?`<div class="gamelist">${_liveGames.map((g,i)=>`<div class="gamerow ${(S.live&&S.live.gameId===g.id)?'sel':''}" onclick="Host.pickLiveGame(${i})"><div class="gnm">${esc(g.away.name)} @ ${esc(g.home.name)}${(g.sport==='ncaaf'||g.sport==='ncaab')?' <span style="font-size:10px;font-weight:800;background:#6d4bd1;color:#fff;border-radius:6px;padding:1px 6px;margin-left:6px;vertical-align:middle">COLLEGE</span>':''}</div><div class="gst ${g.state}">${g.state==='live'?'● Live':g.state==='final'?'Final':'Upcoming'}</div></div>`).join("")}</div>`
     :`<div style="color:var(--ink-soft);font-weight:700;padding:8px 2px">No ${esc(th.name)} games today — run it manually below.</div>`;
   const picked=S.live?`<div style="margin-top:10px;font-weight:800;color:var(--primary-dark)">🔴 Tracking <b>${esc(S.away.name)} @ ${esc(S.home.name)}</b> — score will auto-update. <a href="#" onclick="Host.clearLive();return false" style="color:var(--bad)">clear</a></div>`:"";
   return `<div class="liveset">
-    <label class="lab">🔴 Today's live ${esc(th.name)} games (optional)</label>
+    <label class="lab">🔴 Today's live ${esc(SUBLEAGUES[th.key]?(th.key==="nfl"?"football (NFL + College)":"basketball (NBA + College)"):th.name)} games (optional)</label>
     <div id="liveList">${list}</div>
     <div style="margin-top:8px"><button class="btn soft sm" onclick="Host.loadLiveGames()">↻ Refresh</button></div>${picked}
     <div class="hint" style="margin-top:8px;color:var(--ink-soft);font-weight:700">Tap a game and it auto-scores, advances & awards winners. Skip it to run manually.</div>
