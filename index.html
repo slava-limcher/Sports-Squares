@@ -75,11 +75,14 @@
   .modalbd{position:fixed;inset:0;background:rgba(8,14,24,.62);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px}
   .modalbox{background:var(--card);border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.5);max-width:560px;width:100%;max-height:94vh;overflow:auto;padding:26px 28px;text-align:center}
   /* In-page preview modal (iframe) — reliable, no popup blocking */
-  .previewbox{background:var(--card);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);width:min(96vw,1120px);max-height:94vh;display:flex;flex-direction:column;gap:10px;padding:14px}
+  .previewbox{background:var(--card);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);width:min(96vw,1120px);max-height:94vh;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:14px}
   .previewbox.phone{width:min(94vw,430px)}
   .pv-head{display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--display);font-weight:700;color:var(--ink);font-size:18px}
-  .pv-frame{flex:1;border-radius:14px;overflow:hidden;background:#05080f;aspect-ratio:16/9}
-  .pv-frame.pv-phone{aspect-ratio:9/19;max-height:80vh;width:auto;margin:0 auto}
+  .pv-head .pv-actions{display:flex;gap:8px;align-items:center}
+  .pv-head a.btn{text-decoration:none}
+  /* Deterministic sizing: height derives from width via aspect-ratio (no flex:1, which can collapse to 0) */
+  .pv-frame{width:100%;border-radius:14px;overflow:hidden;background:#05080f;aspect-ratio:16/9}
+  .pv-frame.pv-phone{aspect-ratio:9/19;height:min(78vh,720px);width:auto;align-self:center;margin:0 auto}
   .pv-frame iframe{width:100%;height:100%;border:0;display:block}
   .modalbox h2{font-family:var(--display);font-weight:700;font-size:26px;margin:2px 0}
   .ll-tag{font-weight:800;color:var(--bad);letter-spacing:2px;font-size:14px}
@@ -616,7 +619,10 @@ const Host={
     const title=((k&&THEMES[k])?(THEMES[k].emoji+" "+THEMES[k].name):"All sports")+" — "+(phone?"Phone":"TV")+" preview";
     let m=$("previewModal");
     if(!m){m=document.createElement("div");m.id="previewModal";m.className="modalbd";m.onclick=(e)=>{if(e.target===m)Host.closePreview();};document.body.appendChild(m);}
-    m.innerHTML=`<div class="previewbox ${phone?'phone':''}"><div class="pv-head"><span>${esc(title)}</span><button class="btn soft sm" onclick="Host.closePreview()">✕ Close</button></div><div class="pv-frame ${phone?'pv-phone':''}"><iframe src="${url}" title="preview" allowfullscreen></iframe></div></div>`;
+    // A real anchor (target=_blank) is never popup-blocked — guaranteed fallback if the iframe can't render.
+    m.innerHTML=`<div class="previewbox ${phone?'phone':''}"><div class="pv-head"><span>${esc(title)}</span>
+        <span class="pv-actions"><a class="btn soft sm" href="${url}" target="_blank" rel="noopener">↗ Open full</a><button class="btn soft sm" onclick="Host.closePreview()">✕ Close</button></span></div>
+      <div class="pv-frame ${phone?'pv-phone':''}"><iframe id="pvIframe" src="${url}" title="preview" allowfullscreen></iframe></div></div>`;
     m.style.display="flex";
   },
   closePreview(){const m=$("previewModal");if(m){m.innerHTML="";m.style.display="none";}},
