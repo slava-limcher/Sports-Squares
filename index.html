@@ -289,6 +289,19 @@
   .cpick .sw{width:36px;height:36px;border-radius:50%;background:var(--sw);border:2px solid rgba(255,255,255,.3);cursor:pointer;padding:0;-webkit-appearance:none;appearance:none;transition:transform .12s,box-shadow .12s}
   .cpick .sw.on{box-shadow:0 0 0 3px var(--card),0 0 0 6px var(--accent);transform:scale(1.14)}
   .cpick .sw:active{transform:scale(.9)}
+  /* Logo (emoji) picker */
+  .lpick{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:6px 0 2px}
+  .lpick .lg{width:42px;height:42px;border-radius:12px;background:#10151f;border:2px solid #2c3a4f;font-size:22px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;appearance:none;transition:transform .12s,border-color .12s}
+  .lpick .lg.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);transform:scale(1.1)}
+  .lpick .lg:active{transform:scale(.9)}
+  .legend .you-logo{font-size:15px;vertical-align:-2px}
+  /* Square contents: chosen logo (emoji) stacked over initials */
+  .cell.owned{flex-direction:column;gap:1px;line-height:1}
+  .cell .sq-logo{font-size:clamp(12px,calc(var(--cell,30px)*0.52),64px);line-height:1}
+  .cell .sq-ini{font-family:var(--display);font-weight:700;font-size:clamp(10px,calc(var(--cell,30px)*0.40),46px);line-height:1;letter-spacing:.5px}
+  .pcell{flex-direction:column;gap:0}
+  .pcell .psq-logo{font-size:14px;line-height:1}
+  .pcell .psq-ini{font-size:8px;font-weight:800;line-height:1;letter-spacing:.3px}
 
   #toast{position:fixed;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:200}#toast.show{display:flex}
   #toast .c{font-family:var(--display);font-weight:700;font-size:clamp(36px,8vw,86px);color:#fff;text-align:center;text-shadow:0 4px 0 var(--primary-dark),0 12px 30px rgba(0,0,0,.4);animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
@@ -671,7 +684,7 @@ const Host={
     renderHost();},
 };
 function hostApplyClaim(p){if(!S||!canClaimSt(S))return;const owned=S.grid.filter(o=>o.owner===p.alias).length;let budget=Math.max(0,S.maxPer-owned);
-  (p.cells||[]).forEach(i=>{if(budget<=0)return;if(i>=0&&i<100&&!S.grid[i].owner){S.grid[i]={owner:p.alias,color:p.color};budget--;}});renderHost();pushState();}
+  (p.cells||[]).forEach(i=>{if(budget<=0)return;if(i>=0&&i<100&&!S.grid[i].owner){S.grid[i]={owner:p.alias,color:p.color,logo:p.logo||null,ini:p.ini||initialsOf(p.alias)};budget--;}});renderHost();pushState();}
 
 /* ---- RENDER (host & tv share) ---- */
 function claimedCount(){return S.grid.filter(o=>o.owner).length;}
@@ -737,7 +750,7 @@ function gridHTML(th){
       const owner=o.owner||null;const isNew=owner&&_fx.owners[i]!==owner;
       const cls=["cell"];if(owner)cls.push("owned");if(isNew)cls.push("pop");if(liveSquareOn(S)&&i===lc)cls.push("live");if(wc)cls.push("won");
       _fx.owners[i]=owner;
-      const st=owner?`style="background:${o.color};--oc:${o.color}"`:"";const lab=owner?esc(shortName(owner)):((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
+      const st=owner?`style="background:${o.color};--oc:${o.color}"`:"";const lab=owner?`<span class="sq-logo">${o.logo||"🏀"}</span><span class="sq-ini">${esc(o.ini||initialsOf(owner))}</span>`:((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
       cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}}
   _fx.numbersShown=numsNow;
   return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)} ▸ (across)</div>
@@ -898,7 +911,8 @@ function openChannel(code){const sb=liveClient();if(live.channel){try{sb.removeC
 const PLAYER_COLORS=["#2f6fed","#19a7d6","#17b3a3","#36b24a","#e3a90f","#e8772a","#e8553e","#d6468f","#9b6bff","#ffffff"];
 let myName=(()=>{try{return localStorage.getItem("gameday-squares-name")||"";}catch(e){return"";}})();
 let myColor=(()=>{try{return localStorage.getItem("gameday-squares-color")||"";}catch(e){return"";}})();
-const phone={name:myName,color:myColor||null,sel:new Set(),remote:null};
+let myLogo=(()=>{try{return localStorage.getItem("gameday-squares-logo")||"";}catch(e){return"";}})();
+const phone={name:myName,color:myColor||null,logo:myLogo||null,sel:new Set(),remote:null};
 function phoneColor(){if(!phone.color){let h=0;for(const c of(phone.name||"x"))h=(h*31+c.charCodeAt(0))>>>0;phone.color=PLAYER_COLORS[h%PLAYER_COLORS.length];}return phone.color;}
 // Color picker swatches (player picks their own square color).
 function colorPickerHTML(){const cur=phoneColor();return `<div class="cpick">`+PLAYER_COLORS.map(c=>`<button type="button" class="sw${cur===c?' on':''}" style="--sw:${c}" data-c="${c}" onclick="phonePickColor('${c}')" aria-label="Pick color ${c}"></button>`).join("")+`</div>`;}
@@ -906,12 +920,23 @@ function phonePickColor(c){phone.color=c;try{localStorage.setItem("gameday-squar
   // Update live without a full re-render (so a half-typed name / selected squares aren't lost).
   document.querySelectorAll(".cpick .sw").forEach(b=>b.classList.toggle("on",(b.dataset.c||"")===c));
   const leg=document.querySelector(".legend .you-sw");if(leg)leg.style.background=c;}
+// Curated emoji logos a player picks for their squares (shown alongside their initials).
+const LOGOS=["🏀","🔥","⚡","⭐","👑","💎","🚀","🎯","🦅","🦁","🐉","🦈","🐺","🐯","🐻","🦊","🏆","💪","😎","👽"];
+function phoneLogo(){if(!phone.logo){let h=0;for(const c of(phone.name||"x"))h=(h*7+c.charCodeAt(0))>>>0;phone.logo=LOGOS[h%LOGOS.length];}return phone.logo;}
+function logoPickerHTML(){const cur=phoneLogo();return `<div class="lpick">`+LOGOS.map(e=>`<button type="button" class="lg${cur===e?' on':''}" data-l="${e}" onclick="phonePickLogo('${e}')" aria-label="Pick logo">${e}</button>`).join("")+`</div>`;}
+function phonePickLogo(e){phone.logo=e;try{localStorage.setItem("gameday-squares-logo",e);}catch(_){}
+  // Update live without a full re-render (keep a half-typed name / selected squares).
+  document.querySelectorAll(".lpick .lg").forEach(b=>b.classList.toggle("on",(b.dataset.l||"")===e));
+  const lp=document.querySelector(".legend .you-logo");if(lp)lp.textContent=e;}
+// Initials from a name: first letters of two words, else first two letters.
+function initialsOf(name){if(!name)return"";const p=name.trim().split(/\s+/);return (p.length>=2?(p[0][0]+p[1][0]):name.trim().slice(0,2)).toUpperCase();}
 function renderPhone(){const root=$("root");
   if(!phone.name){root.innerHTML=`<div class="phone-wrap"><div class="topbar"><div class="logo">${BB_LOGO}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Join the board</div></div></div>
     <div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:6px">What's your name?</h3>
     <p style="color:var(--ink-soft);font-weight:700;margin-bottom:14px">Tap squares to claim them. If your square is winning when a period ends, you win! 🏆</p>
     <input class="tin" id="nm" maxlength="14" placeholder="Your name…" value="${esc(phone.name)}">
     <div class="cpick-lbl">Pick your color</div>${colorPickerHTML()}
+    <div class="cpick-lbl">Pick your logo</div>${logoPickerHTML()}
     <button class="btn primary big wide" style="margin-top:14px" onclick="phoneSetName()">Join ▸</button></div></div>`;return;}
   const r=phone.remote;
   if(!r){root.innerHTML=`<div class="phone-wrap"><div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:22px">Waiting for the board…</h3><p style="color:var(--ink-soft);font-weight:700;margin-top:8px">Scan the TV's QR. Room <b>${esc(live.code||"?")}</b>.</p></div></div>`;return;}
@@ -930,7 +955,8 @@ function renderPhone(){const root=$("root");
       else if(o.owner)cls.push("taken");
       if(canClaim&&phone.sel.has(i))cls.push("sel");if(liveSquareOn(r)&&i===lc)cls.push("live");
       _fxP.owners[i]=o.owner||null;
-      cells+=`<div class="${cls.join(" ")}" ${o.owner?`style="background:${o.color};--oc:${o.color}"`:""} data-i="${i}"></div>`;}
+      const pc=o.owner?`<span class="psq-logo">${o.logo||"🏀"}</span><span class="psq-ini">${esc(o.ini||initialsOf(o.owner))}</span>`:"";
+      cells+=`<div class="${cls.join(" ")}" ${o.owner?`style="background:${o.color};--oc:${o.color}"`:""} data-i="${i}">${pc}</div>`;}
     if(st===4){ // WINNERS slide
       const wins=r.checks.filter(c=>c.done);const youWon=wins.filter(c=>c.winner===phone.name).map(c=>c.lab);
       body=`<div class="card" style="text-align:center"><div style="font-size:50px">🏆</div><h2 style="font-family:var(--display);font-weight:700;font-size:24px">${youWon.length?`You won ${esc(youWon.join(', '))}! 🎉`:'Final'}</h2>
@@ -941,9 +967,9 @@ function renderPhone(){const root=$("root");
       const sub=canClaim?`Up to ${r.maxPer} each (${budget} left)`:esc(meta.pmsg||"");
       body=`<div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:19px">${headline}</h3>
         <p style="color:var(--ink-soft);font-weight:700;margin:4px 0 4px">${sub}</p>
-        ${canClaim?`<div class="cpick-lbl">Your color</div>${colorPickerHTML()}`:""}
+        ${canClaim?`<div class="cpick-lbl">Your color</div>${colorPickerHTML()}<div class="cpick-lbl">Your logo</div>${logoPickerHTML()}`:""}
         <div class="pgrid" id="pGrid">${cells}</div>
-        <div class="legend"><span><i class="you-sw" style="background:${phoneColor()}"></i>You</span><span><i style="background:#2a3547;border:1px solid #3a4760"></i>Open</span><span><i style="background:#56657c"></i>Taken</span>${liveSquareOn(r)?'<span><i style="background:var(--accent)"></i>Winning now</span>':''}</div>
+        <div class="legend"><span><i class="you-sw" style="background:${phoneColor()}"></i>You <span class="you-logo">${phoneLogo()}</span></span><span><i style="background:#2a3547;border:1px solid #3a4760"></i>Open</span><span><i style="background:#56657c"></i>Taken</span>${liveSquareOn(r)?'<span><i style="background:var(--accent)"></i>Winning now</span>':''}</div>
         ${canClaim?`<button class="btn primary big wide" style="margin-top:12px" id="claimBtn" ${phone.sel.size?"":"disabled"}>Claim ${phone.sel.size||""} Square${phone.sel.size===1?"":"s"}</button>`:""}</div>`;
     }
   }
@@ -952,7 +978,7 @@ function renderPhone(){const root=$("root");
   fxAfterRender(phone.remote);
 }
 function phoneSetName(){const v=$("nm").value.trim().slice(0,14);if(!v)return;phone.name=v;try{localStorage.setItem("gameday-squares-name",v);}catch(e){}renderPhone();}
-function phoneClaim(){if(!phone.sel.size)return;const cells=Array.from(phone.sel);if(live.channel){try{live.channel.send({type:"broadcast",event:"claim",payload:{alias:phone.name,color:phoneColor(),cells}});}catch(e){}}mini(`Claiming ${cells.length} square${cells.length===1?"":"s"}…`);phone.sel.clear();renderPhone();}
+function phoneClaim(){if(!phone.sel.size)return;const cells=Array.from(phone.sel);if(live.channel){try{live.channel.send({type:"broadcast",event:"claim",payload:{alias:phone.name,color:phoneColor(),logo:phoneLogo(),ini:initialsOf(phone.name),cells}});}catch(e){}}mini(`Claiming ${cells.length} square${cells.length===1?"":"s"}…`);phone.sel.clear();renderPhone();}
 function phoneWin(p){if(p.winner===phone.name){phoneCelebrate(p.label);}}
 function applyRemote(row){const r=row.rounds;if(!r||r.kind!=="sports-squares")return;phone.remote=r;if(isTV){S=r;renderTV();}else renderPhone();}
 async function joinAsViewer(code){live.role=isTV?"tv":"player";live.code=code;if(!liveConfigured())return;const sb=liveClient();try{const {data}=await sb.from(LIVE_TABLE).select("*").eq("room_code",code).maybeSingle();if(data)applyRemote(data);}catch(e){}openChannel(code);}
@@ -995,7 +1021,7 @@ function startTVDemo(){
     const key=demoSport||SPORT_ORDER[sportI++ % SPORT_ORDER.length];
     S=freshState(key); applyThemeClass(key); document.body.classList.add("tv");
     const order=shuffle(Array.from({length:100},(_,i)=>i));
-    order.slice(0,78).forEach((idx,k)=>{ const ni=k%names.length; S.grid[idx]={owner:names[ni],color:PLAYER_COLORS[ni%PLAYER_COLORS.length]}; });
+    order.slice(0,78).forEach((idx,k)=>{ const ni=k%names.length; S.grid[idx]={owner:names[ni],color:PLAYER_COLORS[ni%PLAYER_COLORS.length],logo:LOGOS[ni%LOGOS.length],ini:initialsOf(names[ni])}; });
     S.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); S.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]);
     S.step=3; S.score={away:0,home:0}; awarded=0;
     document.documentElement.style.setProperty("--awayc",S.away.color);
@@ -1022,7 +1048,7 @@ function startPhoneDemo(){
     const key=demoSport||SPORT_ORDER[sportI++ % SPORT_ORDER.length]; const th=THEMES[key];
     const grid=Array.from({length:100},()=>({owner:null,color:null}));
     const order=shuffle(Array.from({length:100},(_,i)=>i));
-    order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length]};});
+    order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length],logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};});
     phone.remote={kind:"sports-squares",theme:key,step:0,away:{name:th.teams[0],color:th.colors[0]},home:{name:th.teams[1],color:th.colors[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
     phone.sel=new Set(); renderPhone();
   }
@@ -1034,8 +1060,8 @@ function startPhoneDemo(){
     if(r.step===0){ if(step%2===0) r.step=1; }
     else if(r.step===1){
       if(phone.sel.size<4 && Math.random()<0.75){ const free=freeCells().filter(i=>!phone.sel.has(i)); if(free.length)phone.sel.add(free[Math.floor(Math.random()*free.length)]); }
-      else { phone.sel.forEach(i=>{ if(!r.grid[i].owner) r.grid[i]={owner:"You",color:phoneColor()}; }); phone.sel=new Set(); }
-      if(Math.random()<0.5){ const free=freeCells(); if(free.length){const ni=Math.floor(Math.random()*others.length); r.grid[free[Math.floor(Math.random()*free.length)]]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length]};} }
+      else { phone.sel.forEach(i=>{ if(!r.grid[i].owner) r.grid[i]={owner:"You",color:phoneColor(),logo:phoneLogo(),ini:initialsOf("You")}; }); phone.sel=new Set(); }
+      if(Math.random()<0.5){ const free=freeCells(); if(free.length){const ni=Math.floor(Math.random()*others.length); r.grid[free[Math.floor(Math.random()*free.length)]]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length],logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};} }
       if(step%6===0){ r.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); r.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); r.step=2; }
     } else if(r.step===2){ if(step%3===0) r.step=3; }
     else {
