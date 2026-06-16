@@ -194,7 +194,8 @@
     box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 7px rgba(0,0,0,.32),0 2px 4px rgba(0,0,0,.28),0 0 12px -3px var(--oc,transparent)}
   .cell.qmark{color:#b9c2b9;font-size:15px}
   .cell.live{z-index:6;animation:lp 1.3s ease-in-out infinite}
-  .cell.won{box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 0 0 3px #ffce3a,0 0 18px rgba(255,200,60,.75);z-index:3} .cell .wtag{position:absolute;top:0;right:2px;font-size:10px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
+  .cell.won{box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 0 0 3px #ffce3a,0 0 18px rgba(255,200,60,.75);z-index:3;animation:wonpulse 1.5s ease-in-out infinite} .cell .wtag{position:absolute;top:0;right:2px;font-size:10px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
+  @keyframes wonpulse{0%,100%{box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 0 0 3px #ffce3a,0 0 18px rgba(255,200,60,.7);transform:scale(1)}50%{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 0 0 5px #ffd957,0 0 34px rgba(255,210,70,1);transform:scale(1.06)}}
   @keyframes lp{0%,100%{box-shadow:0 0 0 3px var(--accent),0 0 10px 2px rgba(255,207,51,.55),0 0 22px 6px rgba(255,207,51,.3);transform:scale(1)}50%{box-shadow:0 0 0 4px var(--accent),0 0 22px 6px rgba(255,207,51,1),0 0 42px 14px rgba(255,207,51,.5);transform:scale(1.07)}}
 
   /* ===== FX: claim pop, number-draw reveal, score bump, stage transition, confetti, winner card ===== */
@@ -209,16 +210,22 @@
   .confetti{position:fixed;inset:0;pointer-events:none;z-index:9998;overflow:hidden}
   .confetti i{position:absolute;top:-16px;width:10px;height:15px;border-radius:2px;will-change:transform;animation:cfall linear forwards}
   @keyframes cfall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(106vh) rotate(900deg);opacity:.85}}
-  .winfx{position:fixed;left:50%;top:42%;z-index:9999;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;text-align:center;
-    background:linear-gradient(180deg,#fffbe9,#ffe6a0);border:5px solid var(--accent);border-radius:26px;padding:24px 46px;box-shadow:0 34px 90px rgba(0,0,0,.5)}
-  .winfx .ttl{font-family:var(--display);font-weight:700;font-size:24px;color:#8a6500}
-  .winfx .who{font-family:var(--display);font-weight:700;font-size:clamp(40px,6vw,64px);color:var(--primary-dark);line-height:1;margin:4px 0}
-  .winfx .sub{font-weight:800;color:#8a6500}
-  .winfx.show{animation:winpop 2.6s ease forwards}
-  @keyframes winpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}10%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}18%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
+  .winfx{position:fixed;left:50%;top:44%;z-index:9999;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;text-align:center;
+    background:linear-gradient(180deg,#fffbe9,#ffe08f);border:6px solid var(--accent);border-radius:30px;padding:30px 64px;box-shadow:0 40px 110px rgba(0,0,0,.6),0 0 0 10px rgba(255,206,58,.18),0 0 130px 24px rgba(255,200,60,.4)}
+  .winfx .wf-trophy{font-size:90px;line-height:1;filter:drop-shadow(0 10px 14px rgba(0,0,0,.35));animation:wftrophy 1s ease-in-out infinite}
+  .winfx .ttl{font-family:var(--display);font-weight:700;font-size:30px;color:#8a6500;text-transform:uppercase;letter-spacing:1px}
+  .winfx .who{font-family:var(--display);font-weight:700;font-size:clamp(54px,8vw,108px);color:var(--primary-dark);line-height:1;margin:6px 0}
+  .winfx .sub{font-weight:800;color:#8a6500;font-size:24px}
+  @keyframes wftrophy{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
+  .winfx.show{animation:winpop 3.4s ease forwards}
+  @keyframes winpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}8%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}14%{transform:translate(-50%,-50%) scale(1)}88%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
   /* Full-screen "YOU WON!" takeover on the winning player's phone */
-  .youwon{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;
+  .youwon{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;overflow:hidden;
     background:radial-gradient(circle at 50% 38%,rgba(34,118,62,.92),rgba(8,14,24,.96))}
+  .youwon .yw-rays{position:absolute;width:200vmax;height:200vmax;z-index:0;pointer-events:none;
+    background:conic-gradient(from 0deg,rgba(255,211,77,.18) 0 11deg,transparent 11deg 22deg);animation:ywspin 16s linear infinite}
+  .youwon>*:not(.yw-rays){position:relative;z-index:1}
+  @keyframes ywspin{to{transform:rotate(360deg)}}
   .youwon.show{animation:ywfade 5.2s ease forwards}
   .youwon .yw-trophy{font-size:130px;line-height:1;filter:drop-shadow(0 10px 16px rgba(0,0,0,.5));animation:ywbounce 1s ease-in-out infinite}
   .youwon .yw-big{font-family:var(--display);font-weight:700;font-size:clamp(54px,16vw,92px);color:#ffd34d;line-height:1;margin-top:10px;text-shadow:0 5px 0 rgba(0,0,0,.35);animation:ywpop .6s cubic-bezier(.2,1.4,.4,1) both}
@@ -233,7 +240,7 @@
   body.boardview .wrap::before{content:"";position:fixed;inset:-30%;z-index:-1;pointer-events:none;opacity:.05;
     background:repeating-linear-gradient(115deg,#fff 0 3px,transparent 3px 120px);animation:ambient 34s linear infinite}
   @keyframes ambient{to{transform:translate(120px,60px)}}
-  @media(prefers-reduced-motion:reduce){.cell.pop,.pcell.pop,.cell.hdr.reveal,.bump,.stagein,.winfx.show,body.boardview .wrap::before,.cell.live{animation:none!important}}
+  @media(prefers-reduced-motion:reduce){.cell.pop,.pcell.pop,.cell.hdr.reveal,.bump,.stagein,.winfx.show,.winfx .wf-trophy,.cell.won,.youwon .yw-rays,body.boardview .wrap::before,.cell.live{animation:none!important}}
 
   /* scoreboard mini */
   .scoremini{display:flex;gap:12px}
@@ -271,6 +278,12 @@
   .pcell{aspect-ratio:1/1;border-radius:5px;background:#2a3547;border:2px solid #3a4760;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#8fa0b5;overflow:hidden;cursor:pointer}
   .pcell.mine{color:#fff}.pcell.taken{opacity:.9;cursor:not-allowed}.pcell.sel{box-shadow:0 0 0 2px var(--accent);background:#3a3417}.pcell.live{box-shadow:0 0 0 2px var(--accent)}
   .legend{display:flex;gap:14px;font-size:12px;color:var(--ink-soft);margin-top:10px;flex-wrap:wrap;font-weight:800}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  /* Player color picker */
+  .cpick-lbl{text-align:center;color:var(--ink-soft);font-weight:800;font-size:12px;letter-spacing:.6px;text-transform:uppercase;margin-top:8px}
+  .cpick{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:6px 0 2px}
+  .cpick .sw{width:36px;height:36px;border-radius:50%;background:var(--sw);border:2px solid rgba(255,255,255,.3);cursor:pointer;padding:0;-webkit-appearance:none;appearance:none;transition:transform .12s,box-shadow .12s}
+  .cpick .sw.on{box-shadow:0 0 0 3px var(--card),0 0 0 6px var(--accent);transform:scale(1.14)}
+  .cpick .sw:active{transform:scale(.9)}
 
   #toast{position:fixed;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:200}#toast.show{display:flex}
   #toast .c{font-family:var(--display);font-weight:700;font-size:clamp(36px,8vw,86px);color:#fff;text-align:center;text-shadow:0 4px 0 var(--primary-dark),0 12px 30px rgba(0,0,0,.4);animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
@@ -708,7 +721,7 @@ function gridHTML(th){
       const st=owner?`style="background:${o.color};--oc:${o.color}"`:"";const lab=owner?esc(shortName(owner)):((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
       cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}}
   _fx.numbersShown=numsNow;
-  return `<div class="gridcard"><div class="slidebanner">${esc(meta.ptitle||meta.name)}</div><div class="axislabel">${esc(S.home.name)} ▸ (across)</div>
+  return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)} ▸ (across)</div>
     <div class="gridrow"><div class="axisleft">${esc(S.away.name)} ▸</div><div class="sqgrid">${cells}</div></div></div>`;
 }
 /* Post-render effects: stage transition, score bump, award confetti + winner card.
@@ -735,13 +748,13 @@ function fxAfterRender(state){
   _fx.done=cur;
 }
 function celebrate(chk){
-  confettiBurst();
+  confettiBurst(true);setTimeout(()=>confettiBurst(true),500);
   if(!chk||!chk.winner) return;
   let card=document.querySelector(".winfx");
   if(!card){card=document.createElement("div");card.className="winfx";document.body.appendChild(card);}
-  card.innerHTML=`<div class="ttl">🏆 ${esc(chk.lab)}</div><div class="who">${esc(chk.winner)}</div><div class="sub">wins this one!</div>`;
+  card.innerHTML=`<div class="wf-trophy">🏆</div><div class="ttl">${esc(chk.lab)}</div><div class="who">${esc(chk.winner)}</div><div class="sub">wins this square!</div>`;
   card.classList.remove("show");void card.offsetWidth;card.classList.add("show");
-  clearTimeout(window.__winfxT);window.__winfxT=setTimeout(()=>card.classList.remove("show"),2600);
+  clearTimeout(window.__winfxT);window.__winfxT=setTimeout(()=>card.classList.remove("show"),3400);
 }
 // Full-screen "YOU WON!" takeover for the winning player's phone (deduped per award).
 function phoneCelebrate(label){
@@ -749,19 +762,19 @@ function phoneCelebrate(label){
   const now=Date.now();
   if(window.__ywLabel===label && now-(window.__ywTs||0)<6000) return; // already celebrating this win
   window.__ywLabel=label; window.__ywTs=now;
-  confettiBurst(); setTimeout(confettiBurst,450); setTimeout(confettiBurst,1000);
+  confettiBurst(true); setTimeout(()=>confettiBurst(true),400); setTimeout(()=>confettiBurst(true),900); setTimeout(()=>confettiBurst(true),1500);
   try{ if(navigator.vibrate) navigator.vibrate([0,70,50,70,50,220]); }catch(e){}
   let o=$("youwon"); if(!o){o=document.createElement("div");o.id="youwon";o.className="youwon";document.body.appendChild(o);}
-  o.innerHTML=`<div class="yw-trophy">🏆</div><div class="yw-big">YOU WON!</div>${label?`<div class="yw-sub">${esc(label)}</div>`:""}<div class="yw-tap">tap to keep playing</div>`;
+  o.innerHTML=`<div class="yw-rays"></div><div class="yw-trophy">🏆</div><div class="yw-big">YOU WON!</div>${label?`<div class="yw-sub">${esc(label)}</div>`:""}<div class="yw-tap">tap to keep playing</div>`;
   const close=()=>{o.classList.remove("show");o.style.pointerEvents="none";};
   o.onclick=close;
   o.classList.remove("show");void o.offsetWidth;o.classList.add("show");o.style.pointerEvents="auto";
   clearTimeout(window.__ywT);window.__ywT=setTimeout(close,5200);
 }
-function confettiBurst(){
+function confettiBurst(big){
   const wrap=document.createElement("div");wrap.className="confetti";
   const cols=["#ffcf33","#2fb35e","#3a6df0","#e8553e","#c455bf","#ffffff","#ff9f1c","#34d1bf"];
-  const N=92;
+  const N=big?160:92;
   for(let k=0;k<N;k++){const p=document.createElement("i");
     p.style.background=cols[k%cols.length];
     p.style.left=(Math.random()*100).toFixed(2)+"%";
@@ -862,15 +875,25 @@ function openChannel(code){const sb=liveClient();if(live.channel){try{sb.removeC
     .subscribe();}
 
 /* ---- PHONE ---- */
-const PLAYER_COLORS=["#3a6df0","#2fb35e","#e0772a","#c455bf","#e3a90f","#1ba6bd","#e8553e","#8a6bff","#3fae84","#d98a1e"];
+// Curated, clean palette players choose from (blue-led, plus white) — not random.
+const PLAYER_COLORS=["#2f6fed","#19a7d6","#17b3a3","#36b24a","#e3a90f","#e8772a","#e8553e","#d6468f","#9b6bff","#ffffff"];
 let myName=(()=>{try{return localStorage.getItem("gameday-squares-name")||"";}catch(e){return"";}})();
-const phone={name:myName,color:null,sel:new Set(),remote:null};
+let myColor=(()=>{try{return localStorage.getItem("gameday-squares-color")||"";}catch(e){return"";}})();
+const phone={name:myName,color:myColor||null,sel:new Set(),remote:null};
 function phoneColor(){if(!phone.color){let h=0;for(const c of(phone.name||"x"))h=(h*31+c.charCodeAt(0))>>>0;phone.color=PLAYER_COLORS[h%PLAYER_COLORS.length];}return phone.color;}
+// Color picker swatches (player picks their own square color).
+function colorPickerHTML(){const cur=phoneColor();return `<div class="cpick">`+PLAYER_COLORS.map(c=>`<button type="button" class="sw${cur===c?' on':''}" style="--sw:${c}" data-c="${c}" onclick="phonePickColor('${c}')" aria-label="Pick color ${c}"></button>`).join("")+`</div>`;}
+function phonePickColor(c){phone.color=c;try{localStorage.setItem("gameday-squares-color",c);}catch(e){}
+  // Update live without a full re-render (so a half-typed name / selected squares aren't lost).
+  document.querySelectorAll(".cpick .sw").forEach(b=>b.classList.toggle("on",(b.dataset.c||"")===c));
+  const leg=document.querySelector(".legend .you-sw");if(leg)leg.style.background=c;}
 function renderPhone(){const root=$("root");
   if(!phone.name){root.innerHTML=`<div class="phone-wrap"><div class="topbar"><div class="logo">${BB_LOGO}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Join the board</div></div></div>
     <div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:6px">What's your name?</h3>
     <p style="color:var(--ink-soft);font-weight:700;margin-bottom:14px">Tap squares to claim them. If your square is winning when a period ends, you win! 🏆</p>
-    <input class="tin" id="nm" maxlength="14" placeholder="Your name…" value="${esc(phone.name)}"><button class="btn primary big wide" style="margin-top:14px" onclick="phoneSetName()">Join ▸</button></div></div>`;return;}
+    <input class="tin" id="nm" maxlength="14" placeholder="Your name…" value="${esc(phone.name)}">
+    <div class="cpick-lbl">Pick your color</div>${colorPickerHTML()}
+    <button class="btn primary big wide" style="margin-top:14px" onclick="phoneSetName()">Join ▸</button></div></div>`;return;}
   const r=phone.remote;
   if(!r){root.innerHTML=`<div class="phone-wrap"><div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:22px">Waiting for the board…</h3><p style="color:var(--ink-soft);font-weight:700;margin-top:8px">Scan the TV's QR. Room <b>${esc(live.code||"?")}</b>.</p></div></div>`;return;}
   applyThemeClass(r.theme);document.body.classList.remove("tv");
@@ -899,8 +922,9 @@ function renderPhone(){const root=$("root");
       const sub=canClaim?`Up to ${r.maxPer} each (${budget} left)`:esc(meta.pmsg||"");
       body=`<div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:19px">${headline}</h3>
         <p style="color:var(--ink-soft);font-weight:700;margin:4px 0 4px">${sub}</p>
+        ${canClaim?`<div class="cpick-lbl">Your color</div>${colorPickerHTML()}`:""}
         <div class="pgrid" id="pGrid">${cells}</div>
-        <div class="legend"><span><i style="background:${phoneColor()}"></i>You</span><span><i style="background:#2a3547;border:1px solid #3a4760"></i>Open</span><span><i style="background:#56657c"></i>Taken</span>${liveSquareOn(r)?'<span><i style="background:var(--accent)"></i>Winning now</span>':''}</div>
+        <div class="legend"><span><i class="you-sw" style="background:${phoneColor()}"></i>You</span><span><i style="background:#2a3547;border:1px solid #3a4760"></i>Open</span><span><i style="background:#56657c"></i>Taken</span>${liveSquareOn(r)?'<span><i style="background:var(--accent)"></i>Winning now</span>':''}</div>
         ${canClaim?`<button class="btn primary big wide" style="margin-top:12px" id="claimBtn" ${phone.sel.size?"":"disabled"}>Claim ${phone.sel.size||""} Square${phone.sel.size===1?"":"s"}</button>`:""}</div>`;
     }
   }
