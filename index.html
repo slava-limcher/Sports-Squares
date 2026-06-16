@@ -973,7 +973,7 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
       </div>
       <div class="brandmini" style="visibility:hidden"><div class="logo">${th.emoji}</div><div class="bt">GAME DAY SQUARES</div></div>
     </div>
-    ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Claim on your phone</div><div class="c">${live.code}</div></div><div class="qr" id="qrBox"></div></div>`:""}
+    ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">📱 Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
     ${(S.winProb!=null)?`<div class="tvwp"><div class="lab"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>Win Probability</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div></div>`:""}
     ${(S.props&&S.props.length)?`<div class="tvprops">${S.props.map(p=>`<div class="pchip"><span class="pn">${esc(p.name)}</span> ${esc(p.prop)} ${esc(String(p.line))} <span class="po">${(p.odds>0?"+":"")+(p.odds!=null?p.odds:"")}</span></div>`).join("")}</div>`:""}
     <div class="tvboardwrap">${gridHTML(th)}</div>
