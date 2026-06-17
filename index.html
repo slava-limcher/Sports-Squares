@@ -380,8 +380,8 @@
   .brandmini .bt .live{color:var(--accent)}
   .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:transparent;box-shadow:none;padding:2px 28px;min-height:0}
   .tvt{flex:1;display:flex;align-items:center;gap:16px}
-  .tvscoreboard .tvt:first-child{justify-content:flex-end}
-  .tvscoreboard .tvt:last-child{justify-content:flex-start}
+  .tvscoreboard .tvt:first-child{justify-content:flex-start}
+  .tvscoreboard .tvt:last-child{justify-content:flex-end}
   .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,3.4vw,60px);background:rgba(255,255,255,.92);padding:2px 18px;border-radius:14px;text-shadow:none}
   .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(52px,5.2vw,92px);color:var(--ink);min-width:64px;text-align:center;text-shadow:0 2px 7px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.6)}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
@@ -399,7 +399,7 @@
   .tvjoin .qr{width:340px;height:340px;background:#fff;border-radius:14px;padding:12px}
   .tvjoin .qr img,.tvjoin .qr canvas{display:block;width:100%;height:100%}
   @media (max-height:840px){.tvjoin .qr{width:250px;height:250px}.tvjoin .rl .l{font-size:24px}.tvjoin{left:18px;bottom:18px;padding:14px 16px;gap:10px}}
-  .tvboardwrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+  .tvboardwrap{flex:1;display:flex;align-items:flex-start;justify-content:center;min-height:0}
   .tvboardwrap .sqgrid{margin:0 auto;flex:0 0 auto}
   /* Shorter TVs (720p): keep it big but fit without scrolling */
   @media (max-height:840px){
@@ -1062,7 +1062,6 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
     <div class="tvhead">
       <div class="tvscoreboard">
         <div class="tvt"><span class="n" style="color:${S.away.color};border-bottom:5px solid ${S.away.color2||S.away.color};padding-bottom:3px">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div>
-        <div class="tvsep"></div>
         <div class="tvt"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color};border-bottom:5px solid ${S.home.color2||S.home.color};padding-bottom:3px">${esc(S.home.name)}</span></div>
       </div>
     </div>
