@@ -191,7 +191,7 @@
   .sqgrid{perspective:900px}
   .cell{border-radius:7px;background:linear-gradient(180deg,#2b3649,#222b3b);border:1px solid #3a4760;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -2px 3px rgba(0,0,0,.25),0 1px 1px rgba(0,0,0,.2)}
-  .cell.hdr{background:transparent;border:none;box-shadow:none;font-family:var(--display);font-weight:700;font-size:clamp(20px,calc(var(--cell,30px)*1.08),155px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
+  .cell.hdr{background:transparent;border:none;box-shadow:none;overflow:visible;font-family:var(--display);font-weight:700;font-size:clamp(24px,calc(var(--cell,30px)*1.34),210px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
   .cell.hdr.top{color:#fff}.cell.hdr.left{color:#fff}
   .cell.corner{background:transparent;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
@@ -373,7 +373,7 @@
   body.boardview .stack:first-child{justify-content:center;align-items:center}
   body.boardview .sqgrid{margin:0 auto;flex:0 0 auto}
   /* ===== Clean TV view: scoreboard + big board only ===== */
-  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:6px;width:100%}
+  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:2px;width:100%}
   .tvhead{display:flex;align-items:center;gap:18px;flex:0 0 auto}
   .brandmini{display:flex;align-items:center;gap:12px;flex:0 0 auto}
   .brandmini .logo{width:54px;height:54px;border-radius:14px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:var(--shadow);border:3px solid rgba(0,0,0,.08)}
@@ -413,7 +413,7 @@
     body.tv .roomtag .rl .c{font-size:34px}
     body.tv .slidebanner{font-size:22px;margin-bottom:4px}
     body.tv .sqgrid{width:min(100%,54vh)}
-    body.tv .gridcard{padding:12px}
+    body.tv .gridcard{padding:6px}
     body.tv .title .t1{font-size:30px}
     body.tv .axislabel{margin-bottom:8px}
     body.tv .tcol{padding:12px}
@@ -946,8 +946,8 @@ function fitBoard(){
   const card=grid.closest('.gridcard'); if(!card) return;
   const wrap=card.parentElement; if(!wrap) return;
   const banner=card.querySelector('.slidebanner'), axis=card.querySelector('.axislabel'), aleft=card.querySelector('.axisleft');
-  const chromeV=30+(banner?banner.offsetHeight+8:0)+(axis?axis.offsetHeight+8:0);
-  const chromeH=30+(aleft?aleft.offsetWidth+8:0);
+  const chromeV=12+(banner?banner.offsetHeight+4:0)+(axis?axis.offsetHeight+6:0);
+  const chromeH=12+(aleft?aleft.offsetWidth+6:0);
   const side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)));
   grid.style.width=side+"px"; grid.style.height=side+"px";
   // publish the per-cell size on the gridcard so square text, drawn numbers AND the axis
@@ -957,7 +957,10 @@ function fitBoard(){
 let __fitT=null;
 // Re-fit several times + after web fonts load, so the board sizes correctly even when
 // fonts load late on a fresh machine (otherwise the header grows after sizing -> overlap).
-function scheduleFit(){fitBoard();[70,200,450].forEach(d=>setTimeout(fitBoard,d));}
+function scheduleFit(){fitBoard();[70,200,450].forEach(d=>setTimeout(fitBoard,d));
+  // Watch the board's container (which shrinks/grows as the scoreboard settles after font load)
+  // and refit — prevents a stale, oversized board that overflows the screen bottom.
+  if(!window.__fitRO && window.ResizeObserver){const wrap=document.querySelector('.tvboardwrap');if(wrap){window.__fitRO=new ResizeObserver(()=>{clearTimeout(window.__roT);window.__roT=setTimeout(fitBoard,40);});try{window.__fitRO.observe(wrap);}catch(e){}}}}
 function refitIfBoard(){if(document.body.classList.contains("boardview"))fitBoard();}
 window.addEventListener("resize",()=>{ if(document.body.classList.contains("boardview")){ clearTimeout(__fitT); __fitT=setTimeout(fitBoard,80); } });
 window.addEventListener("load",refitIfBoard);
