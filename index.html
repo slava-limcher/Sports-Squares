@@ -289,6 +289,13 @@
   .cpick .sw{width:36px;height:36px;border-radius:50%;background:var(--sw);border:2px solid rgba(255,255,255,.3);cursor:pointer;padding:0;-webkit-appearance:none;appearance:none;transition:transform .12s,box-shadow .12s}
   .cpick .sw.on{box-shadow:0 0 0 3px var(--card),0 0 0 6px var(--accent);transform:scale(1.14)}
   .cpick .sw:active{transform:scale(.9)}
+  /* "Who are you rooting for?" team picker */
+  .teamrow{display:flex;gap:10px;justify-content:center;margin:6px 0 2px}
+  .teampick{flex:1;max-width:210px;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 10px;border-radius:14px;background:#10151f;border:2px solid #2c3a4f;color:var(--ink);font-family:var(--display);font-weight:700;font-size:17px;cursor:pointer;-webkit-appearance:none;appearance:none;transition:transform .12s,border-color .12s,box-shadow .12s}
+  .teampick .tp-dot{width:18px;height:18px;border-radius:50%;background:var(--tc);flex:0 0 auto;box-shadow:0 0 0 2px rgba(255,255,255,.16)}
+  .teampick .tp-nm{line-height:1.05}
+  .teampick.on{border-color:var(--tc);box-shadow:0 0 0 3px var(--tc);transform:scale(1.03)}
+  .teampick:active{transform:scale(.96)}
   /* Logo (emoji) picker */
   .lpick{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:6px 0 2px}
   .lpick .lg{width:42px;height:42px;border-radius:12px;background:#10151f;border:2px solid #2c3a4f;font-size:22px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;appearance:none;transition:transform .12s,border-color .12s}
@@ -930,14 +937,16 @@ const PLAYER_COLORS=["#2f6fed","#19a7d6","#17b3a3","#36b24a","#e3a90f","#e8772a"
 let myName=(()=>{try{return localStorage.getItem("gameday-squares-name")||"";}catch(e){return"";}})();
 let myColor=(()=>{try{return localStorage.getItem("gameday-squares-color")||"";}catch(e){return"";}})();
 let myLogo=(()=>{try{return localStorage.getItem("gameday-squares-logo")||"";}catch(e){return"";}})();
-const phone={name:myName,color:myColor||null,logo:myLogo||null,sel:new Set(),remote:null};
-function phoneColor(){if(!phone.color){let h=0;for(const c of(phone.name||"x"))h=(h*31+c.charCodeAt(0))>>>0;phone.color=PLAYER_COLORS[h%PLAYER_COLORS.length];}return phone.color;}
-// Color picker swatches (player picks their own square color).
-function colorPickerHTML(){const cur=phoneColor();return `<div class="cpick">`+PLAYER_COLORS.map(c=>`<button type="button" class="sw${cur===c?' on':''}" style="--sw:${c}" data-c="${c}" onclick="phonePickColor('${c}')" aria-label="Pick color ${c}"></button>`).join("")+`</div>`;}
-function phonePickColor(c){phone.color=c;try{localStorage.setItem("gameday-squares-color",c);}catch(e){}
-  // Update live without a full re-render (so a half-typed name / selected squares aren't lost).
-  document.querySelectorAll(".cpick .sw").forEach(b=>b.classList.toggle("on",(b.dataset.c||"")===c));
-  const leg=document.querySelector(".legend .you-sw");if(leg)leg.style.background=c;}
+let myTeam=(()=>{try{return localStorage.getItem("gameday-squares-team")||"";}catch(e){return"";}})();
+const phone={name:myName,color:myColor||null,logo:myLogo||null,team:(myTeam==="home"?"home":"away"),sel:new Set(),remote:null};
+// Square color = the color of the team you're rooting for, so the board stays cohesive (two team colors, not a random rainbow).
+function phoneColor(){const r=phone.remote;const side=(phone.team==="home"?"home":"away");if(r&&r[side]&&r[side].color)return r[side].color;return TEAM_COLORS[side==="home"?1:0];}
+// "Who are you rooting for?" picker — your squares take that team's color.
+function teamPickerHTML(r){if(!r)return "";const cur=(phone.team==="home"?"home":"away");const opt=(side)=>{const t=r[side];return `<button type="button" class="teampick${cur===side?' on':''}" style="--tc:${t.color}" data-side="${side}" onclick="phonePickTeam('${side}')"><span class="tp-dot"></span><span class="tp-nm">${esc(t.name)}</span></button>`;};return `<div class="teamrow">${opt("away")}${opt("home")}</div>`;}
+function phonePickTeam(side){side=(side==="home"?"home":"away");phone.team=side;const r=phone.remote;if(r&&r[side])phone.color=r[side].color;try{localStorage.setItem("gameday-squares-team",side);}catch(e){}
+  // Update selection + legend without a full re-render (keep selected squares).
+  document.querySelectorAll(".teampick").forEach(b=>b.classList.toggle("on",(b.dataset.side||"")===side));
+  const leg=document.querySelector(".legend .you-sw");if(leg&&r&&r[side])leg.style.background=r[side].color;}
 // Curated emoji logos a player picks for their squares (shown alongside their initials).
 const LOGOS=["🏀","🔥","⚡","⭐","👑","💎","🚀","🎯","🦅","🦁","🐉","🦈","🐺","🐯","🐻","🦊","🏆","💪","😎","👽"];
 function phoneLogo(){if(!phone.logo){let h=0;for(const c of(phone.name||"x"))h=(h*7+c.charCodeAt(0))>>>0;phone.logo=LOGOS[h%LOGOS.length];}return phone.logo;}
@@ -953,7 +962,6 @@ function renderPhone(){const root=$("root");
     <div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:6px">What's your name?</h3>
     <p style="color:var(--ink-soft);font-weight:700;margin-bottom:14px">Tap squares to claim them. If your square is winning when a period ends, you win! 🏆</p>
     <input class="tin" id="nm" maxlength="14" placeholder="Your name…" value="${esc(phone.name)}">
-    <div class="cpick-lbl">Pick your color</div>${colorPickerHTML()}
     <div class="cpick-lbl">Pick your logo</div>${logoPickerHTML()}
     <button class="btn primary big wide" style="margin-top:14px" onclick="phoneSetName()">Join ▸</button></div></div>`;return;}
   const r=phone.remote;
@@ -985,7 +993,7 @@ function renderPhone(){const root=$("root");
       const sub=canClaim?`Up to ${r.maxPer} each (${budget} left)`:esc(meta.pmsg||"");
       body=`<div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:19px">${headline}</h3>
         <p style="color:var(--ink-soft);font-weight:700;margin:4px 0 4px">${sub}</p>
-        ${canClaim?`<div class="cpick-lbl">Your color</div>${colorPickerHTML()}<div class="cpick-lbl">Your logo</div>${logoPickerHTML()}`:""}
+        ${canClaim?`<div class="cpick-lbl">Who are you rooting for?</div>${teamPickerHTML(r)}<div class="cpick-lbl">Your logo</div>${logoPickerHTML()}`:""}
         <div class="pgrid" id="pGrid">${cells}</div>
         <div class="legend"><span><i class="you-sw" style="background:${phoneColor()}"></i>You <span class="you-logo">${phoneLogo()}</span></span><span><i style="background:#2a3547;border:1px solid #3a4760"></i>Open</span><span><i style="background:#56657c"></i>Taken</span>${liveSquareOn(r)?'<span><i style="background:var(--accent)"></i>Winning now</span>':''}</div>
         ${canClaim?`<button class="btn primary big wide" style="margin-top:12px" id="claimBtn" ${phone.sel.size?"":"disabled"}>Claim ${phone.sel.size||""} Square${phone.sel.size===1?"":"s"}</button>`:""}</div>`;
