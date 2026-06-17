@@ -360,13 +360,12 @@
   .tvqr .qr{width:170px;height:170px;background:#fff;border-radius:10px;padding:6px}
   .tvqr .qr img,.tvqr .qr canvas{display:block;width:100%;height:100%}
   /* TV join card pinned to the bottom-left corner, bigger QR */
-  .tvjoin{position:fixed;left:26px;bottom:26px;z-index:30;display:flex;align-items:center;gap:16px;background:var(--card);border-radius:18px;padding:14px 18px;box-shadow:var(--shadow)}
-  .tvjoin .rl{text-align:right;line-height:1.1}
-  .tvjoin .rl .l{font-size:13px;color:var(--ink-soft);font-weight:800;letter-spacing:2px;text-transform:uppercase}
-  .tvjoin .rl .c{font-family:var(--display);font-weight:700;font-size:42px;color:var(--ink);letter-spacing:3px}
-  .tvjoin .qr{width:230px;height:230px;background:#fff;border-radius:12px;padding:8px}
+  .tvjoin{position:fixed;left:26px;bottom:26px;z-index:30;display:flex;flex-direction:column;align-items:center;gap:14px;background:var(--card);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow)}
+  .tvjoin .rl{text-align:center;line-height:1.08}
+  .tvjoin .rl .l{font-family:var(--display);font-size:30px;color:var(--ink);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .tvjoin .qr{width:340px;height:340px;background:#fff;border-radius:14px;padding:12px}
   .tvjoin .qr img,.tvjoin .qr canvas{display:block;width:100%;height:100%}
-  @media (max-height:840px){.tvjoin .qr{width:172px;height:172px}.tvjoin .rl .c{font-size:34px}.tvjoin{left:18px;bottom:18px;padding:11px 14px}}
+  @media (max-height:840px){.tvjoin .qr{width:250px;height:250px}.tvjoin .rl .l{font-size:24px}.tvjoin{left:18px;bottom:18px;padding:14px 16px;gap:10px}}
   .tvboardwrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
   .tvboardwrap .sqgrid{margin:0 auto;flex:0 0 auto}
   /* Shorter TVs (720p): keep it big but fit without scrolling */
@@ -699,7 +698,7 @@ function renderHost(){
   if(live.role!=="host"){document.body.classList.remove("boardview");root.innerHTML=setupHTML(th);wireSetup();return;}
   document.body.classList.add("boardview");
   root.innerHTML=`${headerHTML(th)}<div class="main"><div class="stack">${gridHTML(th)}</div><div class="stack rail">${railHTML(th)}</div></div>`;
-  ctlBar();if(live.code)showQR("qrBox",joinUrl(),360);
+  ctlBar();if(live.code)showQR("qrBox",joinUrl(),460);
   scheduleFit();
   fxAfterRender();
 }
@@ -1003,7 +1002,7 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
     ${(S.props&&S.props.length)?`<div class="tvprops">${S.props.map(p=>`<div class="pchip"><span class="pn">${esc(p.name)}</span> ${esc(p.prop)} ${esc(String(p.line))} <span class="po">${(p.odds>0?"+":"")+(p.odds!=null?p.odds:"")}</span></div>`).join("")}</div>`:""}
     <div class="tvboardwrap">${gridHTML(th)}</div>
   </div>`;
-  if(showJoin)showQR("qrBox",joinUrl(),360);
+  if(showJoin)showQR("qrBox",joinUrl(),460);
   scheduleFit();
   fxAfterRender();}
 
