@@ -317,7 +317,7 @@
   #ctl{position:fixed;left:14px;bottom:12px;z-index:130;display:flex;gap:8px}#ctl button{background:var(--card);border:none;color:var(--ink);border-radius:12px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
   /* TV: hide host controls + go BIG for across-the-room legibility */
   body.tv .hostonly{display:none!important} body.tv #ctl{display:none}
-  body.tv .wrap{padding:22px 26px 36px}
+  body.tv .wrap{padding:10px 24px 14px}
   body.tv .topbar,body.tv .main{max-width:1880px}
   body.tv .main{grid-template-columns:1.85fr 1fr;gap:22px}
   body.tv .logo{width:66px;height:66px;font-size:38px}
@@ -349,13 +349,13 @@
   body.boardview .stack:first-child{justify-content:center;align-items:center}
   body.boardview .sqgrid{margin:0 auto;flex:0 0 auto}
   /* ===== Clean TV view: scoreboard + big board only ===== */
-  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:12px;width:100%}
+  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:6px;width:100%}
   .tvhead{display:flex;align-items:center;gap:18px;flex:0 0 auto}
   .brandmini{display:flex;align-items:center;gap:12px;flex:0 0 auto}
   .brandmini .logo{width:54px;height:54px;border-radius:14px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:var(--shadow);border:3px solid rgba(0,0,0,.08)}
   .brandmini .bt{font-family:var(--display);font-weight:700;font-size:22px;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18);line-height:1.05}
   .brandmini .bt .live{color:var(--accent)}
-  .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:transparent;box-shadow:none;padding:8px 28px;min-height:84px}
+  .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:transparent;box-shadow:none;padding:2px 28px;min-height:0}
   .tvt{flex:1;display:flex;align-items:center;gap:16px}
   .tvscoreboard .tvt:first-child{justify-content:flex-end}
   .tvscoreboard .tvt:last-child{justify-content:flex-start}
@@ -592,7 +592,7 @@ async function liveTick(){
   renderHost();pushState();
   // player props (best-effort) — refresh occasionally; hide if the tier returns none
   S._pollN=(S._pollN||0)+1;
-  if(S._pollN===1||S._pollN%4===0){ fetchProps(S.live.sport,S.live.gameId).then(p=>{ if(p===null)return; S.props=p.length?p:null; renderHost(); pushState(); }); }
+  // Player-props strip removed from the TV (per user) — no longer fetched/displayed.
 }
 function liveAutoAward(g){
   const marks=(THEMES[S.live.sport]&&THEMES[S.live.sport].liveMarks)||[];
@@ -1029,7 +1029,6 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
     </div>
     ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
     ${(S.winProb!=null)?`<div class="tvwp"><div class="lab"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>Win Probability</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div></div>`:""}
-    ${(S.props&&S.props.length)?`<div class="tvprops">${S.props.map(p=>`<div class="pchip"><span class="pn">${esc(p.name)}</span> ${esc(p.prop)} ${esc(String(p.line))} <span class="po">${(p.odds>0?"+":"")+(p.odds!=null?p.odds:"")}</span></div>`).join("")}</div>`:""}
     <div class="tvboardwrap">${gridHTML(th)}</div>
   </div>`;
   if(showJoin)showQR("qrBox",joinUrl(),460);
