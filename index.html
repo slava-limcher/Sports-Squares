@@ -362,7 +362,7 @@
   /* TV join card pinned to the bottom-left corner, bigger QR */
   .tvjoin{position:fixed;left:26px;bottom:26px;z-index:30;display:flex;flex-direction:column;align-items:center;gap:14px;background:var(--card);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow)}
   .tvjoin .rl{text-align:center;line-height:1.08}
-  .tvjoin .rl .l{font-family:var(--display);font-size:30px;color:var(--ink);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+  .tvjoin .rl .l{font-family:var(--body);font-size:30px;color:var(--ink);font-weight:800;letter-spacing:.5px;text-transform:uppercase}
   .tvjoin .qr{width:340px;height:340px;background:#fff;border-radius:14px;padding:12px}
   .tvjoin .qr img,.tvjoin .qr canvas{display:block;width:100%;height:100%}
   @media (max-height:840px){.tvjoin .qr{width:250px;height:250px}.tvjoin .rl .l{font-size:24px}.tvjoin{left:18px;bottom:18px;padding:14px 16px;gap:10px}}
@@ -997,7 +997,7 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
       </div>
       <div class="brandmini" style="visibility:hidden"><div class="logo">${th.emoji}</div><div class="bt">GAME DAY SQUARES</div></div>
     </div>
-    ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">📱 Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
+    ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
     ${(S.winProb!=null)?`<div class="tvwp"><div class="lab"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>Win Probability</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div></div>`:""}
     ${(S.props&&S.props.length)?`<div class="tvprops">${S.props.map(p=>`<div class="pchip"><span class="pn">${esc(p.name)}</span> ${esc(p.prop)} ${esc(String(p.line))} <span class="po">${(p.odds>0?"+":"")+(p.odds!=null?p.odds:"")}</span></div>`).join("")}</div>`:""}
     <div class="tvboardwrap">${gridHTML(th)}</div>
