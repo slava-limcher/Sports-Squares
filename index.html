@@ -44,11 +44,12 @@
   .livebadge{display:inline-flex;align-items:center;gap:7px;background:#e8553e;color:#fff;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:6px 13px}
   .livebadge .dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:lp 1.3s infinite}
   /* TV win-probability meter */
-  .tvwp{max-width:min(1500px,96vw);margin:0 auto;width:100%}
-  .tvwp .lab{display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,56px);color:#fff;text-shadow:0 2px 5px rgba(0,0,0,.7);margin-bottom:8px}
-  .tvwp .bar{height:34px;border-radius:14px;overflow:hidden;display:flex;border:3px solid rgba(255,255,255,.4);background:#2a3547}
+  /* TV win-probability meter — compact, pinned lower-left so the board fills top-to-bottom */
+  .tvwp{position:fixed;left:24px;bottom:24px;width:min(380px,28vw);z-index:25}
+  .tvwp .wp-title{font-family:var(--display);font-weight:700;font-size:clamp(16px,1.5vw,28px);color:#fff;text-align:center;text-transform:uppercase;letter-spacing:1px;text-shadow:0 2px 5px rgba(0,0,0,.8);margin-bottom:6px}
+  .tvwp .bar{height:26px;border-radius:12px;overflow:hidden;display:flex;border:3px solid rgba(255,255,255,.4);background:#2a3547}
   .tvwp .bar .a{background:var(--awayc,#3a6df0);transition:width .6s} .tvwp .bar .h{background:var(--homec,#e8553e);transition:width .6s}
-  .tvwp .bar b{display:flex;align-items:center;color:#fff;font-size:16px;padding:0 11px}
+  .tvwp .wp-ends{display:flex;justify-content:space-between;gap:10px;font-family:var(--display);font-weight:700;font-size:clamp(13px,1.1vw,21px);color:#fff;text-shadow:0 2px 5px rgba(0,0,0,.8);margin-top:6px}
   .tvprops{max-width:1200px;margin:0 auto;width:100%;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
   .tvprops .pchip{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:6px 12px;font-weight:800;font-size:14px;color:var(--ink);white-space:nowrap}
   .tvprops .pchip .pn{color:var(--primary-dark)} .tvprops .pchip .po{color:var(--ink-soft)}
@@ -1068,7 +1069,7 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
       </div>
     </div>
     ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
-    ${(S.winProb!=null)?`<div class="tvwp"><div class="lab"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>Win Probability</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div></div>`:""}
+    ${(S.winProb!=null)?`<div class="tvwp"><div class="wp-title">Win Probability</div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div><div class="wp-ends"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div></div>`:""}
     <div class="tvboardwrap">${gridHTML(th)}</div>
   </div>`;
   if(showJoin)showQR("qrBox",joinUrl(),460);
