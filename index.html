@@ -606,9 +606,11 @@ const SQ_STEPS=[
   {key:"live", name:"Game On",    next:"Show Winners / Finish ▸", hint:"Keep the score with the buttons, and tap Award at the end of each period.", ptitle:"Game on! 🏟️", pmsg:"The glowing square is winning right now."},
   {key:"final",name:"Winners",    next:null,                     hint:"All done! Start a new board or change the sport.", ptitle:"Final! 🏆", pmsg:"Thanks for playing!"},
 ];
+// Two fixed team colors for EVERY sport (away, home) — not per-theme/random.
+const TEAM_COLORS=["#2f6fed","#e8772a"]; // away = blue, home = orange
 function freshState(themeKey){const th=THEMES[themeKey];return {kind:"sports-squares",theme:themeKey,step:0,
   live:null,winProb:null,liveState:null,liveStart:null,livePeriod:0,liveErr:null,
-  away:{name:th.teams[0],color:th.colors[0]},home:{name:th.teams[1],color:th.colors[1]},maxPer:10,
+  away:{name:th.teams[0],color:TEAM_COLORS[0]},home:{name:th.teams[1],color:TEAM_COLORS[1]},maxPer:10,
   grid:Array.from({length:100},()=>({owner:null,color:null})),rowDigits:null,colDigits:null,score:{away:0,home:0},
   checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};}
 function stepOf(st){return st&&typeof st.step==="number"?st.step:0;}
@@ -1047,7 +1049,7 @@ function startPhoneDemo(){
     const grid=Array.from({length:100},()=>({owner:null,color:null}));
     const order=shuffle(Array.from({length:100},(_,i)=>i));
     order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length],logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};});
-    phone.remote={kind:"sports-squares",theme:key,step:0,away:{name:th.teams[0],color:th.colors[0]},home:{name:th.teams[1],color:th.colors[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
+    phone.remote={kind:"sports-squares",theme:key,step:0,away:{name:th.teams[0],color:TEAM_COLORS[0]},home:{name:th.teams[1],color:TEAM_COLORS[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
     phone.sel=new Set(); renderPhone();
   }
   function freeCells(){return phone.remote.grid.map((o,i)=>o.owner?null:i).filter(i=>i!==null);}
