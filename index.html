@@ -183,9 +183,9 @@
   /* squares grid */
   .gridcard{background:linear-gradient(180deg,rgba(32,43,61,.72),rgba(22,30,44,.78));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:22px;padding:16px;position:relative;
     box-shadow:0 26px 50px rgba(0,0,0,.5),0 8px 0 rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.05)}
-  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin-bottom:8px;color:var(--homec,var(--ink));text-shadow:0 0 16px var(--homec2,transparent)}
+  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin:0 auto 8px;color:var(--homec,var(--ink));background:rgba(255,255,255,.92);padding:2px 16px;border-radius:12px;width:fit-content;text-shadow:none}
   .gridrow{display:flex;gap:8px;align-items:center;justify-content:center}
-  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));text-shadow:0 0 16px var(--awayc2,transparent);flex:0 0 auto}
+  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));background:rgba(255,255,255,.92);padding:16px 4px;border-radius:12px;text-shadow:none;flex:0 0 auto;align-self:center}
   .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
   .cell{border-radius:7px;background:linear-gradient(180deg,#2b3649,#222b3b);border:1px solid #3a4760;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
