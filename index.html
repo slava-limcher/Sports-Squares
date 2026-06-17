@@ -353,6 +353,7 @@
   .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,3.4vw,60px)}
   .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(52px,5.2vw,92px);color:var(--ink);min-width:64px;text-align:center}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
+  .tvsep{width:3px;align-self:stretch;margin:10px 0;border-radius:2px;background:rgba(255,255,255,.16);flex:0 0 auto}
   .tvqr{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:8px 8px 8px 16px;box-shadow:var(--shadow);flex:0 0 auto}
   .tvqr .rl{text-align:right;line-height:1.1}
   .tvqr .rl .l{font-size:11px;color:var(--ink-soft);font-weight:800;letter-spacing:2px;text-transform:uppercase}
@@ -989,13 +990,11 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
   const th=curTheme();const st=stepOf(S);const showJoin=st<=1&&!!live.code;
   $("root").innerHTML=`<div class="tvscreen">
     <div class="tvhead">
-      <div class="brandmini"><div class="logo">${th.emoji}</div><div class="bt">GAME DAY <span class="live">SQUARES</span></div></div>
       <div class="tvscoreboard">
         <div class="tvt"><span class="n" style="color:${S.away.color}">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div>
-        <div class="tvmid">${esc(SQ_STEPS[st].name)}</div>
+        <div class="tvsep"></div>
         <div class="tvt"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color}">${esc(S.home.name)}</span></div>
       </div>
-      <div class="brandmini" style="visibility:hidden"><div class="logo">${th.emoji}</div><div class="bt">GAME DAY SQUARES</div></div>
     </div>
     ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
     ${(S.winProb!=null)?`<div class="tvwp"><div class="lab"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>Win Probability</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div></div>`:""}
