@@ -222,6 +222,20 @@
   @keyframes wftrophy{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
   .winfx.show{animation:winpop 3.4s ease forwards}
   @keyframes winpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}8%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}14%{transform:translate(-50%,-50%) scale(1)}88%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
+  /* "SCORE!" takeover when a team scores (team-colored) */
+  .scorefx{position:fixed;inset:0;z-index:9997;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0}
+  .scorefx.show{animation:sffade 2.6s ease forwards}
+  .scorefx::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,var(--sc),transparent 62%);opacity:0}
+  .scorefx.show::before{animation:sfflash 2.6s ease forwards}
+  .scorefx .sf-card{position:relative;text-align:center;background:linear-gradient(180deg,var(--sc),var(--sc2));border-radius:28px;padding:22px 64px;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 6px rgba(255,255,255,.18);transform:scale(.6)}
+  .scorefx.show .sf-card{animation:sfpop 2.6s cubic-bezier(.2,1.3,.4,1) forwards}
+  .scorefx .sf-team{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,64px);color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.32)}
+  .scorefx .sf-big{font-family:var(--display);font-weight:700;font-size:clamp(56px,10vw,150px);color:#fff;line-height:1;letter-spacing:3px;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+  .scorefx .sf-pts{display:inline-block;font-family:var(--display);font-weight:700;font-size:clamp(24px,4vw,58px);color:#fff;background:rgba(0,0,0,.24);padding:2px 24px;border-radius:999px;margin-top:8px}
+  @keyframes sffade{0%{opacity:0}6%{opacity:1}82%{opacity:1}100%{opacity:0}}
+  @keyframes sfpop{0%{transform:scale(.5)}10%{transform:scale(1.08)}18%{transform:scale(1)}82%{transform:scale(1)}100%{transform:scale(.96)}}
+  @keyframes sfflash{0%{opacity:0}8%{opacity:.5}34%{opacity:.14}100%{opacity:0}}
+  @media(prefers-reduced-motion:reduce){.scorefx.show,.scorefx.show .sf-card,.scorefx.show::before{animation:none!important}.scorefx.show{opacity:1}}
   /* Full-screen "YOU WON!" takeover on the winning player's phone */
   .youwon{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;overflow:hidden;
     background:radial-gradient(circle at 50% 38%,rgba(34,118,62,.92),rgba(8,14,24,.96))}
@@ -796,10 +810,16 @@ function fxAfterRender(state){
     document.querySelectorAll(".gridcard,.phone-wrap > .card").forEach(el=>{el.classList.remove("stagein");void el.offsetWidth;el.classList.add("stagein");});
   }
   _fx.step=st;
-  // score bump
+  // score bump + "SCORE!" animation
   const sc=G.score?(G.score.away+"-"+G.score.home):null;
   if(_fx.score!==null && _fx.score!==sc){
     document.querySelectorAll(".tvt .s,.tcol .sc,.tcol .sc-edit").forEach(el=>{el.classList.remove("bump");void el.offsetWidth;el.classList.add("bump");});
+    // Who scored? Celebrate only an INCREASE (not a correction/typo).
+    const prev=(_fx.score||"0-0").split("-").map(Number);
+    let side=null,delta=0;
+    if(G.score.away>prev[0]){side="away";delta=G.score.away-prev[0];}
+    else if(G.score.home>prev[1]){side="home";delta=G.score.home-prev[1];}
+    if(side){ if(isPhone) mini(`${G[side].name} scored! ${G.score.away}–${G.score.home}`); else scoreCelebrate(G,side,delta); }
   }
   _fx.score=sc;
   // newly awarded checks -> confetti + winner card
@@ -816,6 +836,16 @@ function celebrate(chk){
   card.innerHTML=`<div class="wf-trophy">🏆</div><div class="ttl">${esc(chk.lab)}</div><div class="who">${esc(chk.winner)}</div><div class="sub">wins this square!</div>`;
   card.classList.remove("show");void card.offsetWidth;card.classList.add("show");
   clearTimeout(window.__winfxT);window.__winfxT=setTimeout(()=>card.classList.remove("show"),3400);
+}
+// Big "SCORE!" takeover when a team's score goes up, in that team's colors, so everyone notices.
+function scoreCelebrate(G,side,delta){
+  const t=G[side]||{}; const col=t.color||"#2f6fed"; const col2=t.color2||col;
+  let o=$("scorefx"); if(!o){o=document.createElement("div");o.id="scorefx";o.className="scorefx";document.body.appendChild(o);}
+  o.style.setProperty("--sc",col); o.style.setProperty("--sc2",col2);
+  o.innerHTML=`<div class="sf-card"><div class="sf-team">${esc(t.name||"")}</div><div class="sf-big">SCORE!</div><div class="sf-pts">+${delta}</div></div>`;
+  o.classList.remove("show");void o.offsetWidth;o.classList.add("show");
+  confettiBurst();
+  clearTimeout(window.__sfxT);window.__sfxT=setTimeout(()=>o.classList.remove("show"),2600);
 }
 // Full-screen "YOU WON!" takeover for the winning player's phone (deduped per award).
 function phoneCelebrate(label){
