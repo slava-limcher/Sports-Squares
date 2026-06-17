@@ -183,9 +183,9 @@
   /* squares grid */
   .gridcard{background:linear-gradient(180deg,rgba(32,43,61,.72),rgba(22,30,44,.78));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:22px;padding:16px;position:relative;
     box-shadow:0 26px 50px rgba(0,0,0,.5),0 8px 0 rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.05)}
-  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin-bottom:8px;color:var(--homec,var(--ink))}
+  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin-bottom:8px;color:var(--homec,var(--ink));text-shadow:0 0 16px var(--homec2,transparent)}
   .gridrow{display:flex;gap:8px;align-items:center;justify-content:center}
-  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));flex:0 0 auto}
+  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));text-shadow:0 0 16px var(--awayc2,transparent);flex:0 0 auto}
   .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
   .cell{border-radius:7px;background:linear-gradient(180deg,#2b3649,#222b3b);border:1px solid #3a4760;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
@@ -247,7 +247,7 @@
 
   /* scoreboard mini */
   .scoremini{display:flex;gap:12px}
-  .tcol{flex:1;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:12px;text-align:center;border-top:7px solid var(--tc,#888)}
+  .tcol{flex:1;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:12px;text-align:center;border-top:7px solid var(--tc,#888);border-bottom:5px solid var(--tc2,var(--tc,#888))}
   .tcol .nm{font-family:var(--display);font-weight:700;font-size:24px}
   .tcol .sc{font-family:var(--display);font-weight:700;font-size:58px;line-height:1}
   /* editable team name + score on the host scoreboard */
@@ -606,11 +606,21 @@ const SQ_STEPS=[
   {key:"live", name:"Game On",    next:"Show Winners / Finish ▸", hint:"Keep the score with the buttons, and tap Award at the end of each period.", ptitle:"Game on! 🏟️", pmsg:"The glowing square is winning right now."},
   {key:"final",name:"Winners",    next:null,                     hint:"All done! Start a new board or change the sport.", ptitle:"Final! 🏆", pmsg:"Thanks for playing!"},
 ];
-// Two fixed team colors for EVERY sport (away, home) — not per-theme/random.
-const TEAM_COLORS=["#2f6fed","#e8772a"]; // away = blue, home = orange
+// Default team colors for generic/manual teams (away, home) + their secondary accents.
+const TEAM_COLORS=["#2f6fed","#e8772a"];   // primary: away = blue, home = orange
+const TEAM_COLORS2=["#16357a","#b8541c"];  // secondary accents
+// Real team colors [primary, secondary] for live games, per pro league, keyed by nickname
+// (matched within the picked sport so cross-league nicknames like Panthers/Kings/Jets don't collide).
+const TEAM_BRAND={
+ nfl:{cardinals:["#97233F","#FFB612"],falcons:["#A71930","#A5ACAF"],ravens:["#241773","#9E7C0C"],bills:["#00338D","#C60C30"],panthers:["#0085CA","#101820"],bears:["#0B162A","#C83803"],bengals:["#FB4F14","#000000"],browns:["#311D00","#FF3C00"],cowboys:["#003594","#869397"],broncos:["#FB4F14","#002244"],lions:["#0076B6","#B0B7BC"],packers:["#203731","#FFB612"],texans:["#03202F","#A71930"],colts:["#002C5F","#A2AAAD"],jaguars:["#006778","#D7A22A"],chiefs:["#E31837","#FFB81C"],raiders:["#101010","#A5ACAF"],chargers:["#0080C6","#FFC20E"],rams:["#003594","#FFA300"],dolphins:["#008E97","#FC4C02"],vikings:["#4F2683","#FFC62F"],patriots:["#002244","#C60C30"],saints:["#D3BC8D","#101820"],giants:["#0B2265","#A71930"],jets:["#125740","#101010"],eagles:["#004C54","#A5ACAF"],steelers:["#FFB612","#101820"],"49ers":["#AA0000","#B3995D"],seahawks:["#002244","#69BE28"],buccaneers:["#D50A0A","#34302B"],titans:["#0C2340","#4B92DB"],commanders:["#5A1414","#FFB612"]},
+ nba:{hawks:["#E03A3E","#C1D32F"],celtics:["#007A33","#BA9653"],nets:["#101010","#C4CED4"],hornets:["#1D1160","#00788C"],bulls:["#CE1141","#101010"],cavaliers:["#860038","#FDBB30"],mavericks:["#00538C","#B8C4CA"],nuggets:["#0E2240","#FEC524"],pistons:["#C8102E","#1D42BA"],warriors:["#1D428A","#FFC72C"],rockets:["#CE1141","#C4CED4"],pacers:["#002D62","#FDBB30"],clippers:["#C8102E","#1D428A"],lakers:["#552583","#FDB927"],grizzlies:["#5D76A9","#F5B112"],heat:["#98002E","#F9A01B"],bucks:["#00471B","#EEE1C6"],timberwolves:["#0C2340","#236192"],pelicans:["#0C2340","#C8102E"],knicks:["#006BB6","#F58426"],magic:["#0077C0","#C4CED4"],"76ers":["#006BB6","#ED174C"],suns:["#1D1160","#E56020"],blazers:["#E03A3E","#B6BFBF"],kings:["#5A2D81","#63727A"],spurs:["#8A8D8F","#101010"],raptors:["#CE1141","#101010"],jazz:["#002B5C","#F9A01B"],wizards:["#002B5C","#E31837"],thunder:["#007AC1","#EF3B24"]},
+ mlb:{diamondbacks:["#A71930","#E3D4AD"],braves:["#CE1141","#13274F"],orioles:["#DF4601","#101010"],"red sox":["#BD3039","#0C2340"],cubs:["#0E3386","#CC3433"],"white sox":["#27251F","#C4CED4"],reds:["#C6011F","#101010"],guardians:["#00385D","#E50022"],rockies:["#33006F","#C4CED4"],tigers:["#0C2340","#FA4616"],astros:["#002D62","#EB6E1F"],royals:["#004687","#BD9B60"],angels:["#003263","#BA0021"],dodgers:["#005A9C","#A5ACAF"],marlins:["#00A3E0","#EF3340"],brewers:["#12284B","#FFC52F"],twins:["#002B5C","#D31145"],mets:["#002D72","#FF5910"],yankees:["#0C2340","#C4CED4"],athletics:["#003831","#EFB21E"],phillies:["#E81828","#002D72"],pirates:["#FDB827","#27251F"],padres:["#2F241D","#FFC425"],giants:["#FD5A1E","#27251F"],mariners:["#0C2C56","#3FA39B"],cardinals:["#C41E3A","#0C2340"],rays:["#092C5C","#8FBCE6"],rangers:["#003278","#C0111F"],"blue jays":["#134A8E","#E8291C"],nationals:["#AB0003","#14225A"]},
+ nhl:{ducks:["#F47A38","#B09862"],bruins:["#FFB81C","#101010"],sabres:["#003087","#FFB81C"],flames:["#C8102E","#F1BE48"],hurricanes:["#CC0000","#101010"],blackhawks:["#CF0A2C","#101010"],avalanche:["#6F263D","#236192"],"blue jackets":["#002654","#CE1126"],stars:["#006847","#8F8F8C"],"red wings":["#CE1126","#C4CED4"],oilers:["#FF4C00","#041E42"],panthers:["#C8102E","#041E42"],kings:["#111111","#A2AAAD"],wild:["#A6192E","#154734"],canadiens:["#AF1E2D","#192168"],predators:["#FFB81C","#041E42"],devils:["#CE1126","#101010"],islanders:["#00539B","#F47D30"],rangers:["#0038A8","#CE1126"],senators:["#C52032","#C2912C"],flyers:["#F74902","#101010"],penguins:["#FFB81C","#101010"],sharks:["#006D75","#EA7200"],kraken:["#001628","#99D9D9"],blues:["#002F87","#FCB514"],lightning:["#002868","#C4CED4"],"maple leafs":["#00205B","#C4CED4"],canucks:["#00205B","#00843D"],"golden knights":["#B4975A","#333F42"],capitals:["#041E42","#C8102E"],jets:["#041E42","#7B303E"]}
+};
+function teamBrand(sport,name){const m=TEAM_BRAND[sport];if(!m||!name)return null;const n=(""+name).toLowerCase();let best=null,bl=0;for(const k in m){if(n.indexOf(k)>=0&&k.length>bl){best=m[k];bl=k.length;}}return best;}
 function freshState(themeKey){const th=THEMES[themeKey];return {kind:"sports-squares",theme:themeKey,step:0,
   live:null,winProb:null,liveState:null,liveStart:null,livePeriod:0,liveErr:null,
-  away:{name:th.teams[0],color:TEAM_COLORS[0]},home:{name:th.teams[1],color:TEAM_COLORS[1]},maxPer:10,
+  away:{name:th.teams[0],color:TEAM_COLORS[0],color2:TEAM_COLORS2[0]},home:{name:th.teams[1],color:TEAM_COLORS[1],color2:TEAM_COLORS2[1]},maxPer:10,
   grid:Array.from({length:100},()=>({owner:null,color:null})),rowDigits:null,colDigits:null,score:{away:0,home:0},
   checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};}
 function stepOf(st){return st&&typeof st.step==="number"?st.step:0;}
@@ -659,6 +669,10 @@ const Host={
       _liveGames=lists.flat().sort((a,b)=>ord[a.state]-ord[b.state]);renderHost();
     }catch(e){if(box)box.innerHTML='<div style="padding:10px;color:var(--bad);font-weight:800">Couldn\'t load games ('+(e.status||e.message)+').</div>';}},
   pickLiveGame(i){const g=_liveGames[i];if(!g)return;S.live={sport:g.sport,gameId:g.id};S.away.name=g.away.name;S.home.name=g.home.name;
+    // Real team colors (primary fill + secondary accent) for this matchup; keep defaults if not found.
+    const ba=teamBrand(g.sport,g.away.name)||teamBrand(g.sport,g.away.abbr);
+    const bh=teamBrand(g.sport,g.home.name)||teamBrand(g.sport,g.home.abbr);
+    if(ba){S.away.color=ba[0];S.away.color2=ba[1];} if(bh){S.home.color=bh[0];S.home.color2=bh[1];}
     // align the board's checkpoints to the picked league (college basketball = halves, etc.)
     if(THEMES[g.sport])S.checks=THEMES[g.sport].checks.map(lab=>({lab,done:false,idx:null,winner:null}));
     renderHost();},
@@ -698,6 +712,8 @@ function renderHost(){
   const th=curTheme();
   document.documentElement.style.setProperty("--awayc",S.away.color);
   document.documentElement.style.setProperty("--homec",S.home.color);
+  document.documentElement.style.setProperty("--awayc2",S.away.color2||S.away.color);
+  document.documentElement.style.setProperty("--homec2",S.home.color2||S.home.color);
   if(live.role!=="host"){document.body.classList.remove("boardview");root.innerHTML=setupHTML(th);wireSetup();return;}
   document.body.classList.add("boardview");
   root.innerHTML=`${headerHTML(th)}<div class="main"><div class="stack">${gridHTML(th)}</div><div class="stack rail">${railHTML(th)}</div></div>`;
@@ -825,9 +841,9 @@ function railHTML(th){
   const lc=liveCell();const st=stepOf(S);const meta=SQ_STEPS[st];const showScore=numbersOut(S);
   const nowName = st<2?"— not drawn yet —":(lc>=0?(S.grid[lc].owner||"(open square)"):"—");
   function tcol(side){const t=S[side];
-    if(S.live)return `<div class="tcol" style="--tc:${t.color}"><div class="nm">${esc(t.name)}</div><div class="sc">${S.score[side]}</div><div class="dig">last digit ${S.score[side]%10}</div></div>`;
+    if(S.live)return `<div class="tcol" style="--tc:${t.color};--tc2:${t.color2||t.color}"><div class="nm">${esc(t.name)}</div><div class="sc">${S.score[side]}</div><div class="dig">last digit ${S.score[side]%10}</div></div>`;
     const sb=showScore?(th.scoreBtns.map(b=>`<button class="sbtn" onclick="Host.score('${side}',${b.v})">${b.lab}</button>`).join("")+`<button class="sbtn minus" onclick="Host.score('${side}',-1)">−1</button>`):"";
-    return `<div class="tcol" style="--tc:${t.color}"><input class="nm-edit" value="${esc(t.name)}" maxlength="16" onchange="Host.renameTeam('${side}',this.value)" title="Tap to rename"><input class="sc-edit" type="number" min="0" value="${S.score[side]}" onchange="Host.setScore('${side}',this.value)" title="Tap to type the score"><div class="dig">last digit ${S.score[side]%10}</div><div class="scorebtns hostonly">${sb}</div></div>`;}
+    return `<div class="tcol" style="--tc:${t.color};--tc2:${t.color2||t.color}"><input class="nm-edit" value="${esc(t.name)}" maxlength="16" onchange="Host.renameTeam('${side}',this.value)" title="Tap to rename"><input class="sc-edit" type="number" min="0" value="${S.score[side]}" onchange="Host.setScore('${side}',this.value)" title="Tap to type the score"><div class="dig">last digit ${S.score[side]%10}</div><div class="scorebtns hostonly">${sb}</div></div>`;}
   const pot=claimedCount();
   const checks=S.checks.map((ch,ci)=>`<div class="chk ${ch.done?'done':''}"><div class="ck"><div class="lab">${esc(ch.lab)}</div>${ch.done?`<div class="win">${ch.winner?('🏆 '+esc(ch.winner)):'no winner'}</div>`:`<div class="sub">winning: ${esc(nowName)}</div>`}</div>${(ch.done||!showScore||S.live)?'':`<button class="btn sm hostonly" onclick="Host.award(${ci})">Award</button>`}</div>`).join("");
   const liveStatus=()=>{const stMap={pre:"Waiting for game to start…",live:"🔴 LIVE — auto-scoring",final:"🏁 Final"};const per=(S.liveState==="live"&&S.livePeriod)?(" · period "+S.livePeriod):"";
@@ -989,13 +1005,14 @@ async function joinAsViewer(code){live.role=isTV?"tv":"player";live.code=code;if
 function renderTV(){if(!S){document.body.classList.remove("boardview");$("root").innerHTML=`<div class="card" style="max-width:520px;margin:60px auto;text-align:center"><h3 style="font-family:var(--display);font-weight:700;font-size:26px">📺 TV View</h3><p style="color:var(--ink-soft);font-weight:700;margin-top:8px">Waiting for the host. Room <b>${esc(live.code||"?")}</b>.</p></div>`;return;}
   applyThemeClass(S.theme);document.body.classList.add("boardview");
   document.documentElement.style.setProperty("--awayc",S.away.color);document.documentElement.style.setProperty("--homec",S.home.color);
+  document.documentElement.style.setProperty("--awayc2",S.away.color2||S.away.color);document.documentElement.style.setProperty("--homec2",S.home.color2||S.home.color);
   const th=curTheme();const st=stepOf(S);const showJoin=st<=1&&!!live.code;
   $("root").innerHTML=`<div class="tvscreen">
     <div class="tvhead">
       <div class="tvscoreboard">
-        <div class="tvt"><span class="n" style="color:${S.away.color}">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div>
+        <div class="tvt"><span class="n" style="color:${S.away.color};border-bottom:5px solid ${S.away.color2||S.away.color};padding-bottom:3px">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div>
         <div class="tvsep"></div>
-        <div class="tvt"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color}">${esc(S.home.name)}</span></div>
+        <div class="tvt"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color};border-bottom:5px solid ${S.home.color2||S.home.color};padding-bottom:3px">${esc(S.home.name)}</span></div>
       </div>
     </div>
     ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
@@ -1026,6 +1043,8 @@ function startTVDemo(){
     S.step=3; S.score={away:0,home:0}; awarded=0;
     document.documentElement.style.setProperty("--awayc",S.away.color);
     document.documentElement.style.setProperty("--homec",S.home.color);
+    document.documentElement.style.setProperty("--awayc2",S.away.color2||S.away.color);
+    document.documentElement.style.setProperty("--homec2",S.home.color2||S.home.color);
     renderTV();
   }
   function scoreVal(){ const b=THEMES[S.theme].scoreBtns; return b[Math.floor(Math.random()*b.length)].v; }
@@ -1049,7 +1068,7 @@ function startPhoneDemo(){
     const grid=Array.from({length:100},()=>({owner:null,color:null}));
     const order=shuffle(Array.from({length:100},(_,i)=>i));
     order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length],logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};});
-    phone.remote={kind:"sports-squares",theme:key,step:0,away:{name:th.teams[0],color:TEAM_COLORS[0]},home:{name:th.teams[1],color:TEAM_COLORS[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
+    phone.remote={kind:"sports-squares",theme:key,step:0,away:{name:th.teams[0],color:TEAM_COLORS[0],color2:TEAM_COLORS2[0]},home:{name:th.teams[1],color:TEAM_COLORS[1],color2:TEAM_COLORS2[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
     phone.sel=new Set(); renderPhone();
   }
   function freeCells(){return phone.remote.grid.map((o,i)=>o.owner?null:i).filter(i=>i!==null);}
