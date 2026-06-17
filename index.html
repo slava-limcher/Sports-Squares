@@ -44,11 +44,11 @@
   .livebadge{display:inline-flex;align-items:center;gap:7px;background:#e8553e;color:#fff;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:6px 13px}
   .livebadge .dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:lp 1.3s infinite}
   /* TV win-probability meter */
-  .tvwp{max-width:820px;margin:0 auto;width:100%}
-  .tvwp .lab{display:flex;justify-content:space-between;font-family:var(--display);font-weight:700;font-size:17px;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.2);margin-bottom:5px}
-  .tvwp .bar{height:26px;border-radius:12px;overflow:hidden;display:flex;border:3px solid rgba(255,255,255,.4);background:#2a3547}
+  .tvwp{max-width:min(1500px,96vw);margin:0 auto;width:100%}
+  .tvwp .lab{display:flex;justify-content:space-between;align-items:center;gap:16px;font-family:var(--display);font-weight:700;font-size:clamp(26px,3.4vw,56px);color:#fff;text-shadow:0 2px 5px rgba(0,0,0,.7);margin-bottom:8px}
+  .tvwp .bar{height:34px;border-radius:14px;overflow:hidden;display:flex;border:3px solid rgba(255,255,255,.4);background:#2a3547}
   .tvwp .bar .a{background:var(--awayc,#3a6df0);transition:width .6s} .tvwp .bar .h{background:var(--homec,#e8553e);transition:width .6s}
-  .tvwp .bar b{display:flex;align-items:center;color:#fff;font-size:13px;padding:0 9px}
+  .tvwp .bar b{display:flex;align-items:center;color:#fff;font-size:16px;padding:0 11px}
   .tvprops{max-width:1200px;margin:0 auto;width:100%;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
   .tvprops .pchip{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:6px 12px;font-weight:800;font-size:14px;color:var(--ink);white-space:nowrap}
   .tvprops .pchip .pn{color:var(--primary-dark)} .tvprops .pchip .po{color:var(--ink-soft)}
@@ -359,7 +359,7 @@
   .tvt{flex:1;display:flex;align-items:center;gap:16px}
   .tvscoreboard .tvt:first-child{justify-content:flex-end}
   .tvscoreboard .tvt:last-child{justify-content:flex-start}
-  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,3.4vw,60px);text-shadow:0 2px 7px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.6)}
+  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,3.4vw,60px);background:rgba(255,255,255,.92);padding:2px 18px;border-radius:14px;text-shadow:none}
   .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(52px,5.2vw,92px);color:var(--ink);min-width:64px;text-align:center;text-shadow:0 2px 7px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.6)}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
   .tvsep{width:3px;align-self:stretch;margin:10px 0;border-radius:2px;background:rgba(255,255,255,.16);flex:0 0 auto}
