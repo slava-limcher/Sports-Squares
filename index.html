@@ -187,11 +187,11 @@
   .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);margin:0 auto 2px;color:var(--homec,var(--ink));background:rgba(255,255,255,.92);padding:1px 12px;border-radius:10px;width:fit-content;text-shadow:none}
   .gridrow{display:flex;gap:8px;align-items:center;justify-content:center}
   .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);color:var(--awayc,var(--ink));background:rgba(255,255,255,.92);padding:10px 3px;border-radius:10px;text-shadow:none;flex:0 0 auto;align-self:center}
-  .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
+  .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
   .cell{border-radius:7px;background:linear-gradient(180deg,#2b3649,#222b3b);border:1px solid #3a4760;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -2px 3px rgba(0,0,0,.25),0 1px 1px rgba(0,0,0,.2)}
-  .cell.hdr{background:transparent;border:none;box-shadow:none;overflow:visible;font-family:var(--display);font-weight:700;font-size:clamp(24px,calc(var(--cell,30px)*1.34),210px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
+  .cell.hdr{background:transparent;border:none;box-shadow:none;overflow:visible;font-family:var(--display);font-weight:700;font-size:clamp(20px,calc(var(--cell,30px)*0.95),130px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
   .cell.hdr.top{color:#fff}.cell.hdr.left{color:#fff}
   .cell.corner{background:transparent;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
@@ -952,15 +952,17 @@ function fitBoard(){
   const setSide=(s)=>{grid.style.width=s+"px";grid.style.height=s+"px";card.style.setProperty("--cell",Math.floor((s-40)/11)+"px");};
   let side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)));
   setSide(side);
-  // Self-correct: if the whole card still overflows its container (chrome estimate off, or the
-  // scoreboard grew at full font size on a wide TV), shrink to exactly fit — never spill off-screen.
-  const over=Math.max(card.offsetHeight-wrap.clientHeight, card.offsetWidth-wrap.clientWidth);
+  // Self-correct: shrink so the whole card fits its container AND stays within the visible window
+  // (catches chrome mis-estimates, a scoreboard that grew at full font size, or a shorter window
+  // than the board was first sized for) — every row always shows, never spills off the bottom.
+  const rect=card.getBoundingClientRect();
+  const over=Math.max(card.offsetHeight-wrap.clientHeight, card.offsetWidth-wrap.clientWidth, rect.bottom-window.innerHeight+4);
   if(over>0){side=Math.max(150,side-Math.ceil(over));setSide(side);}
 }
 let __fitT=null;
 // Re-fit several times + after web fonts load, so the board sizes correctly even when
 // fonts load late on a fresh machine (otherwise the header grows after sizing -> overlap).
-function scheduleFit(){fitBoard();[70,200,450].forEach(d=>setTimeout(fitBoard,d));
+function scheduleFit(){fitBoard();[70,200,450,800,1300].forEach(d=>setTimeout(fitBoard,d));
   // Watch the board's container (which shrinks/grows as the scoreboard settles after font load)
   // and refit — prevents a stale, oversized board that overflows the screen bottom.
   if(!window.__fitRO && window.ResizeObserver){const wrap=document.querySelector('.tvboardwrap');if(wrap){window.__fitRO=new ResizeObserver(()=>{clearTimeout(window.__roT);window.__roT=setTimeout(fitBoard,40);});try{window.__fitRO.observe(wrap);}catch(e){}}}}
