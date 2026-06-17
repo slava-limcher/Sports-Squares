@@ -1046,7 +1046,7 @@ function startTVDemo(){
     const key=demoSport||SPORT_ORDER[sportI++ % SPORT_ORDER.length];
     S=freshState(key); applyThemeClass(key); document.body.classList.add("tv");
     const order=shuffle(Array.from({length:100},(_,i)=>i));
-    order.slice(0,78).forEach((idx,k)=>{ const ni=k%names.length; S.grid[idx]={owner:names[ni],color:PLAYER_COLORS[ni%PLAYER_COLORS.length],logo:LOGOS[ni%LOGOS.length],ini:initialsOf(names[ni])}; });
+    order.slice(0,78).forEach((idx,k)=>{ const ni=k%names.length; S.grid[idx]={owner:names[ni],color:(ni%2===0?S.away.color:S.home.color),logo:LOGOS[ni%LOGOS.length],ini:initialsOf(names[ni])}; });
     S.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); S.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]);
     S.step=3; S.score={away:0,home:0}; awarded=0;
     document.documentElement.style.setProperty("--awayc",S.away.color);
@@ -1075,7 +1075,7 @@ function startPhoneDemo(){
     const key=demoSport||SPORT_ORDER[sportI++ % SPORT_ORDER.length]; const th=THEMES[key];
     const grid=Array.from({length:100},()=>({owner:null,color:null}));
     const order=shuffle(Array.from({length:100},(_,i)=>i));
-    order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length],logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};});
+    order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:(ni%2===0?TEAM_COLORS[0]:TEAM_COLORS[1]),logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};});
     phone.remote={kind:"sports-squares",theme:key,step:0,away:{name:th.teams[0],color:TEAM_COLORS[0],color2:TEAM_COLORS2[0]},home:{name:th.teams[1],color:TEAM_COLORS[1],color2:TEAM_COLORS2[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
     phone.sel=new Set(); renderPhone();
   }
@@ -1088,7 +1088,7 @@ function startPhoneDemo(){
     else if(r.step===1){
       if(phone.sel.size<4 && Math.random()<0.75){ const free=freeCells().filter(i=>!phone.sel.has(i)); if(free.length)phone.sel.add(free[Math.floor(Math.random()*free.length)]); }
       else { phone.sel.forEach(i=>{ if(!r.grid[i].owner) r.grid[i]={owner:"You",color:phoneColor(),logo:phoneLogo(),ini:initialsOf("You")}; }); phone.sel=new Set(); }
-      if(Math.random()<0.5){ const free=freeCells(); if(free.length){const ni=Math.floor(Math.random()*others.length); r.grid[free[Math.floor(Math.random()*free.length)]]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length],logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};} }
+      if(Math.random()<0.5){ const free=freeCells(); if(free.length){const ni=Math.floor(Math.random()*others.length); r.grid[free[Math.floor(Math.random()*free.length)]]={owner:others[ni],color:(ni%2===0?r.away.color:r.home.color),logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};} }
       if(step%6===0){ r.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); r.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); r.step=2; }
     } else if(r.step===2){ if(step%3===0) r.step=3; }
     else {
