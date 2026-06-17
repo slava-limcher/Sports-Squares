@@ -184,9 +184,9 @@
   /* squares grid */
   .gridcard{background:linear-gradient(180deg,rgba(32,43,61,.72),rgba(22,30,44,.78));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:22px;padding:16px;position:relative;
     box-shadow:0 26px 50px rgba(0,0,0,.5),0 8px 0 rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.05)}
-  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin:0 auto 8px;color:var(--homec,var(--ink));background:rgba(255,255,255,.92);padding:2px 16px;border-radius:12px;width:fit-content;text-shadow:none}
+  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);margin:0 auto 2px;color:var(--homec,var(--ink));background:rgba(255,255,255,.92);padding:1px 12px;border-radius:10px;width:fit-content;text-shadow:none}
   .gridrow{display:flex;gap:8px;align-items:center;justify-content:center}
-  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));background:rgba(255,255,255,.92);padding:16px 4px;border-radius:12px;text-shadow:none;flex:0 0 auto;align-self:center}
+  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);color:var(--awayc,var(--ink));background:rgba(255,255,255,.92);padding:10px 3px;border-radius:10px;text-shadow:none;flex:0 0 auto;align-self:center}
   .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
   .cell{border-radius:7px;background:linear-gradient(180deg,#2b3649,#222b3b);border:1px solid #3a4760;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
@@ -341,7 +341,7 @@
   #ctl{position:fixed;left:14px;bottom:12px;z-index:130;display:flex;gap:8px}#ctl button{background:var(--card);border:none;color:var(--ink);border-radius:12px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
   /* TV: hide host controls + go BIG for across-the-room legibility */
   body.tv .hostonly{display:none!important} body.tv #ctl{display:none}
-  body.tv .wrap{padding:10px 24px 14px}
+  body.tv .wrap{padding:2px 12px 4px}
   body.tv .topbar,body.tv .main{max-width:1880px}
   body.tv .main{grid-template-columns:1.85fr 1fr;gap:22px}
   body.tv .logo{width:66px;height:66px;font-size:38px}
@@ -373,20 +373,20 @@
   body.boardview .stack:first-child{justify-content:center;align-items:center}
   body.boardview .sqgrid{margin:0 auto;flex:0 0 auto}
   /* ===== Clean TV view: scoreboard + big board only ===== */
-  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:2px;width:100%}
+  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:0;width:100%}
   .tvhead{display:flex;align-items:center;gap:18px;flex:0 0 auto}
   .brandmini{display:flex;align-items:center;gap:12px;flex:0 0 auto}
   .brandmini .logo{width:54px;height:54px;border-radius:14px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:var(--shadow);border:3px solid rgba(0,0,0,.08)}
   .brandmini .bt{font-family:var(--display);font-weight:700;font-size:22px;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18);line-height:1.05}
   .brandmini .bt .live{color:var(--accent)}
-  .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:transparent;box-shadow:none;padding:2px 28px;min-height:0}
+  .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:transparent;box-shadow:none;padding:0 28px;min-height:0}
   .tvt{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px}
   .tvscoreboard .tvt:first-child{align-items:flex-start}
   .tvscoreboard .tvt:last-child{align-items:flex-end}
   .tvt-main{display:flex;align-items:center;gap:16px}
-  .tvsub{font-family:var(--display);font-weight:700;font-size:clamp(16px,1.5vw,30px);color:#fff;letter-spacing:1px;text-transform:uppercase;opacity:.92;text-shadow:0 2px 5px rgba(0,0,0,.85);padding:0 6px}
-  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,3.4vw,60px);background:rgba(255,255,255,.92);padding:2px 18px;border-radius:14px;text-shadow:none}
-  .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(52px,5.2vw,92px);color:#fff;min-width:64px;text-align:center;background:rgba(12,18,30,.55);border-radius:14px;padding:0 16px;text-shadow:0 2px 6px rgba(0,0,0,.7)}
+  .tvsub{font-family:var(--display);font-weight:700;font-size:clamp(12px,1.2vw,20px);color:#fff;letter-spacing:1px;text-transform:uppercase;opacity:.92;text-shadow:0 2px 5px rgba(0,0,0,.85);padding:0 6px}
+  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(26px,2.9vw,46px);background:rgba(255,255,255,.92);padding:2px 16px;border-radius:12px;text-shadow:none}
+  .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(38px,4.2vw,68px);color:#fff;min-width:52px;text-align:center;background:rgba(12,18,30,.55);border-radius:12px;padding:0 14px;text-shadow:0 2px 6px rgba(0,0,0,.7)}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
   .tvsep{width:3px;align-self:stretch;margin:10px 0;border-radius:2px;background:rgba(255,255,255,.16);flex:0 0 auto}
   .tvqr{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:8px 8px 8px 16px;box-shadow:var(--shadow);flex:0 0 auto}
@@ -413,7 +413,7 @@
     body.tv .roomtag .rl .c{font-size:34px}
     body.tv .slidebanner{font-size:22px;margin-bottom:4px}
     body.tv .sqgrid{width:min(100%,54vh)}
-    body.tv .gridcard{padding:6px}
+    body.tv .gridcard{padding:2px}
     body.tv .title .t1{font-size:30px}
     body.tv .axislabel{margin-bottom:8px}
     body.tv .tcol{padding:12px}
@@ -946,13 +946,16 @@ function fitBoard(){
   const card=grid.closest('.gridcard'); if(!card) return;
   const wrap=card.parentElement; if(!wrap) return;
   const banner=card.querySelector('.slidebanner'), axis=card.querySelector('.axislabel'), aleft=card.querySelector('.axisleft');
-  const chromeV=12+(banner?banner.offsetHeight+4:0)+(axis?axis.offsetHeight+6:0);
-  const chromeH=12+(aleft?aleft.offsetWidth+6:0);
-  const side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)));
-  grid.style.width=side+"px"; grid.style.height=side+"px";
-  // publish the per-cell size on the gridcard so square text, drawn numbers AND the axis
-  // team labels (which live outside the grid) all inherit it and scale with the board.
-  card.style.setProperty("--cell", Math.floor((side-40)/11)+"px");
+  const banH=banner?banner.offsetHeight:0;
+  const chromeV=6+(banH?banH+2:0)+(axis?axis.offsetHeight+2:0);
+  const chromeH=6+(aleft?aleft.offsetWidth+2:0);
+  const setSide=(s)=>{grid.style.width=s+"px";grid.style.height=s+"px";card.style.setProperty("--cell",Math.floor((s-40)/11)+"px");};
+  let side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)));
+  setSide(side);
+  // Self-correct: if the whole card still overflows its container (chrome estimate off, or the
+  // scoreboard grew at full font size on a wide TV), shrink to exactly fit — never spill off-screen.
+  const over=Math.max(card.offsetHeight-wrap.clientHeight, card.offsetWidth-wrap.clientWidth);
+  if(over>0){side=Math.max(150,side-Math.ceil(over));setSide(side);}
 }
 let __fitT=null;
 // Re-fit several times + after web fonts load, so the board sizes correctly even when
