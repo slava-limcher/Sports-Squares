@@ -73,11 +73,14 @@
   .modalbd{position:fixed;inset:0;background:rgba(8,14,24,.62);z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px}
   .modalbox{background:var(--card);border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.5);max-width:560px;width:100%;max-height:94vh;overflow:auto;padding:26px 28px;text-align:center}
   /* In-page preview modal (iframe) — reliable, no popup blocking */
-  .previewbox{background:var(--card);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);width:min(96vw,1120px);max-height:94vh;display:flex;flex-direction:column;gap:10px;padding:14px}
+  .previewbox{background:var(--card);border-radius:18px;box-shadow:0 30px 80px rgba(0,0,0,.6);width:min(96vw,1120px);max-height:94vh;overflow:auto;display:flex;flex-direction:column;gap:10px;padding:14px}
   .previewbox.phone{width:min(94vw,430px)}
   .pv-head{display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--display);font-weight:700;color:var(--ink);font-size:18px}
-  .pv-frame{flex:1;border-radius:14px;overflow:hidden;background:#05080f;aspect-ratio:16/9}
-  .pv-frame.pv-phone{aspect-ratio:9/19;max-height:80vh;width:auto;margin:0 auto}
+  .pv-head .pv-actions{display:flex;gap:8px;align-items:center}
+  .pv-head a.btn{text-decoration:none}
+  /* Deterministic sizing: height derives from width via aspect-ratio (no flex:1, which can collapse to 0) */
+  .pv-frame{width:100%;border-radius:14px;overflow:hidden;background:#05080f;aspect-ratio:16/9}
+  .pv-frame.pv-phone{aspect-ratio:9/19;height:min(78vh,720px);width:auto;align-self:center;margin:0 auto}
   .pv-frame iframe{width:100%;height:100%;border:0;display:block}
   .modalbox h2{font-family:var(--display);font-weight:700;font-size:26px;margin:2px 0}
   .ll-tag{font-weight:800;color:var(--bad);letter-spacing:2px;font-size:14px}
@@ -178,11 +181,11 @@
   @media(max-width:980px){.main{grid-template-columns:1fr}}
 
   /* squares grid */
-  .gridcard{background:linear-gradient(180deg,#202b3d,#161e2c);border-radius:22px;padding:16px;position:relative;
+  .gridcard{background:linear-gradient(180deg,rgba(32,43,61,.72),rgba(22,30,44,.78));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:22px;padding:16px;position:relative;
     box-shadow:0 26px 50px rgba(0,0,0,.5),0 8px 0 rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.05)}
-  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin-bottom:8px;color:var(--homec,var(--ink))}
+  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin-bottom:8px;color:var(--homec,var(--ink));text-shadow:0 0 16px var(--homec2,transparent)}
   .gridrow{display:flex;gap:8px;align-items:center;justify-content:center}
-  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));flex:0 0 auto}
+  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));text-shadow:0 0 16px var(--awayc2,transparent);flex:0 0 auto}
   .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
   .cell{border-radius:7px;background:linear-gradient(180deg,#2b3649,#222b3b);border:1px solid #3a4760;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
@@ -190,11 +193,12 @@
   .cell.hdr{background:transparent;border:none;box-shadow:none;font-family:var(--display);font-weight:700;font-size:clamp(16px,calc(var(--cell,30px)*0.84),120px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
   .cell.hdr.top{color:var(--homec,var(--ink))}.cell.hdr.left{color:var(--awayc,var(--ink))}
   .cell.corner{background:transparent;border:none;box-shadow:none}
-  .cell.owned{color:#fff;border-color:rgba(0,0,0,.18);text-shadow:0 1px 2px rgba(0,0,0,.45);
+  .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 7px rgba(0,0,0,.32),0 2px 4px rgba(0,0,0,.28),0 0 12px -3px var(--oc,transparent)}
   .cell.qmark{color:#b9c2b9;font-size:15px}
   .cell.live{z-index:6;animation:lp 1.3s ease-in-out infinite}
-  .cell.won{box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 0 0 3px #ffce3a,0 0 18px rgba(255,200,60,.75);z-index:3} .cell .wtag{position:absolute;top:0;right:2px;font-size:10px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
+  .cell.won{box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 0 0 3px #ffce3a,0 0 18px rgba(255,200,60,.75);z-index:3;animation:wonpulse 1.5s ease-in-out infinite} .cell .wtag{position:absolute;top:0;right:2px;font-size:10px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
+  @keyframes wonpulse{0%,100%{box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 0 0 3px #ffce3a,0 0 18px rgba(255,200,60,.7);transform:scale(1)}50%{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 0 0 5px #ffd957,0 0 34px rgba(255,210,70,1);transform:scale(1.06)}}
   @keyframes lp{0%,100%{box-shadow:0 0 0 3px var(--accent),0 0 10px 2px rgba(255,207,51,.55),0 0 22px 6px rgba(255,207,51,.3);transform:scale(1)}50%{box-shadow:0 0 0 4px var(--accent),0 0 22px 6px rgba(255,207,51,1),0 0 42px 14px rgba(255,207,51,.5);transform:scale(1.07)}}
 
   /* ===== FX: claim pop, number-draw reveal, score bump, stage transition, confetti, winner card ===== */
@@ -209,16 +213,22 @@
   .confetti{position:fixed;inset:0;pointer-events:none;z-index:9998;overflow:hidden}
   .confetti i{position:absolute;top:-16px;width:10px;height:15px;border-radius:2px;will-change:transform;animation:cfall linear forwards}
   @keyframes cfall{0%{transform:translateY(-20px) rotate(0);opacity:1}100%{transform:translateY(106vh) rotate(900deg);opacity:.85}}
-  .winfx{position:fixed;left:50%;top:42%;z-index:9999;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;text-align:center;
-    background:linear-gradient(180deg,#fffbe9,#ffe6a0);border:5px solid var(--accent);border-radius:26px;padding:24px 46px;box-shadow:0 34px 90px rgba(0,0,0,.5)}
-  .winfx .ttl{font-family:var(--display);font-weight:700;font-size:24px;color:#8a6500}
-  .winfx .who{font-family:var(--display);font-weight:700;font-size:clamp(40px,6vw,64px);color:var(--primary-dark);line-height:1;margin:4px 0}
-  .winfx .sub{font-weight:800;color:#8a6500}
-  .winfx.show{animation:winpop 2.6s ease forwards}
-  @keyframes winpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}10%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}18%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
+  .winfx{position:fixed;left:50%;top:44%;z-index:9999;transform:translate(-50%,-50%) scale(.6);opacity:0;pointer-events:none;text-align:center;
+    background:linear-gradient(180deg,#fffbe9,#ffe08f);border:6px solid var(--accent);border-radius:30px;padding:30px 64px;box-shadow:0 40px 110px rgba(0,0,0,.6),0 0 0 10px rgba(255,206,58,.18),0 0 130px 24px rgba(255,200,60,.4)}
+  .winfx .wf-trophy{font-size:90px;line-height:1;filter:drop-shadow(0 10px 14px rgba(0,0,0,.35));animation:wftrophy 1s ease-in-out infinite}
+  .winfx .ttl{font-family:var(--display);font-weight:700;font-size:30px;color:#8a6500;text-transform:uppercase;letter-spacing:1px}
+  .winfx .who{font-family:var(--display);font-weight:700;font-size:clamp(54px,8vw,108px);color:var(--primary-dark);line-height:1;margin:6px 0}
+  .winfx .sub{font-weight:800;color:#8a6500;font-size:24px}
+  @keyframes wftrophy{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
+  .winfx.show{animation:winpop 3.4s ease forwards}
+  @keyframes winpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}8%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}14%{transform:translate(-50%,-50%) scale(1)}88%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
   /* Full-screen "YOU WON!" takeover on the winning player's phone */
-  .youwon{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;
+  .youwon{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;overflow:hidden;
     background:radial-gradient(circle at 50% 38%,rgba(34,118,62,.92),rgba(8,14,24,.96))}
+  .youwon .yw-rays{position:absolute;width:200vmax;height:200vmax;z-index:0;pointer-events:none;
+    background:conic-gradient(from 0deg,rgba(255,211,77,.18) 0 11deg,transparent 11deg 22deg);animation:ywspin 16s linear infinite}
+  .youwon>*:not(.yw-rays){position:relative;z-index:1}
+  @keyframes ywspin{to{transform:rotate(360deg)}}
   .youwon.show{animation:ywfade 5.2s ease forwards}
   .youwon .yw-trophy{font-size:130px;line-height:1;filter:drop-shadow(0 10px 16px rgba(0,0,0,.5));animation:ywbounce 1s ease-in-out infinite}
   .youwon .yw-big{font-family:var(--display);font-weight:700;font-size:clamp(54px,16vw,92px);color:#ffd34d;line-height:1;margin-top:10px;text-shadow:0 5px 0 rgba(0,0,0,.35);animation:ywpop .6s cubic-bezier(.2,1.4,.4,1) both}
@@ -233,11 +243,11 @@
   body.boardview .wrap::before{content:"";position:fixed;inset:-30%;z-index:-1;pointer-events:none;opacity:.05;
     background:repeating-linear-gradient(115deg,#fff 0 3px,transparent 3px 120px);animation:ambient 34s linear infinite}
   @keyframes ambient{to{transform:translate(120px,60px)}}
-  @media(prefers-reduced-motion:reduce){.cell.pop,.pcell.pop,.cell.hdr.reveal,.bump,.stagein,.winfx.show,body.boardview .wrap::before,.cell.live{animation:none!important}}
+  @media(prefers-reduced-motion:reduce){.cell.pop,.pcell.pop,.cell.hdr.reveal,.bump,.stagein,.winfx.show,.winfx .wf-trophy,.cell.won,.youwon .yw-rays,body.boardview .wrap::before,.cell.live{animation:none!important}}
 
   /* scoreboard mini */
   .scoremini{display:flex;gap:12px}
-  .tcol{flex:1;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:12px;text-align:center;border-top:7px solid var(--tc,#888)}
+  .tcol{flex:1;background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:12px;text-align:center;border-top:7px solid var(--tc,#888);border-bottom:5px solid var(--tc2,var(--tc,#888))}
   .tcol .nm{font-family:var(--display);font-weight:700;font-size:24px}
   .tcol .sc{font-family:var(--display);font-weight:700;font-size:58px;line-height:1}
   /* editable team name + score on the host scoreboard */
@@ -267,10 +277,38 @@
 
   /* phone */
   .phone-wrap{max-width:460px;margin:0 auto}
+  /* Phone cards match the TV: semi-transparent + blur so the sport background shows through */
+  .phone-wrap .card{background:linear-gradient(180deg,rgba(32,43,61,.74),rgba(22,30,44,.82));-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.06)}
   .pgrid{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin-top:8px}
   .pcell{aspect-ratio:1/1;border-radius:5px;background:#2a3547;border:2px solid #3a4760;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;color:#8fa0b5;overflow:hidden;cursor:pointer}
-  .pcell.mine{color:#fff}.pcell.taken{opacity:.9;cursor:not-allowed}.pcell.sel{box-shadow:0 0 0 2px var(--accent);background:#3a3417}.pcell.live{box-shadow:0 0 0 2px var(--accent)}
+  .pcell.mine{color:#fff;border-color:var(--oc)}.pcell.taken{opacity:.9;cursor:not-allowed;border-color:var(--oc)}.pcell.sel{box-shadow:0 0 0 2px var(--accent);background:#3a3417}.pcell.live{box-shadow:0 0 0 2px var(--accent)}
   .legend{display:flex;gap:14px;font-size:12px;color:var(--ink-soft);margin-top:10px;flex-wrap:wrap;font-weight:800}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+  /* Player color picker */
+  .cpick-lbl{text-align:center;color:var(--ink-soft);font-weight:800;font-size:12px;letter-spacing:.6px;text-transform:uppercase;margin-top:8px}
+  .cpick{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:6px 0 2px}
+  .cpick .sw{width:36px;height:36px;border-radius:50%;background:var(--sw);border:2px solid rgba(255,255,255,.3);cursor:pointer;padding:0;-webkit-appearance:none;appearance:none;transition:transform .12s,box-shadow .12s}
+  .cpick .sw.on{box-shadow:0 0 0 3px var(--card),0 0 0 6px var(--accent);transform:scale(1.14)}
+  .cpick .sw:active{transform:scale(.9)}
+  /* "Who are you rooting for?" team picker */
+  .teamrow{display:flex;gap:10px;justify-content:center;margin:6px 0 2px}
+  .teampick{flex:1;max-width:210px;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 10px;border-radius:14px;background:#10151f;border:2px solid #2c3a4f;color:var(--ink);font-family:var(--display);font-weight:700;font-size:17px;cursor:pointer;-webkit-appearance:none;appearance:none;transition:transform .12s,border-color .12s,box-shadow .12s}
+  .teampick .tp-dot{width:18px;height:18px;border-radius:50%;background:var(--tc);flex:0 0 auto;box-shadow:0 0 0 2px rgba(255,255,255,.16)}
+  .teampick .tp-nm{line-height:1.05}
+  .teampick.on{border-color:var(--tc);box-shadow:0 0 0 3px var(--tc);transform:scale(1.03)}
+  .teampick:active{transform:scale(.96)}
+  /* Logo (emoji) picker */
+  .lpick{display:flex;flex-wrap:wrap;gap:7px;justify-content:center;margin:6px 0 2px}
+  .lpick .lg{width:42px;height:42px;border-radius:12px;background:#10151f;border:2px solid #2c3a4f;font-size:22px;line-height:1;cursor:pointer;padding:0;display:flex;align-items:center;justify-content:center;-webkit-appearance:none;appearance:none;transition:transform .12s,border-color .12s}
+  .lpick .lg.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent);transform:scale(1.1)}
+  .lpick .lg:active{transform:scale(.9)}
+  .legend .you-logo{font-size:15px;vertical-align:-2px}
+  /* Square contents: chosen logo (emoji) stacked over initials */
+  .cell.owned{flex-direction:column;gap:1px;line-height:1}
+  .cell .sq-logo{font-size:clamp(12px,calc(var(--cell,30px)*0.52),64px);line-height:1}
+  .cell .sq-ini{font-family:var(--display);font-weight:700;font-size:clamp(10px,calc(var(--cell,30px)*0.40),46px);line-height:1;letter-spacing:.5px}
+  .pcell{flex-direction:column;gap:0}
+  .pcell .psq-logo{font-size:14px;line-height:1}
+  .pcell .psq-ini{font-size:8px;font-weight:800;line-height:1;letter-spacing:.3px}
 
   #toast{position:fixed;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:200}#toast.show{display:flex}
   #toast .c{font-family:var(--display);font-weight:700;font-size:clamp(36px,8vw,86px);color:#fff;text-align:center;text-shadow:0 4px 0 var(--primary-dark),0 12px 30px rgba(0,0,0,.4);animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
@@ -322,6 +360,7 @@
   .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,3.4vw,60px)}
   .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(52px,5.2vw,92px);color:var(--ink);min-width:64px;text-align:center}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
+  .tvsep{width:3px;align-self:stretch;margin:10px 0;border-radius:2px;background:rgba(255,255,255,.16);flex:0 0 auto}
   .tvqr{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:8px 8px 8px 16px;box-shadow:var(--shadow);flex:0 0 auto}
   .tvqr .rl{text-align:right;line-height:1.1}
   .tvqr .rl .l{font-size:11px;color:var(--ink-soft);font-weight:800;letter-spacing:2px;text-transform:uppercase}
@@ -329,13 +368,12 @@
   .tvqr .qr{width:170px;height:170px;background:#fff;border-radius:10px;padding:6px}
   .tvqr .qr img,.tvqr .qr canvas{display:block;width:100%;height:100%}
   /* TV join card pinned to the bottom-left corner, bigger QR */
-  .tvjoin{position:fixed;left:26px;bottom:26px;z-index:30;display:flex;align-items:center;gap:16px;background:var(--card);border-radius:18px;padding:14px 18px;box-shadow:var(--shadow)}
-  .tvjoin .rl{text-align:right;line-height:1.1}
-  .tvjoin .rl .l{font-size:13px;color:var(--ink-soft);font-weight:800;letter-spacing:2px;text-transform:uppercase}
-  .tvjoin .rl .c{font-family:var(--display);font-weight:700;font-size:42px;color:var(--ink);letter-spacing:3px}
-  .tvjoin .qr{width:230px;height:230px;background:#fff;border-radius:12px;padding:8px}
+  .tvjoin{position:fixed;left:26px;bottom:26px;z-index:30;display:flex;flex-direction:column;align-items:center;gap:14px;background:rgba(27,36,51,.5);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:20px;padding:18px 20px;box-shadow:0 16px 40px rgba(0,0,0,.4)}
+  .tvjoin .rl{text-align:center;line-height:1.08}
+  .tvjoin .rl .l{font-family:var(--body);font-size:30px;color:#fff;font-weight:800;letter-spacing:.5px;text-transform:uppercase;text-shadow:0 2px 6px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.7)}
+  .tvjoin .qr{width:340px;height:340px;background:#fff;border-radius:14px;padding:12px}
   .tvjoin .qr img,.tvjoin .qr canvas{display:block;width:100%;height:100%}
-  @media (max-height:840px){.tvjoin .qr{width:172px;height:172px}.tvjoin .rl .c{font-size:34px}.tvjoin{left:18px;bottom:18px;padding:11px 14px}}
+  @media (max-height:840px){.tvjoin .qr{width:250px;height:250px}.tvjoin .rl .l{font-size:24px}.tvjoin{left:18px;bottom:18px;padding:14px 16px;gap:10px}}
   .tvboardwrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
   .tvboardwrap .sqgrid{margin:0 auto;flex:0 0 auto}
   /* Shorter TVs (720p): keep it big but fit without scrolling */
@@ -440,17 +478,25 @@ const CARD_SVG={
 function cardBg(key){const f=CARD_SVG[key]||FIELD_SVG[key];if(!f)return null;
   // Cards crop-to-fit (keep aspect) instead of stretching, so the art never looks squished.
   const svg=f().replace('preserveAspectRatio="none"','preserveAspectRatio="xMidYMid slice"');
-  return 'url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';}
+  const uri='url("data:image/svg+xml,'+encodeURIComponent(svg)+'")';
+  // Basketball card uses the real court photo (SVG kept as fallback for the deployed site).
+  if(key==="nba"||key==="ncaab")return 'url("'+COURT_IMG+'"), '+uri;
+  return uri;}
 // College presets reuse the football field / basketball court art.
 FIELD_SVG.ncaaf=FIELD_SVG.nfl; FIELD_SVG.ncaab=FIELD_SVG.nba; CARD_SVG.ncaaf=CARD_SVG.nfl;
-const COURT_VIDEO="court.mp4?v=2";  // basketball video background (local; not committed — see .gitignore)
+const COURT_VIDEO="court.mp4";  // basketball video background (local; not committed — see .gitignore). No ?query — file:// treats "court.mp4?v=2" as a literal filename and fails.
 function setBgVideo(on){const v=$("bgvid");if(!v)return;
   if(on){ if(v.getAttribute("src")!==COURT_VIDEO){v.setAttribute("src",COURT_VIDEO);v.setAttribute("poster","data:image/svg+xml,"+encodeURIComponent(FIELD_SVG.nba()));}
     v.style.display="block"; const p=v.play&&v.play(); if(p&&p.catch)p.catch(()=>{}); }
   else{ v.style.display="none"; try{v.pause();}catch(e){} }
 }
+// Real top-down court photo for basketball (local-only, see .gitignore). The drawn SVG
+// court is listed as a 2nd background so the deployed site — which has no local photo —
+// still falls back to it gracefully.
+const COURT_IMG="court.jpg";  // no ?query — see COURT_VIDEO note (file:// can't resolve a query on a real file)
 function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
-  const bg=fieldBg(key);if(bg)document.body.style.setProperty("--bg",bg);else document.body.style.removeProperty("--bg");
+  // Basketball plays the looping court VIDEO; the SVG court is the poster + deployed fallback.
+  const svg=fieldBg(key);if(svg)document.body.style.setProperty("--bg",svg);else document.body.style.removeProperty("--bg");
   setBgVideo(key==="nba"||key==="ncaab");}
 
 /* ===== LIVE DATA (balldontlie.io) — browser-direct; key kept in localStorage only ===== */
@@ -567,9 +613,21 @@ const SQ_STEPS=[
   {key:"live", name:"Game On",    next:"Show Winners / Finish ▸", hint:"Keep the score with the buttons, and tap Award at the end of each period.", ptitle:"Game on! 🏟️", pmsg:"The glowing square is winning right now."},
   {key:"final",name:"Winners",    next:null,                     hint:"All done! Start a new board or change the sport.", ptitle:"Final! 🏆", pmsg:"Thanks for playing!"},
 ];
+// Default team colors for generic/manual teams (away, home) + their secondary accents.
+const TEAM_COLORS=["#2f6fed","#e8772a"];   // primary: away = blue, home = orange
+const TEAM_COLORS2=["#16357a","#b8541c"];  // secondary accents
+// Real team colors [primary, secondary] for live games, per pro league, keyed by nickname
+// (matched within the picked sport so cross-league nicknames like Panthers/Kings/Jets don't collide).
+const TEAM_BRAND={
+ nfl:{cardinals:["#97233F","#FFB612"],falcons:["#A71930","#A5ACAF"],ravens:["#241773","#9E7C0C"],bills:["#00338D","#C60C30"],panthers:["#0085CA","#101820"],bears:["#0B162A","#C83803"],bengals:["#FB4F14","#000000"],browns:["#311D00","#FF3C00"],cowboys:["#003594","#869397"],broncos:["#FB4F14","#002244"],lions:["#0076B6","#B0B7BC"],packers:["#203731","#FFB612"],texans:["#03202F","#A71930"],colts:["#002C5F","#A2AAAD"],jaguars:["#006778","#D7A22A"],chiefs:["#E31837","#FFB81C"],raiders:["#101010","#A5ACAF"],chargers:["#0080C6","#FFC20E"],rams:["#003594","#FFA300"],dolphins:["#008E97","#FC4C02"],vikings:["#4F2683","#FFC62F"],patriots:["#002244","#C60C30"],saints:["#D3BC8D","#101820"],giants:["#0B2265","#A71930"],jets:["#125740","#101010"],eagles:["#004C54","#A5ACAF"],steelers:["#FFB612","#101820"],"49ers":["#AA0000","#B3995D"],seahawks:["#002244","#69BE28"],buccaneers:["#D50A0A","#34302B"],titans:["#0C2340","#4B92DB"],commanders:["#5A1414","#FFB612"]},
+ nba:{hawks:["#E03A3E","#C1D32F"],celtics:["#007A33","#BA9653"],nets:["#101010","#C4CED4"],hornets:["#1D1160","#00788C"],bulls:["#CE1141","#101010"],cavaliers:["#860038","#FDBB30"],mavericks:["#00538C","#B8C4CA"],nuggets:["#0E2240","#FEC524"],pistons:["#C8102E","#1D42BA"],warriors:["#1D428A","#FFC72C"],rockets:["#CE1141","#C4CED4"],pacers:["#002D62","#FDBB30"],clippers:["#C8102E","#1D428A"],lakers:["#552583","#FDB927"],grizzlies:["#5D76A9","#F5B112"],heat:["#98002E","#F9A01B"],bucks:["#00471B","#EEE1C6"],timberwolves:["#0C2340","#236192"],pelicans:["#0C2340","#C8102E"],knicks:["#006BB6","#F58426"],magic:["#0077C0","#C4CED4"],"76ers":["#006BB6","#ED174C"],suns:["#1D1160","#E56020"],blazers:["#E03A3E","#B6BFBF"],kings:["#5A2D81","#63727A"],spurs:["#8A8D8F","#101010"],raptors:["#CE1141","#101010"],jazz:["#002B5C","#F9A01B"],wizards:["#002B5C","#E31837"],thunder:["#007AC1","#EF3B24"]},
+ mlb:{diamondbacks:["#A71930","#E3D4AD"],braves:["#CE1141","#13274F"],orioles:["#DF4601","#101010"],"red sox":["#BD3039","#0C2340"],cubs:["#0E3386","#CC3433"],"white sox":["#27251F","#C4CED4"],reds:["#C6011F","#101010"],guardians:["#00385D","#E50022"],rockies:["#33006F","#C4CED4"],tigers:["#0C2340","#FA4616"],astros:["#002D62","#EB6E1F"],royals:["#004687","#BD9B60"],angels:["#003263","#BA0021"],dodgers:["#005A9C","#A5ACAF"],marlins:["#00A3E0","#EF3340"],brewers:["#12284B","#FFC52F"],twins:["#002B5C","#D31145"],mets:["#002D72","#FF5910"],yankees:["#0C2340","#C4CED4"],athletics:["#003831","#EFB21E"],phillies:["#E81828","#002D72"],pirates:["#FDB827","#27251F"],padres:["#2F241D","#FFC425"],giants:["#FD5A1E","#27251F"],mariners:["#0C2C56","#3FA39B"],cardinals:["#C41E3A","#0C2340"],rays:["#092C5C","#8FBCE6"],rangers:["#003278","#C0111F"],"blue jays":["#134A8E","#E8291C"],nationals:["#AB0003","#14225A"]},
+ nhl:{ducks:["#F47A38","#B09862"],bruins:["#FFB81C","#101010"],sabres:["#003087","#FFB81C"],flames:["#C8102E","#F1BE48"],hurricanes:["#CC0000","#101010"],blackhawks:["#CF0A2C","#101010"],avalanche:["#6F263D","#236192"],"blue jackets":["#002654","#CE1126"],stars:["#006847","#8F8F8C"],"red wings":["#CE1126","#C4CED4"],oilers:["#FF4C00","#041E42"],panthers:["#C8102E","#041E42"],kings:["#111111","#A2AAAD"],wild:["#A6192E","#154734"],canadiens:["#AF1E2D","#192168"],predators:["#FFB81C","#041E42"],devils:["#CE1126","#101010"],islanders:["#00539B","#F47D30"],rangers:["#0038A8","#CE1126"],senators:["#C52032","#C2912C"],flyers:["#F74902","#101010"],penguins:["#FFB81C","#101010"],sharks:["#006D75","#EA7200"],kraken:["#001628","#99D9D9"],blues:["#002F87","#FCB514"],lightning:["#002868","#C4CED4"],"maple leafs":["#00205B","#C4CED4"],canucks:["#00205B","#00843D"],"golden knights":["#B4975A","#333F42"],capitals:["#041E42","#C8102E"],jets:["#041E42","#7B303E"]}
+};
+function teamBrand(sport,name){const m=TEAM_BRAND[sport];if(!m||!name)return null;const n=(""+name).toLowerCase();let best=null,bl=0;for(const k in m){if(n.indexOf(k)>=0&&k.length>bl){best=m[k];bl=k.length;}}return best;}
 function freshState(themeKey){const th=THEMES[themeKey];return {kind:"sports-squares",theme:themeKey,step:0,
   live:null,winProb:null,liveState:null,liveStart:null,livePeriod:0,liveErr:null,
-  away:{name:th.teams[0],color:th.colors[0]},home:{name:th.teams[1],color:th.colors[1]},maxPer:10,
+  away:{name:th.teams[0],color:TEAM_COLORS[0],color2:TEAM_COLORS2[0]},home:{name:th.teams[1],color:TEAM_COLORS[1],color2:TEAM_COLORS2[1]},maxPer:10,
   grid:Array.from({length:100},()=>({owner:null,color:null})),rowDigits:null,colDigits:null,score:{away:0,home:0},
   checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};}
 function stepOf(st){return st&&typeof st.step==="number"?st.step:0;}
@@ -587,11 +645,17 @@ const Host={
   previewSport(k,mode){Host.openPreview(mode,k);},
   openPreview(mode,k){
     const phone=(mode==="phone"); const v=phone?"play":"tv";
-    const url="./?"+v+"&demo"+((k&&THEMES[k])?"&sport="+encodeURIComponent(k):"");
+    // Build from the CURRENT page URL (strip any query/hash) so the preview loads exactly how
+    // this page did — including file:// (where "./?..." would open a folder listing, not the game).
+    const base=location.href.split('#')[0].split('?')[0];
+    const url=base+"?"+v+"&demo"+((k&&THEMES[k])?"&sport="+encodeURIComponent(k):"");
     const title=((k&&THEMES[k])?(THEMES[k].emoji+" "+THEMES[k].name):"All sports")+" — "+(phone?"Phone":"TV")+" preview";
     let m=$("previewModal");
     if(!m){m=document.createElement("div");m.id="previewModal";m.className="modalbd";m.onclick=(e)=>{if(e.target===m)Host.closePreview();};document.body.appendChild(m);}
-    m.innerHTML=`<div class="previewbox ${phone?'phone':''}"><div class="pv-head"><span>${esc(title)}</span><button class="btn soft sm" onclick="Host.closePreview()">✕ Close</button></div><div class="pv-frame ${phone?'pv-phone':''}"><iframe src="${url}" title="preview" allowfullscreen></iframe></div></div>`;
+    // A real anchor (target=_blank) is never popup-blocked — guaranteed fallback if the iframe can't render.
+    m.innerHTML=`<div class="previewbox ${phone?'phone':''}"><div class="pv-head"><span>${esc(title)}</span>
+        <span class="pv-actions"><a class="btn soft sm" href="${url}" target="_blank" rel="noopener">↗ Open full</a><button class="btn soft sm" onclick="Host.closePreview()">✕ Close</button></span></div>
+      <div class="pv-frame ${phone?'pv-phone':''}"><iframe id="pvIframe" src="${url}" title="preview" allowfullscreen></iframe></div></div>`;
     m.style.display="flex";
   },
   closePreview(){const m=$("previewModal");if(m){m.innerHTML="";m.style.display="none";}},
@@ -612,6 +676,10 @@ const Host={
       _liveGames=lists.flat().sort((a,b)=>ord[a.state]-ord[b.state]);renderHost();
     }catch(e){if(box)box.innerHTML='<div style="padding:10px;color:var(--bad);font-weight:800">Couldn\'t load games ('+(e.status||e.message)+').</div>';}},
   pickLiveGame(i){const g=_liveGames[i];if(!g)return;S.live={sport:g.sport,gameId:g.id};S.away.name=g.away.name;S.home.name=g.home.name;
+    // Real team colors (primary fill + secondary accent) for this matchup; keep defaults if not found.
+    const ba=teamBrand(g.sport,g.away.name)||teamBrand(g.sport,g.away.abbr);
+    const bh=teamBrand(g.sport,g.home.name)||teamBrand(g.sport,g.home.abbr);
+    if(ba){S.away.color=ba[0];S.away.color2=ba[1];} if(bh){S.home.color=bh[0];S.home.color2=bh[1];}
     // align the board's checkpoints to the picked league (college basketball = halves, etc.)
     if(THEMES[g.sport])S.checks=THEMES[g.sport].checks.map(lab=>({lab,done:false,idx:null,winner:null}));
     renderHost();},
@@ -639,7 +707,7 @@ const Host={
     renderHost();},
 };
 function hostApplyClaim(p){if(!S||!canClaimSt(S))return;const owned=S.grid.filter(o=>o.owner===p.alias).length;let budget=Math.max(0,S.maxPer-owned);
-  (p.cells||[]).forEach(i=>{if(budget<=0)return;if(i>=0&&i<100&&!S.grid[i].owner){S.grid[i]={owner:p.alias,color:p.color};budget--;}});renderHost();pushState();}
+  (p.cells||[]).forEach(i=>{if(budget<=0)return;if(i>=0&&i<100&&!S.grid[i].owner){S.grid[i]={owner:p.alias,color:p.color,logo:p.logo||null,ini:p.ini||initialsOf(p.alias)};budget--;}});renderHost();pushState();}
 
 /* ---- RENDER (host & tv share) ---- */
 function claimedCount(){return S.grid.filter(o=>o.owner).length;}
@@ -651,10 +719,12 @@ function renderHost(){
   const th=curTheme();
   document.documentElement.style.setProperty("--awayc",S.away.color);
   document.documentElement.style.setProperty("--homec",S.home.color);
+  document.documentElement.style.setProperty("--awayc2",S.away.color2||S.away.color);
+  document.documentElement.style.setProperty("--homec2",S.home.color2||S.home.color);
   if(live.role!=="host"){document.body.classList.remove("boardview");root.innerHTML=setupHTML(th);wireSetup();return;}
   document.body.classList.add("boardview");
   root.innerHTML=`${headerHTML(th)}<div class="main"><div class="stack">${gridHTML(th)}</div><div class="stack rail">${railHTML(th)}</div></div>`;
-  ctlBar();if(live.code)showQR("qrBox",joinUrl(),360);
+  ctlBar();if(live.code)showQR("qrBox",joinUrl(),460);
   scheduleFit();
   fxAfterRender();
 }
@@ -705,10 +775,10 @@ function gridHTML(th){
       const owner=o.owner||null;const isNew=owner&&_fx.owners[i]!==owner;
       const cls=["cell"];if(owner)cls.push("owned");if(isNew)cls.push("pop");if(liveSquareOn(S)&&i===lc)cls.push("live");if(wc)cls.push("won");
       _fx.owners[i]=owner;
-      const st=owner?`style="background:${o.color};--oc:${o.color}"`:"";const lab=owner?esc(shortName(owner)):((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
+      const st=owner?`style="background:${o.color};--oc:${o.color}"`:"";const lab=owner?`<span class="sq-logo">${o.logo||"🏀"}</span><span class="sq-ini">${esc(o.ini||initialsOf(owner))}</span>`:((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
       cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}}
   _fx.numbersShown=numsNow;
-  return `<div class="gridcard"><div class="slidebanner">${esc(meta.ptitle||meta.name)}</div><div class="axislabel">${esc(S.home.name)} ▸ (across)</div>
+  return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)} ▸ (across)</div>
     <div class="gridrow"><div class="axisleft">${esc(S.away.name)} ▸</div><div class="sqgrid">${cells}</div></div></div>`;
 }
 /* Post-render effects: stage transition, score bump, award confetti + winner card.
@@ -735,13 +805,13 @@ function fxAfterRender(state){
   _fx.done=cur;
 }
 function celebrate(chk){
-  confettiBurst();
+  confettiBurst(true);setTimeout(()=>confettiBurst(true),500);
   if(!chk||!chk.winner) return;
   let card=document.querySelector(".winfx");
   if(!card){card=document.createElement("div");card.className="winfx";document.body.appendChild(card);}
-  card.innerHTML=`<div class="ttl">🏆 ${esc(chk.lab)}</div><div class="who">${esc(chk.winner)}</div><div class="sub">wins this one!</div>`;
+  card.innerHTML=`<div class="wf-trophy">🏆</div><div class="ttl">${esc(chk.lab)}</div><div class="who">${esc(chk.winner)}</div><div class="sub">wins this square!</div>`;
   card.classList.remove("show");void card.offsetWidth;card.classList.add("show");
-  clearTimeout(window.__winfxT);window.__winfxT=setTimeout(()=>card.classList.remove("show"),2600);
+  clearTimeout(window.__winfxT);window.__winfxT=setTimeout(()=>card.classList.remove("show"),3400);
 }
 // Full-screen "YOU WON!" takeover for the winning player's phone (deduped per award).
 function phoneCelebrate(label){
@@ -749,19 +819,19 @@ function phoneCelebrate(label){
   const now=Date.now();
   if(window.__ywLabel===label && now-(window.__ywTs||0)<6000) return; // already celebrating this win
   window.__ywLabel=label; window.__ywTs=now;
-  confettiBurst(); setTimeout(confettiBurst,450); setTimeout(confettiBurst,1000);
+  confettiBurst(true); setTimeout(()=>confettiBurst(true),400); setTimeout(()=>confettiBurst(true),900); setTimeout(()=>confettiBurst(true),1500);
   try{ if(navigator.vibrate) navigator.vibrate([0,70,50,70,50,220]); }catch(e){}
   let o=$("youwon"); if(!o){o=document.createElement("div");o.id="youwon";o.className="youwon";document.body.appendChild(o);}
-  o.innerHTML=`<div class="yw-trophy">🏆</div><div class="yw-big">YOU WON!</div>${label?`<div class="yw-sub">${esc(label)}</div>`:""}<div class="yw-tap">tap to keep playing</div>`;
+  o.innerHTML=`<div class="yw-rays"></div><div class="yw-trophy">🏆</div><div class="yw-big">YOU WON!</div>${label?`<div class="yw-sub">${esc(label)}</div>`:""}<div class="yw-tap">tap to keep playing</div>`;
   const close=()=>{o.classList.remove("show");o.style.pointerEvents="none";};
   o.onclick=close;
   o.classList.remove("show");void o.offsetWidth;o.classList.add("show");o.style.pointerEvents="auto";
   clearTimeout(window.__ywT);window.__ywT=setTimeout(close,5200);
 }
-function confettiBurst(){
+function confettiBurst(big){
   const wrap=document.createElement("div");wrap.className="confetti";
   const cols=["#ffcf33","#2fb35e","#3a6df0","#e8553e","#c455bf","#ffffff","#ff9f1c","#34d1bf"];
-  const N=92;
+  const N=big?160:92;
   for(let k=0;k<N;k++){const p=document.createElement("i");
     p.style.background=cols[k%cols.length];
     p.style.left=(Math.random()*100).toFixed(2)+"%";
@@ -778,9 +848,9 @@ function railHTML(th){
   const lc=liveCell();const st=stepOf(S);const meta=SQ_STEPS[st];const showScore=numbersOut(S);
   const nowName = st<2?"— not drawn yet —":(lc>=0?(S.grid[lc].owner||"(open square)"):"—");
   function tcol(side){const t=S[side];
-    if(S.live)return `<div class="tcol" style="--tc:${t.color}"><div class="nm">${esc(t.name)}</div><div class="sc">${S.score[side]}</div><div class="dig">last digit ${S.score[side]%10}</div></div>`;
+    if(S.live)return `<div class="tcol" style="--tc:${t.color};--tc2:${t.color2||t.color}"><div class="nm">${esc(t.name)}</div><div class="sc">${S.score[side]}</div><div class="dig">last digit ${S.score[side]%10}</div></div>`;
     const sb=showScore?(th.scoreBtns.map(b=>`<button class="sbtn" onclick="Host.score('${side}',${b.v})">${b.lab}</button>`).join("")+`<button class="sbtn minus" onclick="Host.score('${side}',-1)">−1</button>`):"";
-    return `<div class="tcol" style="--tc:${t.color}"><input class="nm-edit" value="${esc(t.name)}" maxlength="16" onchange="Host.renameTeam('${side}',this.value)" title="Tap to rename"><input class="sc-edit" type="number" min="0" value="${S.score[side]}" onchange="Host.setScore('${side}',this.value)" title="Tap to type the score"><div class="dig">last digit ${S.score[side]%10}</div><div class="scorebtns hostonly">${sb}</div></div>`;}
+    return `<div class="tcol" style="--tc:${t.color};--tc2:${t.color2||t.color}"><input class="nm-edit" value="${esc(t.name)}" maxlength="16" onchange="Host.renameTeam('${side}',this.value)" title="Tap to rename"><input class="sc-edit" type="number" min="0" value="${S.score[side]}" onchange="Host.setScore('${side}',this.value)" title="Tap to type the score"><div class="dig">last digit ${S.score[side]%10}</div><div class="scorebtns hostonly">${sb}</div></div>`;}
   const pot=claimedCount();
   const checks=S.checks.map((ch,ci)=>`<div class="chk ${ch.done?'done':''}"><div class="ck"><div class="lab">${esc(ch.lab)}</div>${ch.done?`<div class="win">${ch.winner?('🏆 '+esc(ch.winner)):'no winner'}</div>`:`<div class="sub">winning: ${esc(nowName)}</div>`}</div>${(ch.done||!showScore||S.live)?'':`<button class="btn sm hostonly" onclick="Host.award(${ci})">Award</button>`}</div>`).join("");
   const liveStatus=()=>{const stMap={pre:"Waiting for game to start…",live:"🔴 LIVE — auto-scoring",final:"🏁 Final"};const per=(S.liveState==="live"&&S.livePeriod)?(" · period "+S.livePeriod):"";
@@ -862,15 +932,38 @@ function openChannel(code){const sb=liveClient();if(live.channel){try{sb.removeC
     .subscribe();}
 
 /* ---- PHONE ---- */
-const PLAYER_COLORS=["#3a6df0","#2fb35e","#e0772a","#c455bf","#e3a90f","#1ba6bd","#e8553e","#8a6bff","#3fae84","#d98a1e"];
+// Curated, clean palette players choose from (blue-led, plus white) — not random.
+const PLAYER_COLORS=["#2f6fed","#19a7d6","#17b3a3","#36b24a","#e3a90f","#e8772a","#e8553e","#d6468f","#9b6bff","#ffffff"];
 let myName=(()=>{try{return localStorage.getItem("gameday-squares-name")||"";}catch(e){return"";}})();
-const phone={name:myName,color:null,sel:new Set(),remote:null};
-function phoneColor(){if(!phone.color){let h=0;for(const c of(phone.name||"x"))h=(h*31+c.charCodeAt(0))>>>0;phone.color=PLAYER_COLORS[h%PLAYER_COLORS.length];}return phone.color;}
+let myColor=(()=>{try{return localStorage.getItem("gameday-squares-color")||"";}catch(e){return"";}})();
+let myLogo=(()=>{try{return localStorage.getItem("gameday-squares-logo")||"";}catch(e){return"";}})();
+let myTeam=(()=>{try{return localStorage.getItem("gameday-squares-team")||"";}catch(e){return"";}})();
+const phone={name:myName,color:myColor||null,logo:myLogo||null,team:(myTeam==="home"?"home":"away"),sel:new Set(),remote:null};
+// Square color = the color of the team you're rooting for, so the board stays cohesive (two team colors, not a random rainbow).
+function phoneColor(){const r=phone.remote;const side=(phone.team==="home"?"home":"away");if(r&&r[side]&&r[side].color)return r[side].color;return TEAM_COLORS[side==="home"?1:0];}
+// "Who are you rooting for?" picker — your squares take that team's color.
+function teamPickerHTML(r){if(!r)return "";const cur=(phone.team==="home"?"home":"away");const opt=(side)=>{const t=r[side];return `<button type="button" class="teampick${cur===side?' on':''}" style="--tc:${t.color}" data-side="${side}" onclick="phonePickTeam('${side}')"><span class="tp-dot"></span><span class="tp-nm">${esc(t.name)}</span></button>`;};return `<div class="teamrow">${opt("away")}${opt("home")}</div>`;}
+function phonePickTeam(side){side=(side==="home"?"home":"away");phone.team=side;const r=phone.remote;if(r&&r[side])phone.color=r[side].color;try{localStorage.setItem("gameday-squares-team",side);}catch(e){}
+  // Update selection + legend without a full re-render (keep selected squares).
+  document.querySelectorAll(".teampick").forEach(b=>b.classList.toggle("on",(b.dataset.side||"")===side));
+  const leg=document.querySelector(".legend .you-sw");if(leg&&r&&r[side])leg.style.background=r[side].color;}
+// Curated emoji logos a player picks for their squares (shown alongside their initials).
+const LOGOS=["🏀","🔥","⚡","⭐","👑","💎","🚀","🎯","🦅","🦁","🐉","🦈","🐺","🐯","🐻","🦊","🏆","💪","😎","👽"];
+function phoneLogo(){if(!phone.logo){let h=0;for(const c of(phone.name||"x"))h=(h*7+c.charCodeAt(0))>>>0;phone.logo=LOGOS[h%LOGOS.length];}return phone.logo;}
+function logoPickerHTML(){const cur=phoneLogo();return `<div class="lpick">`+LOGOS.map(e=>`<button type="button" class="lg${cur===e?' on':''}" data-l="${e}" onclick="phonePickLogo('${e}')" aria-label="Pick logo">${e}</button>`).join("")+`</div>`;}
+function phonePickLogo(e){phone.logo=e;try{localStorage.setItem("gameday-squares-logo",e);}catch(_){}
+  // Update live without a full re-render (keep a half-typed name / selected squares).
+  document.querySelectorAll(".lpick .lg").forEach(b=>b.classList.toggle("on",(b.dataset.l||"")===e));
+  const lp=document.querySelector(".legend .you-logo");if(lp)lp.textContent=e;}
+// Initials from a name: first letters of two words, else first two letters.
+function initialsOf(name){if(!name)return"";const p=name.trim().split(/\s+/);return (p.length>=2?(p[0][0]+p[1][0]):name.trim().slice(0,2)).toUpperCase();}
 function renderPhone(){const root=$("root");
   if(!phone.name){root.innerHTML=`<div class="phone-wrap"><div class="topbar"><div class="logo">${BB_LOGO}</div><div class="title"><div class="t1">GAME DAY SQUARES</div><div class="t2">Join the board</div></div></div>
     <div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:24px;margin-bottom:6px">What's your name?</h3>
     <p style="color:var(--ink-soft);font-weight:700;margin-bottom:14px">Tap squares to claim them. If your square is winning when a period ends, you win! 🏆</p>
-    <input class="tin" id="nm" maxlength="14" placeholder="Your name…" value="${esc(phone.name)}"><button class="btn primary big wide" style="margin-top:14px" onclick="phoneSetName()">Join ▸</button></div></div>`;return;}
+    <input class="tin" id="nm" maxlength="14" placeholder="Your name…" value="${esc(phone.name)}">
+    <div class="cpick-lbl">Pick your logo</div>${logoPickerHTML()}
+    <button class="btn primary big wide" style="margin-top:14px" onclick="phoneSetName()">Join ▸</button></div></div>`;return;}
   const r=phone.remote;
   if(!r){root.innerHTML=`<div class="phone-wrap"><div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:22px">Waiting for the board…</h3><p style="color:var(--ink-soft);font-weight:700;margin-top:8px">Scan the TV's QR. Room <b>${esc(live.code||"?")}</b>.</p></div></div>`;return;}
   applyThemeClass(r.theme);document.body.classList.remove("tv");
@@ -888,7 +981,8 @@ function renderPhone(){const root=$("root");
       else if(o.owner)cls.push("taken");
       if(canClaim&&phone.sel.has(i))cls.push("sel");if(liveSquareOn(r)&&i===lc)cls.push("live");
       _fxP.owners[i]=o.owner||null;
-      cells+=`<div class="${cls.join(" ")}" ${o.owner?`style="background:${o.color};--oc:${o.color}"`:""} data-i="${i}"></div>`;}
+      const pc=o.owner?`<span class="psq-logo">${o.logo||"🏀"}</span><span class="psq-ini">${esc(o.ini||initialsOf(o.owner))}</span>`:"";
+      cells+=`<div class="${cls.join(" ")}" ${o.owner?`style="background:${o.color};--oc:${o.color}"`:""} data-i="${i}">${pc}</div>`;}
     if(st===4){ // WINNERS slide
       const wins=r.checks.filter(c=>c.done);const youWon=wins.filter(c=>c.winner===phone.name).map(c=>c.lab);
       body=`<div class="card" style="text-align:center"><div style="font-size:50px">🏆</div><h2 style="font-family:var(--display);font-weight:700;font-size:24px">${youWon.length?`You won ${esc(youWon.join(', '))}! 🎉`:'Final'}</h2>
@@ -899,8 +993,9 @@ function renderPhone(){const root=$("root");
       const sub=canClaim?`Up to ${r.maxPer} each (${budget} left)`:esc(meta.pmsg||"");
       body=`<div class="card"><h3 style="font-family:var(--display);font-weight:700;font-size:19px">${headline}</h3>
         <p style="color:var(--ink-soft);font-weight:700;margin:4px 0 4px">${sub}</p>
+        ${canClaim?`<div class="cpick-lbl">Who are you rooting for?</div>${teamPickerHTML(r)}<div class="cpick-lbl">Your logo</div>${logoPickerHTML()}`:""}
         <div class="pgrid" id="pGrid">${cells}</div>
-        <div class="legend"><span><i style="background:${phoneColor()}"></i>You</span><span><i style="background:#2a3547;border:1px solid #3a4760"></i>Open</span><span><i style="background:#56657c"></i>Taken</span>${liveSquareOn(r)?'<span><i style="background:var(--accent)"></i>Winning now</span>':''}</div>
+        <div class="legend"><span><i class="you-sw" style="background:${phoneColor()}"></i>You <span class="you-logo">${phoneLogo()}</span></span><span><i style="background:#2a3547;border:1px solid #3a4760"></i>Open</span><span><i style="background:#56657c"></i>Taken</span>${liveSquareOn(r)?'<span><i style="background:var(--accent)"></i>Winning now</span>':''}</div>
         ${canClaim?`<button class="btn primary big wide" style="margin-top:12px" id="claimBtn" ${phone.sel.size?"":"disabled"}>Claim ${phone.sel.size||""} Square${phone.sel.size===1?"":"s"}</button>`:""}</div>`;
     }
   }
@@ -909,7 +1004,7 @@ function renderPhone(){const root=$("root");
   fxAfterRender(phone.remote);
 }
 function phoneSetName(){const v=$("nm").value.trim().slice(0,14);if(!v)return;phone.name=v;try{localStorage.setItem("gameday-squares-name",v);}catch(e){}renderPhone();}
-function phoneClaim(){if(!phone.sel.size)return;const cells=Array.from(phone.sel);if(live.channel){try{live.channel.send({type:"broadcast",event:"claim",payload:{alias:phone.name,color:phoneColor(),cells}});}catch(e){}}mini(`Claiming ${cells.length} square${cells.length===1?"":"s"}…`);phone.sel.clear();renderPhone();}
+function phoneClaim(){if(!phone.sel.size)return;const cells=Array.from(phone.sel);if(live.channel){try{live.channel.send({type:"broadcast",event:"claim",payload:{alias:phone.name,color:phoneColor(),logo:phoneLogo(),ini:initialsOf(phone.name),cells}});}catch(e){}}mini(`Claiming ${cells.length} square${cells.length===1?"":"s"}…`);phone.sel.clear();renderPhone();}
 function phoneWin(p){if(p.winner===phone.name){phoneCelebrate(p.label);}}
 function applyRemote(row){const r=row.rounds;if(!r||r.kind!=="sports-squares")return;phone.remote=r;if(isTV){S=r;renderTV();}else renderPhone();}
 async function joinAsViewer(code){live.role=isTV?"tv":"player";live.code=code;if(!liveConfigured())return;const sb=liveClient();try{const {data}=await sb.from(LIVE_TABLE).select("*").eq("room_code",code).maybeSingle();if(data)applyRemote(data);}catch(e){}openChannel(code);}
@@ -918,23 +1013,22 @@ async function joinAsViewer(code){live.role=isTV?"tv":"player";live.code=code;if
 function renderTV(){if(!S){document.body.classList.remove("boardview");$("root").innerHTML=`<div class="card" style="max-width:520px;margin:60px auto;text-align:center"><h3 style="font-family:var(--display);font-weight:700;font-size:26px">📺 TV View</h3><p style="color:var(--ink-soft);font-weight:700;margin-top:8px">Waiting for the host. Room <b>${esc(live.code||"?")}</b>.</p></div>`;return;}
   applyThemeClass(S.theme);document.body.classList.add("boardview");
   document.documentElement.style.setProperty("--awayc",S.away.color);document.documentElement.style.setProperty("--homec",S.home.color);
+  document.documentElement.style.setProperty("--awayc2",S.away.color2||S.away.color);document.documentElement.style.setProperty("--homec2",S.home.color2||S.home.color);
   const th=curTheme();const st=stepOf(S);const showJoin=st<=1&&!!live.code;
   $("root").innerHTML=`<div class="tvscreen">
     <div class="tvhead">
-      <div class="brandmini"><div class="logo">${th.emoji}</div><div class="bt">GAME DAY <span class="live">SQUARES</span></div></div>
       <div class="tvscoreboard">
-        <div class="tvt"><span class="n" style="color:${S.away.color}">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div>
-        <div class="tvmid">${esc(SQ_STEPS[st].name)}</div>
-        <div class="tvt"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color}">${esc(S.home.name)}</span></div>
+        <div class="tvt"><span class="n" style="color:${S.away.color};border-bottom:5px solid ${S.away.color2||S.away.color};padding-bottom:3px">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div>
+        <div class="tvsep"></div>
+        <div class="tvt"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color};border-bottom:5px solid ${S.home.color2||S.home.color};padding-bottom:3px">${esc(S.home.name)}</span></div>
       </div>
-      <div class="brandmini" style="visibility:hidden"><div class="logo">${th.emoji}</div><div class="bt">GAME DAY SQUARES</div></div>
     </div>
-    ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Claim on your phone</div><div class="c">${live.code}</div></div><div class="qr" id="qrBox"></div></div>`:""}
+    ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
     ${(S.winProb!=null)?`<div class="tvwp"><div class="lab"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>Win Probability</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div></div>`:""}
     ${(S.props&&S.props.length)?`<div class="tvprops">${S.props.map(p=>`<div class="pchip"><span class="pn">${esc(p.name)}</span> ${esc(p.prop)} ${esc(String(p.line))} <span class="po">${(p.odds>0?"+":"")+(p.odds!=null?p.odds:"")}</span></div>`).join("")}</div>`:""}
     <div class="tvboardwrap">${gridHTML(th)}</div>
   </div>`;
-  if(showJoin)showQR("qrBox",joinUrl(),360);
+  if(showJoin)showQR("qrBox",joinUrl(),460);
   scheduleFit();
   fxAfterRender();}
 
@@ -952,11 +1046,13 @@ function startTVDemo(){
     const key=demoSport||SPORT_ORDER[sportI++ % SPORT_ORDER.length];
     S=freshState(key); applyThemeClass(key); document.body.classList.add("tv");
     const order=shuffle(Array.from({length:100},(_,i)=>i));
-    order.slice(0,78).forEach((idx,k)=>{ const ni=k%names.length; S.grid[idx]={owner:names[ni],color:PLAYER_COLORS[ni%PLAYER_COLORS.length]}; });
+    order.slice(0,78).forEach((idx,k)=>{ const ni=k%names.length; S.grid[idx]={owner:names[ni],color:(ni%2===0?S.away.color:S.home.color),logo:LOGOS[ni%LOGOS.length],ini:initialsOf(names[ni])}; });
     S.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); S.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]);
     S.step=3; S.score={away:0,home:0}; awarded=0;
     document.documentElement.style.setProperty("--awayc",S.away.color);
     document.documentElement.style.setProperty("--homec",S.home.color);
+    document.documentElement.style.setProperty("--awayc2",S.away.color2||S.away.color);
+    document.documentElement.style.setProperty("--homec2",S.home.color2||S.home.color);
     renderTV();
   }
   function scoreVal(){ const b=THEMES[S.theme].scoreBtns; return b[Math.floor(Math.random()*b.length)].v; }
@@ -979,8 +1075,8 @@ function startPhoneDemo(){
     const key=demoSport||SPORT_ORDER[sportI++ % SPORT_ORDER.length]; const th=THEMES[key];
     const grid=Array.from({length:100},()=>({owner:null,color:null}));
     const order=shuffle(Array.from({length:100},(_,i)=>i));
-    order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length]};});
-    phone.remote={kind:"sports-squares",theme:key,step:0,away:{name:th.teams[0],color:th.colors[0]},home:{name:th.teams[1],color:th.colors[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
+    order.slice(0,52).forEach((idx,k)=>{const ni=k%others.length;grid[idx]={owner:others[ni],color:(ni%2===0?TEAM_COLORS[0]:TEAM_COLORS[1]),logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};});
+    phone.remote={kind:"sports-squares",theme:key,step:0,away:{name:th.teams[0],color:TEAM_COLORS[0],color2:TEAM_COLORS2[0]},home:{name:th.teams[1],color:TEAM_COLORS[1],color2:TEAM_COLORS2[1]},maxPer:10,grid,rowDigits:null,colDigits:null,score:{away:0,home:0},checks:th.checks.map(lab=>({lab,done:false,idx:null,winner:null}))};
     phone.sel=new Set(); renderPhone();
   }
   function freeCells(){return phone.remote.grid.map((o,i)=>o.owner?null:i).filter(i=>i!==null);}
@@ -991,8 +1087,8 @@ function startPhoneDemo(){
     if(r.step===0){ if(step%2===0) r.step=1; }
     else if(r.step===1){
       if(phone.sel.size<4 && Math.random()<0.75){ const free=freeCells().filter(i=>!phone.sel.has(i)); if(free.length)phone.sel.add(free[Math.floor(Math.random()*free.length)]); }
-      else { phone.sel.forEach(i=>{ if(!r.grid[i].owner) r.grid[i]={owner:"You",color:phoneColor()}; }); phone.sel=new Set(); }
-      if(Math.random()<0.5){ const free=freeCells(); if(free.length){const ni=Math.floor(Math.random()*others.length); r.grid[free[Math.floor(Math.random()*free.length)]]={owner:others[ni],color:PLAYER_COLORS[(ni+1)%PLAYER_COLORS.length]};} }
+      else { phone.sel.forEach(i=>{ if(!r.grid[i].owner) r.grid[i]={owner:"You",color:phoneColor(),logo:phoneLogo(),ini:initialsOf("You")}; }); phone.sel=new Set(); }
+      if(Math.random()<0.5){ const free=freeCells(); if(free.length){const ni=Math.floor(Math.random()*others.length); r.grid[free[Math.floor(Math.random()*free.length)]]={owner:others[ni],color:(ni%2===0?r.away.color:r.home.color),logo:LOGOS[(ni+1)%LOGOS.length],ini:initialsOf(others[ni])};} }
       if(step%6===0){ r.rowDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); r.colDigits=shuffle([0,1,2,3,4,5,6,7,8,9]); r.step=2; }
     } else if(r.step===2){ if(step%3===0) r.step=3; }
     else {
