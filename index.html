@@ -190,7 +190,7 @@
   .sqgrid{perspective:900px}
   .cell{border-radius:7px;background:linear-gradient(180deg,#2b3649,#222b3b);border:1px solid #3a4760;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -2px 3px rgba(0,0,0,.25),0 1px 1px rgba(0,0,0,.2)}
-  .cell.hdr{background:transparent;border:none;box-shadow:none;font-family:var(--display);font-weight:700;font-size:clamp(16px,calc(var(--cell,30px)*0.84),120px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
+  .cell.hdr{background:transparent;border:none;box-shadow:none;font-family:var(--display);font-weight:700;font-size:clamp(20px,calc(var(--cell,30px)*1.08),155px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
   .cell.hdr.top{color:var(--homec,var(--ink))}.cell.hdr.left{color:var(--awayc,var(--ink))}
   .cell.corner{background:transparent;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
@@ -356,7 +356,9 @@
   .brandmini .bt{font-family:var(--display);font-weight:700;font-size:22px;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18);line-height:1.05}
   .brandmini .bt .live{color:var(--accent)}
   .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:transparent;box-shadow:none;padding:8px 28px;min-height:84px}
-  .tvt{display:flex;align-items:center;gap:16px}
+  .tvt{flex:1;display:flex;align-items:center;gap:16px}
+  .tvscoreboard .tvt:first-child{justify-content:flex-end}
+  .tvscoreboard .tvt:last-child{justify-content:flex-start}
   .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,3.4vw,60px);text-shadow:0 2px 7px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.6)}
   .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(52px,5.2vw,92px);color:var(--ink);min-width:64px;text-align:center;text-shadow:0 2px 7px rgba(0,0,0,.9),0 0 16px rgba(0,0,0,.6)}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
@@ -778,8 +780,8 @@ function gridHTML(th){
       const st=owner?`style="background:${o.color};--oc:${o.color}"`:"";const lab=owner?`<span class="sq-logo">${o.logo||"🏀"}</span><span class="sq-ini">${esc(o.ini||initialsOf(owner))}</span>`:((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
       cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}}
   _fx.numbersShown=numsNow;
-  return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)} ▸ (across)</div>
-    <div class="gridrow"><div class="axisleft">${esc(S.away.name)} ▸</div><div class="sqgrid">${cells}</div></div></div>`;
+  return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)}</div>
+    <div class="gridrow"><div class="axisleft">${esc(S.away.name)}</div><div class="sqgrid">${cells}</div></div></div>`;
 }
 /* Post-render effects: stage transition, score bump, award confetti + winner card.
    Diffs against _fx (which gridHTML keeps in sync for host/TV; reset here for phone). */
