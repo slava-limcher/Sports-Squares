@@ -223,19 +223,28 @@
   .winfx.show{animation:winpop 3.4s ease forwards}
   @keyframes winpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}8%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}14%{transform:translate(-50%,-50%) scale(1)}88%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
   /* "SCORE!" takeover when a team scores (team-colored) */
-  .scorefx{position:fixed;inset:0;z-index:9997;pointer-events:none;display:flex;align-items:center;justify-content:center;opacity:0}
-  .scorefx.show{animation:sffade 2.6s ease forwards}
+  .scorefx{position:fixed;inset:0;z-index:9997;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0}
+  .scorefx.show{animation:sffade 2.8s ease forwards}
   .scorefx::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,var(--sc),transparent 62%);opacity:0}
-  .scorefx.show::before{animation:sfflash 2.6s ease forwards}
-  .scorefx .sf-card{position:relative;text-align:center;background:linear-gradient(180deg,var(--sc),var(--sc2));border-radius:28px;padding:22px 64px;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 6px rgba(255,255,255,.18);transform:scale(.6)}
-  .scorefx.show .sf-card{animation:sfpop 2.6s cubic-bezier(.2,1.3,.4,1) forwards}
+  .scorefx.show::before{animation:sfflash 2.8s ease forwards}
+  .scorefx .sf-rays{position:absolute;width:170vmax;height:170vmax;z-index:0;pointer-events:none;opacity:.32;background:conic-gradient(from 0deg,var(--sc) 0 8deg,transparent 8deg 16deg)}
+  .scorefx.show .sf-rays{animation:sfspin 6s linear infinite}
+  @keyframes sfspin{to{transform:rotate(360deg)}}
+  .scorefx .sf-card{position:relative;z-index:1;text-align:center;background:linear-gradient(180deg,var(--sc),var(--sc2));border-radius:28px;padding:22px 64px;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 6px rgba(255,255,255,.18);transform:scale(.6)}
+  .scorefx.show .sf-card{animation:sfpop 2.8s cubic-bezier(.2,1.3,.4,1) forwards}
   .scorefx .sf-team{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,64px);color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.32)}
+  .scorefx.show .sf-team{animation:sfpts .5s .05s both}
   .scorefx .sf-big{font-family:var(--display);font-weight:700;font-size:clamp(56px,10vw,150px);color:#fff;line-height:1;letter-spacing:3px;text-shadow:0 6px 0 rgba(0,0,0,.35)}
+  .scorefx.show .sf-big{animation:sfbig .55s cubic-bezier(.2,1.5,.4,1) both,sfpulse .72s ease-in-out .6s infinite}
   .scorefx .sf-pts{display:inline-block;font-family:var(--display);font-weight:700;font-size:clamp(24px,4vw,58px);color:#fff;background:rgba(0,0,0,.24);padding:2px 24px;border-radius:999px;margin-top:8px}
-  @keyframes sffade{0%{opacity:0}6%{opacity:1}82%{opacity:1}100%{opacity:0}}
-  @keyframes sfpop{0%{transform:scale(.5)}10%{transform:scale(1.08)}18%{transform:scale(1)}82%{transform:scale(1)}100%{transform:scale(.96)}}
-  @keyframes sfflash{0%{opacity:0}8%{opacity:.5}34%{opacity:.14}100%{opacity:0}}
-  @media(prefers-reduced-motion:reduce){.scorefx.show,.scorefx.show .sf-card,.scorefx.show::before{animation:none!important}.scorefx.show{opacity:1}}
+  .scorefx.show .sf-pts{animation:sfpts .5s .25s both}
+  @keyframes sffade{0%{opacity:0}5%{opacity:1}84%{opacity:1}100%{opacity:0}}
+  @keyframes sfpop{0%{transform:scale(.5) rotate(-7deg)}9%{transform:scale(1.1) rotate(4deg)}16%{transform:scale(1) rotate(0)}84%{transform:scale(1)}100%{transform:scale(.95)}}
+  @keyframes sfbig{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.14);opacity:1}100%{transform:scale(1)}}
+  @keyframes sfpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+  @keyframes sfpts{0%{transform:translateY(22px) scale(.5);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+  @keyframes sfflash{0%{opacity:0}8%{opacity:.55}34%{opacity:.14}100%{opacity:0}}
+  @media(prefers-reduced-motion:reduce){.scorefx.show,.scorefx.show .sf-card,.scorefx.show .sf-big,.scorefx.show .sf-rays,.scorefx.show .sf-team,.scorefx.show .sf-pts,.scorefx.show::before{animation:none!important}.scorefx.show{opacity:1}}
   /* Full-screen "YOU WON!" takeover on the winning player's phone */
   .youwon{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;overflow:hidden;
     background:radial-gradient(circle at 50% 38%,rgba(34,118,62,.92),rgba(8,14,24,.96))}
@@ -842,10 +851,10 @@ function scoreCelebrate(G,side,delta){
   const t=G[side]||{}; const col=t.color||"#2f6fed"; const col2=t.color2||col;
   let o=$("scorefx"); if(!o){o=document.createElement("div");o.id="scorefx";o.className="scorefx";document.body.appendChild(o);}
   o.style.setProperty("--sc",col); o.style.setProperty("--sc2",col2);
-  o.innerHTML=`<div class="sf-card"><div class="sf-team">${esc(t.name||"")}</div><div class="sf-big">SCORE!</div><div class="sf-pts">+${delta}</div></div>`;
+  o.innerHTML=`<div class="sf-rays"></div><div class="sf-card"><div class="sf-team">${esc(t.name||"")}</div><div class="sf-big">SCORE!</div><div class="sf-pts">+${delta}</div></div>`;
   o.classList.remove("show");void o.offsetWidth;o.classList.add("show");
-  confettiBurst();
-  clearTimeout(window.__sfxT);window.__sfxT=setTimeout(()=>o.classList.remove("show"),2600);
+  confettiBurst(true);setTimeout(()=>confettiBurst(true),350);setTimeout(()=>confettiBurst(true),750);
+  clearTimeout(window.__sfxT);window.__sfxT=setTimeout(()=>o.classList.remove("show"),2800);
 }
 // Full-screen "YOU WON!" takeover for the winning player's phone (deduped per award).
 function phoneCelebrate(label){
