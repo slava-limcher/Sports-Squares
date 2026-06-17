@@ -486,9 +486,11 @@ function cardBg(key){const f=CARD_SVG[key]||FIELD_SVG[key];if(!f)return null;
   return uri;}
 // College presets reuse the football field / basketball court art.
 FIELD_SVG.ncaaf=FIELD_SVG.nfl; FIELD_SVG.ncaab=FIELD_SVG.nba; CARD_SVG.ncaaf=CARD_SVG.nfl;
-const COURT_VIDEO="court.mp4";  // basketball video background (local; not committed — see .gitignore). No ?query — file:// treats "court.mp4?v=2" as a literal filename and fails.
-function setBgVideo(on){const v=$("bgvid");if(!v)return;
-  if(on){ if(v.getAttribute("src")!==COURT_VIDEO){v.setAttribute("src",COURT_VIDEO);v.setAttribute("poster","data:image/svg+xml,"+encodeURIComponent(FIELD_SVG.nba()));}
+// Looping video backgrounds per theme (local-only — see .gitignore; the drawn SVG field
+// is the poster + deployed fallback). No ?query — file:// treats "x.mp4?v=2" as a literal filename and fails.
+const BG_VIDEOS={nba:"court.mp4",ncaab:"court.mp4",nhl:"rink.mp4"};
+function setBgVideo(key){const v=$("bgvid");if(!v)return;const src=BG_VIDEOS[key];
+  if(src){ if(v.getAttribute("src")!==src){v.setAttribute("src",src);v.setAttribute("poster","data:image/svg+xml,"+encodeURIComponent((FIELD_SVG[key]||FIELD_SVG.nba)()));}
     v.style.display="block"; const p=v.play&&v.play(); if(p&&p.catch)p.catch(()=>{}); }
   else{ v.style.display="none"; try{v.pause();}catch(e){} }
 }
@@ -497,9 +499,9 @@ function setBgVideo(on){const v=$("bgvid");if(!v)return;
 // still falls back to it gracefully.
 const COURT_IMG="court.jpg";  // no ?query — see COURT_VIDEO note (file:// can't resolve a query on a real file)
 function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
-  // Basketball plays the looping court VIDEO; the SVG court is the poster + deployed fallback.
+  // Basketball + hockey play a looping VIDEO bg (per BG_VIDEOS); the SVG field is the poster + deployed fallback.
   const svg=fieldBg(key);if(svg)document.body.style.setProperty("--bg",svg);else document.body.style.removeProperty("--bg");
-  setBgVideo(key==="nba"||key==="ncaab");}
+  setBgVideo(key);}
 
 /* ===== LIVE DATA (balldontlie.io) — browser-direct; key kept in localStorage only ===== */
 /* Default balldontlie key baked in per user request (repo is private).
