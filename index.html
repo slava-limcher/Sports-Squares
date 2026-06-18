@@ -377,19 +377,22 @@
   body.boardview .sqgrid{margin:0 auto;flex:0 0 auto}
   /* ===== Clean TV view: scoreboard + big board only ===== */
   .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:0;width:100%;position:relative}
-  .tvhead{position:absolute;top:2px;left:0;right:0;z-index:30;pointer-events:none;display:flex;align-items:flex-start;gap:18px}
+  .tvhead{position:absolute;top:10px;left:0;right:0;z-index:30;pointer-events:none;display:flex;align-items:flex-start;gap:18px}
   .brandmini{display:flex;align-items:center;gap:12px;flex:0 0 auto}
   .brandmini .logo{width:54px;height:54px;border-radius:14px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:var(--shadow);border:3px solid rgba(0,0,0,.08)}
   .brandmini .bt{font-family:var(--display);font-weight:700;font-size:22px;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18);line-height:1.05}
   .brandmini .bt .live{color:var(--accent)}
-  .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:transparent;box-shadow:none;padding:0 28px;min-height:0}
-  .tvt{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px}
-  .tvscoreboard .tvt:first-child{align-items:flex-start}
-  .tvscoreboard .tvt:last-child{align-items:flex-end}
-  .tvt-main{display:flex;align-items:center;gap:16px}
-  .tvsub{font-family:var(--display);font-weight:700;font-size:clamp(16px,1.7vw,32px);color:#fff;letter-spacing:1px;text-transform:uppercase;opacity:.92;text-shadow:0 2px 5px rgba(0,0,0,.85);padding:0 6px}
-  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(28px,3.3vw,58px);background:rgba(255,255,255,.92);padding:2px 18px;border-radius:13px;text-shadow:none}
-  .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(44px,5.2vw,88px);color:#fff;min-width:60px;text-align:center;background:rgba(12,18,30,.55);border-radius:13px;padding:0 16px;text-shadow:0 2px 6px rgba(0,0,0,.7)}
+  .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:space-between;gap:18px;background:transparent;box-shadow:none;padding:0 18px;min-height:0}
+  .tvt{flex:1;display:flex;align-items:center;gap:14px;min-width:0}
+  .tvscoreboard .tvt:first-child{justify-content:flex-start}
+  .tvscoreboard .tvt:last-child{justify-content:flex-end}
+  .tvt-body{display:flex;flex-direction:column;min-width:0}
+  .tvscoreboard .tvt:last-child .tvt-body{align-items:flex-end}
+  .tvlogo{width:clamp(50px,5.4vw,100px);height:clamp(50px,5.4vw,100px);flex:0 0 auto}
+  .tvlogo svg{width:100%;height:100%;display:block;filter:drop-shadow(0 3px 5px rgba(0,0,0,.55))}
+  .tvname{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(26px,3.5vw,62px);line-height:1;text-transform:uppercase;letter-spacing:1px;white-space:nowrap;text-shadow:0 3px 0 rgba(0,0,0,.4),0 2px 10px rgba(0,0,0,.7)}
+  .tvsub{font-family:var(--display);font-weight:700;font-size:clamp(13px,1.3vw,24px);color:#fff;letter-spacing:1px;text-transform:uppercase;opacity:.9;text-shadow:0 2px 5px rgba(0,0,0,.85)}
+  .tvt .s{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(42px,5vw,92px);color:#fff;min-width:46px;text-align:center;text-shadow:0 3px 0 rgba(0,0,0,.45),0 2px 10px rgba(0,0,0,.7)}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
   .tvsep{width:3px;align-self:stretch;margin:10px 0;border-radius:2px;background:rgba(255,255,255,.16);flex:0 0 auto}
   .tvqr{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:8px 8px 8px 16px;box-shadow:var(--shadow);flex:0 0 auto}
@@ -708,7 +711,7 @@ const Host={
       const ord={live:0,pre:1,final:2};
       _liveGames=lists.flat().sort((a,b)=>ord[a.state]-ord[b.state]);renderHost();
     }catch(e){if(box)box.innerHTML='<div style="padding:10px;color:var(--bad);font-weight:800">Couldn\'t load games ('+(e.status||e.message)+').</div>';}},
-  pickLiveGame(i){const g=_liveGames[i];if(!g)return;S.live={sport:g.sport,gameId:g.id};S.away.name=g.away.name;S.home.name=g.home.name;
+  pickLiveGame(i){const g=_liveGames[i];if(!g)return;S.live={sport:g.sport,gameId:g.id};S.away.name=g.away.name;S.home.name=g.home.name;S.away.abbr=g.away.abbr;S.home.abbr=g.home.abbr;
     // Real team colors (primary fill + secondary accent) for this matchup; keep defaults if not found.
     const ba=teamBrand(g.sport,g.away.name)||teamBrand(g.sport,g.away.abbr);
     const bh=teamBrand(g.sport,g.home.name)||teamBrand(g.sport,g.home.abbr);
@@ -1072,12 +1075,20 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
   applyThemeClass(S.theme);document.body.classList.add("boardview");
   document.documentElement.style.setProperty("--awayc",S.away.color);document.documentElement.style.setProperty("--homec",S.home.color);
   document.documentElement.style.setProperty("--awayc2",S.away.color2||S.away.color);document.documentElement.style.setProperty("--homec2",S.home.color2||S.home.color);
-  const th=curTheme();const st=stepOf(S);const showJoin=st<=1&&!!live.code;
+  const th=curTheme();const st=stepOf(S);const showJoin=st<=1&&!!live.code;const emblemSport=(S.live&&S.live.sport)||S.theme;
   $("root").innerHTML=`<div class="tvscreen">
     <div class="tvhead">
       <div class="tvscoreboard">
-        <div class="tvt"><div class="tvt-main"><span class="n" style="color:${S.away.color};border-bottom:5px solid ${S.away.color2||S.away.color};padding-bottom:3px">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div><div class="tvsub" id="tvTime">${nowTimeStr()}</div></div>
-        <div class="tvt"><div class="tvt-main"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color};border-bottom:5px solid ${S.home.color2||S.home.color};padding-bottom:3px">${esc(S.home.name)}</span></div>${periodLabel()?`<div class="tvsub">${esc(periodLabel())}</div>`:""}</div>
+        <div class="tvt">
+          <div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.away),S.away.color)}</div>
+          <div class="tvt-body"><div class="tvname" style="color:${titleColor(S.away.color,S.away.color2)}">${esc(S.away.name)}</div><div class="tvsub" id="tvTime">${nowTimeStr()}</div></div>
+          <div class="s">${S.score.away}</div>
+        </div>
+        <div class="tvt">
+          <div class="s">${S.score.home}</div>
+          <div class="tvt-body"><div class="tvname" style="color:${titleColor(S.home.color,S.home.color2)}">${esc(S.home.name)}</div><div class="tvsub">${periodLabel()?esc(periodLabel()):'&nbsp;'}</div></div>
+          <div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.home),S.home.color)}</div>
+        </div>
       </div>
     </div>
     ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
@@ -1093,6 +1104,25 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
 function nowTimeStr(){try{const d=new Date();let h=d.getHours();const m=d.getMinutes();const ap=h>=12?"PM":"AM";h=h%12||12;return h+":"+(m<10?"0"+m:m)+" "+ap;}catch(e){return "";}}
 // Live game period label (inning / quarter / period) for the scoreboard.
 function periodLabel(){if(!S||!S.live)return "";if(S.liveState==="final")return "Final";const p=S.livePeriod||0;if(!p)return S.liveState==="pre"?"Pregame":"";const sp=S.live.sport;if(sp==="mlb")return "Inning "+p;if(sp==="nhl")return "Period "+p;return "Q"+p;}
+// ----- Team header: abbreviation, readable title color, auto-generated logo emblem -----
+function abbrOf(name){if(!name)return "?";const w=(""+name).trim().split(/\s+/);if(w.length>=2)return (w[0][0]+w[1][0]+(w[1][1]||"")).toUpperCase();return (""+name).replace(/[^A-Za-z0-9]/g,"").slice(0,3).toUpperCase()||"?";}
+function teamAbbr(t){return (t&&t.abbr)?(""+t.abbr).toUpperCase():abbrOf(t&&t.name);}
+function hexLum(c){c=(""+c).replace("#","");if(c.length===3)c=c.split("").map(x=>x+x).join("");const n=parseInt(c,16)||0;return (0.299*((n>>16)&255)+0.587*((n>>8)&255)+0.114*(n&255))/255;}
+function lightenHex(c,a){c=(""+c).replace("#","");if(c.length===3)c=c.split("").map(x=>x+x).join("");const n=parseInt(c,16)||0;const f=x=>Math.round(x+(255-x)*a);return "#"+[f((n>>16)&255),f((n>>8)&255),f(n&255)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+// Pick the brighter of a team's two brand colors for the title; lighten if both are dark (dark bg).
+function titleColor(c1,c2){const a=hexLum(c1),b=hexLum(c2||c1);let best=a>=b?c1:(c2||c1);if(Math.max(a,b)<0.2)best=lightenHex(best,0.55);return best;}
+// Auto logo: per-sport crossed equipment + a circular team-color badge with the abbreviation.
+function teamEmblem(sport,abbr,color){
+  const badge=`<circle cx="50" cy="50" r="23" fill="${color}" stroke="#fff" stroke-width="2.5"/><text x="50" y="58" text-anchor="middle" font-family="Brega,var(--display)" font-weight="700" font-size="18" fill="#fff" stroke="none">${esc(abbr)}</text>`;
+  let eq="";
+  if(sport==="mlb"){const bat='<rect x="46.5" y="5" width="7" height="60" rx="3.5"/><circle cx="50" cy="67" r="5.5"/>';
+    eq=`<g fill="#c9a36a" stroke="#7c5a32" stroke-width="2"><g transform="rotate(40 50 50)">${bat}</g><g transform="rotate(-40 50 50)">${bat}</g></g>`;}
+  else if(sport==="nhl"){const st='<rect x="47" y="5" width="6" height="58" rx="3"/><path d="M40 63 h19 v6 h-22 a3 3 0 0 1 0 -6 z"/>';
+    eq=`<g fill="#c9a36a" stroke="#7c5a32" stroke-width="2"><g transform="rotate(40 50 50)">${st}</g><g transform="rotate(-40 50 50)">${st}</g></g>`;}
+  else if(sport==="nba"||sport==="ncaab"){eq=`<circle cx="50" cy="50" r="35" fill="none" stroke="#e0772a" stroke-width="6"/><path d="M15 50H85M50 15V85M27 27Q50 50 27 73M73 27Q50 50 73 73" fill="none" stroke="#e0772a" stroke-width="3"/>`;}
+  else if(sport==="nfl"||sport==="ncaaf"){eq=`<ellipse cx="50" cy="50" rx="40" ry="25" fill="none" stroke="#9a6233" stroke-width="6"/><path d="M40 50h20M45 45v10M50 44v12M55 45v10" stroke="#9a6233" stroke-width="3" fill="none"/>`;}
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">${eq}${badge}</svg>`;
+}
 
 /* =====================================================================
    TV PREVIEW — self-running demo (no host, no Supabase, no room).
