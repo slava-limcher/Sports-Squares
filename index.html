@@ -953,7 +953,8 @@ function fitBoard(){
   const chromeV=6+(banH?banH+2:0)+(axis?axis.offsetHeight+2:0);
   const chromeH=6+(aleft?aleft.offsetWidth+2:0);
   const setSide=(s)=>{grid.style.width=s+"px";grid.style.height=s+"px";card.style.setProperty("--cell",Math.floor((s-40)/11)+"px");};
-  let side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)));
+  const BOARD_SCALE=0.9; // sized down 10% from the max fit
+  let side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)*BOARD_SCALE));
   setSide(side);
   // Self-correct: shrink so the whole card fits its container AND stays within the visible window
   // (catches chrome mis-estimates, a scoreboard that grew at full font size, or a shorter window
