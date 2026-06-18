@@ -11,8 +11,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 <style>
-  /* Custom "Brega" font (embedded) for the board's drawn numbers */
-  @font-face{font-family:'Brega';src:url('Brega.ttf') format('truetype');font-display:swap}
   :root{
     --primary:#2e8b57;--primary-dark:#1f6b41;--accent:#ffcf33;--accent-dark:#e3ab00;
     --cream:#fff7e8;--ink:#e9eef5;--ink-soft:#9fb2c4;--card:#1b2433;--line:#34425a;
@@ -46,12 +44,11 @@
   .livebadge{display:inline-flex;align-items:center;gap:7px;background:#e8553e;color:#fff;font-weight:800;font-size:13px;letter-spacing:1px;text-transform:uppercase;border-radius:999px;padding:6px 13px}
   .livebadge .dot{width:8px;height:8px;border-radius:50%;background:#fff;animation:lp 1.3s infinite}
   /* TV win-probability meter */
-  /* TV win-probability meter — compact, pinned lower-left so the board fills top-to-bottom */
-  .tvwp{position:fixed;left:20px;bottom:20px;width:min(460px,38vw);z-index:25;background:rgba(10,16,28,.62);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);border-radius:18px;padding:14px 18px;box-shadow:0 16px 40px rgba(0,0,0,.5)}
-  .tvwp .wp-title{font-family:var(--display);font-weight:700;font-size:clamp(22px,2.4vw,44px);color:#fff;text-align:center;text-transform:uppercase;letter-spacing:1px;text-shadow:0 2px 5px rgba(0,0,0,.8);margin-bottom:8px}
-  .tvwp .bar{height:42px;border-radius:16px;overflow:hidden;display:flex;border:4px solid rgba(255,255,255,.45);background:#2a3547}
+  .tvwp{max-width:820px;margin:0 auto;width:100%}
+  .tvwp .lab{display:flex;justify-content:space-between;font-family:var(--display);font-weight:700;font-size:17px;color:#fff;text-shadow:0 2px 0 rgba(0,0,0,.2);margin-bottom:5px}
+  .tvwp .bar{height:26px;border-radius:12px;overflow:hidden;display:flex;border:3px solid rgba(255,255,255,.4);background:#2a3547}
   .tvwp .bar .a{background:var(--awayc,#3a6df0);transition:width .6s} .tvwp .bar .h{background:var(--homec,#e8553e);transition:width .6s}
-  .tvwp .wp-ends{display:flex;justify-content:space-between;gap:10px;font-family:var(--display);font-weight:700;font-size:clamp(18px,1.8vw,32px);color:#fff;text-shadow:0 2px 5px rgba(0,0,0,.8);margin-top:8px}
+  .tvwp .bar b{display:flex;align-items:center;color:#fff;font-size:13px;padding:0 9px}
   .tvprops{max-width:1200px;margin:0 auto;width:100%;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
   .tvprops .pchip{background:var(--card);border-radius:10px;box-shadow:var(--shadow);padding:6px 12px;font-weight:800;font-size:14px;color:var(--ink);white-space:nowrap}
   .tvprops .pchip .pn{color:var(--primary-dark)} .tvprops .pchip .po{color:var(--ink-soft)}
@@ -184,19 +181,18 @@
   @media(max-width:980px){.main{grid-template-columns:1fr}}
 
   /* squares grid */
-  .gridcard{background:linear-gradient(180deg,rgba(32,43,61,.72),rgba(22,30,44,.78));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:22px;padding:6px;position:relative;
+  .gridcard{background:linear-gradient(180deg,rgba(32,43,61,.72),rgba(22,30,44,.78));-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);border-radius:22px;padding:16px;position:relative;
     box-shadow:0 26px 50px rgba(0,0,0,.5),0 8px 0 rgba(0,0,0,.3),inset 0 2px 0 rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.05)}
-  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);margin:0 auto 2px;color:var(--homec,var(--ink));background:rgba(255,255,255,.92);padding:1px 12px;border-radius:10px;width:fit-content;text-shadow:none}
+  .axislabel{text-align:center;font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);margin-bottom:8px;color:var(--homec,var(--ink));text-shadow:0 0 16px var(--homec2,transparent)}
   .gridrow{display:flex;gap:8px;align-items:center;justify-content:center}
-  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);color:var(--awayc,var(--ink));background:rgba(255,255,255,.92);padding:10px 3px;border-radius:10px;text-shadow:none;flex:0 0 auto;align-self:center}
-  .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
+  .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(15px,calc(var(--cell,28px)*0.52),46px);color:var(--awayc,var(--ink));text-shadow:0 0 16px var(--awayc2,transparent);flex:0 0 auto}
+  .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
-  .cell{border-radius:6px;background:rgba(14,22,40,.5);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.05),inset 0 -2px 3px rgba(0,0,0,.2)}
-  .cell.hdr{border:none;border-radius:9px;box-shadow:0 3px 0 rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.22);overflow:hidden;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(16px,calc(var(--cell,30px)*0.74),100px);color:#fff;text-shadow:0 2px 3px rgba(0,0,0,.45)}
-  .cell.hdr.top{background:var(--homec,#23478f)}
-  .cell.hdr.left{background:var(--awayc,#c8102e)}
-  .cell.corner{background:#0c1424;border:none;box-shadow:none}
+  .cell{border-radius:7px;background:linear-gradient(180deg,#2b3649,#222b3b);border:1px solid #3a4760;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06),inset 0 -2px 3px rgba(0,0,0,.25),0 1px 1px rgba(0,0,0,.2)}
+  .cell.hdr{background:transparent;border:none;box-shadow:none;font-family:var(--display);font-weight:700;font-size:clamp(16px,calc(var(--cell,30px)*0.84),120px);text-shadow:0 2px 3px rgba(0,0,0,.28)}
+  .cell.hdr.top{color:var(--homec,var(--ink))}.cell.hdr.left{color:var(--awayc,var(--ink))}
+  .cell.corner{background:transparent;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 7px rgba(0,0,0,.32),0 2px 4px rgba(0,0,0,.28),0 0 12px -3px var(--oc,transparent)}
   .cell.qmark{color:#b9c2b9;font-size:15px}
@@ -226,29 +222,6 @@
   @keyframes wftrophy{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-10px) rotate(6deg)}}
   .winfx.show{animation:winpop 3.4s ease forwards}
   @keyframes winpop{0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}8%{opacity:1;transform:translate(-50%,-50%) scale(1.08)}14%{transform:translate(-50%,-50%) scale(1)}88%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(.94)}}
-  /* "SCORE!" takeover when a team scores (team-colored) */
-  .scorefx{position:fixed;inset:0;z-index:9997;pointer-events:none;display:flex;align-items:center;justify-content:center;overflow:hidden;opacity:0}
-  .scorefx.show{animation:sffade 2.8s ease forwards}
-  .scorefx::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,var(--sc),transparent 62%);opacity:0}
-  .scorefx.show::before{animation:sfflash 2.8s ease forwards}
-  .scorefx .sf-rays{position:absolute;width:170vmax;height:170vmax;z-index:0;pointer-events:none;opacity:.32;background:conic-gradient(from 0deg,var(--sc) 0 8deg,transparent 8deg 16deg)}
-  .scorefx.show .sf-rays{animation:sfspin 6s linear infinite}
-  @keyframes sfspin{to{transform:rotate(360deg)}}
-  .scorefx .sf-card{position:relative;z-index:1;text-align:center;background:linear-gradient(180deg,var(--sc),var(--sc2));border-radius:28px;padding:22px 64px;box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 6px rgba(255,255,255,.18);transform:scale(.6)}
-  .scorefx.show .sf-card{animation:sfpop 2.8s cubic-bezier(.2,1.3,.4,1) forwards}
-  .scorefx .sf-team{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,64px);color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.32)}
-  .scorefx.show .sf-team{animation:sfpts .5s .05s both}
-  .scorefx .sf-big{font-family:var(--display);font-weight:700;font-size:clamp(56px,10vw,150px);color:#fff;line-height:1;letter-spacing:3px;text-shadow:0 6px 0 rgba(0,0,0,.35)}
-  .scorefx.show .sf-big{animation:sfbig .55s cubic-bezier(.2,1.5,.4,1) both,sfpulse .72s ease-in-out .6s infinite}
-  .scorefx .sf-pts{display:inline-block;font-family:var(--display);font-weight:700;font-size:clamp(24px,4vw,58px);color:#fff;background:rgba(0,0,0,.24);padding:2px 24px;border-radius:999px;margin-top:8px}
-  .scorefx.show .sf-pts{animation:sfpts .5s .25s both}
-  @keyframes sffade{0%{opacity:0}5%{opacity:1}84%{opacity:1}100%{opacity:0}}
-  @keyframes sfpop{0%{transform:scale(.5) rotate(-7deg)}9%{transform:scale(1.1) rotate(4deg)}16%{transform:scale(1) rotate(0)}84%{transform:scale(1)}100%{transform:scale(.95)}}
-  @keyframes sfbig{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.14);opacity:1}100%{transform:scale(1)}}
-  @keyframes sfpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
-  @keyframes sfpts{0%{transform:translateY(22px) scale(.5);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
-  @keyframes sfflash{0%{opacity:0}8%{opacity:.55}34%{opacity:.14}100%{opacity:0}}
-  @media(prefers-reduced-motion:reduce){.scorefx.show,.scorefx.show .sf-card,.scorefx.show .sf-big,.scorefx.show .sf-rays,.scorefx.show .sf-team,.scorefx.show .sf-pts,.scorefx.show::before{animation:none!important}.scorefx.show{opacity:1}}
   /* Full-screen "YOU WON!" takeover on the winning player's phone */
   .youwon{position:fixed;inset:0;z-index:10000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;opacity:0;pointer-events:none;overflow:hidden;
     background:radial-gradient(circle at 50% 38%,rgba(34,118,62,.92),rgba(8,14,24,.96))}
@@ -300,7 +273,7 @@
   .slidebar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
   .slidenow{flex:1;text-align:center;font-family:var(--display);font-weight:700;font-size:15px;color:var(--ink-soft);min-width:110px}
   .slidebanner{text-align:center;font-family:var(--display);font-weight:700;font-size:21px;color:var(--primary-dark);margin-bottom:8px}
-  body.tv .slidebanner{display:none}
+  body.tv .slidebanner{font-size:32px;margin-bottom:12px}
 
   /* phone */
   .phone-wrap{max-width:460px;margin:0 auto}
@@ -330,9 +303,9 @@
   .lpick .lg:active{transform:scale(.9)}
   .legend .you-logo{font-size:15px;vertical-align:-2px}
   /* Square contents: chosen logo (emoji) stacked over initials */
-  .cell.owned{line-height:1}
-  .cell .sq-logo{position:absolute;top:2px;left:3px;font-size:clamp(9px,calc(var(--cell,30px)*0.34),34px);line-height:1}
-  .cell .sq-ini{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(12px,calc(var(--cell,30px)*0.56),60px);line-height:1;letter-spacing:.5px}
+  .cell.owned{flex-direction:column;gap:1px;line-height:1}
+  .cell .sq-logo{font-size:clamp(12px,calc(var(--cell,30px)*0.52),64px);line-height:1}
+  .cell .sq-ini{font-family:var(--display);font-weight:700;font-size:clamp(10px,calc(var(--cell,30px)*0.40),46px);line-height:1;letter-spacing:.5px}
   .pcell{flex-direction:column;gap:0}
   .pcell .psq-logo{font-size:14px;line-height:1}
   .pcell .psq-ini{font-size:8px;font-weight:800;line-height:1;letter-spacing:.3px}
@@ -344,7 +317,7 @@
   #ctl{position:fixed;left:14px;bottom:12px;z-index:130;display:flex;gap:8px}#ctl button{background:var(--card);border:none;color:var(--ink);border-radius:12px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
   /* TV: hide host controls + go BIG for across-the-room legibility */
   body.tv .hostonly{display:none!important} body.tv #ctl{display:none}
-  body.tv .wrap{padding:0 12px 4px}
+  body.tv .wrap{padding:22px 26px 36px}
   body.tv .topbar,body.tv .main{max-width:1880px}
   body.tv .main{grid-template-columns:1.85fr 1fr;gap:22px}
   body.tv .logo{width:66px;height:66px;font-size:38px}
@@ -354,7 +327,7 @@
   body.tv .roomtag .qr{width:208px;height:208px}
   body.tv .sqgrid{width:min(100%,60vh)}
   body.tv .cell{border-radius:9px}
-  body.tv .axislabel{display:none}
+  body.tv .axislabel{margin-bottom:12px}
   body.tv .tcol{padding:16px}
   body.tv .tcol .nm{font-size:32px}
   body.tv .tcol .sc{font-size:78px}
@@ -376,20 +349,16 @@
   body.boardview .stack:first-child{justify-content:center;align-items:center}
   body.boardview .sqgrid{margin:0 auto;flex:0 0 auto}
   /* ===== Clean TV view: scoreboard + big board only ===== */
-  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:0;width:100%;position:relative}
-  .tvhead{position:absolute;top:2px;left:0;right:0;z-index:30;pointer-events:none;display:flex;align-items:flex-start;gap:18px}
+  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:12px;width:100%}
+  .tvhead{display:flex;align-items:center;gap:18px;flex:0 0 auto}
   .brandmini{display:flex;align-items:center;gap:12px;flex:0 0 auto}
   .brandmini .logo{width:54px;height:54px;border-radius:14px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:var(--shadow);border:3px solid rgba(0,0,0,.08)}
   .brandmini .bt{font-family:var(--display);font-weight:700;font-size:22px;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18);line-height:1.05}
   .brandmini .bt .live{color:var(--accent)}
-  .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:transparent;box-shadow:none;padding:0 28px;min-height:0}
-  .tvt{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px}
-  .tvscoreboard .tvt:first-child{align-items:flex-start}
-  .tvscoreboard .tvt:last-child{align-items:flex-end}
-  .tvt-main{display:flex;align-items:center;gap:16px}
-  .tvsub{font-family:var(--display);font-weight:700;font-size:clamp(16px,1.7vw,32px);color:#fff;letter-spacing:1px;text-transform:uppercase;opacity:.92;text-shadow:0 2px 5px rgba(0,0,0,.85);padding:0 6px}
-  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(28px,3.3vw,58px);background:rgba(255,255,255,.92);padding:2px 18px;border-radius:13px;text-shadow:none}
-  .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(44px,5.2vw,88px);color:#fff;min-width:60px;text-align:center;background:rgba(12,18,30,.55);border-radius:13px;padding:0 16px;text-shadow:0 2px 6px rgba(0,0,0,.7)}
+  .tvscoreboard{flex:1;display:flex;align-items:center;justify-content:center;gap:30px;background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:8px 28px;min-height:84px}
+  .tvt{display:flex;align-items:center;gap:16px}
+  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(34px,3.4vw,60px)}
+  .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(52px,5.2vw,92px);color:var(--ink);min-width:64px;text-align:center}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
   .tvsep{width:3px;align-self:stretch;margin:10px 0;border-radius:2px;background:rgba(255,255,255,.16);flex:0 0 auto}
   .tvqr{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:8px 8px 8px 16px;box-shadow:var(--shadow);flex:0 0 auto}
@@ -416,7 +385,7 @@
     body.tv .roomtag .rl .c{font-size:34px}
     body.tv .slidebanner{font-size:22px;margin-bottom:4px}
     body.tv .sqgrid{width:min(100%,54vh)}
-    body.tv .gridcard{padding:2px}
+    body.tv .gridcard{padding:12px}
     body.tv .title .t1{font-size:30px}
     body.tv .axislabel{margin-bottom:8px}
     body.tv .tcol{padding:12px}
@@ -515,11 +484,9 @@ function cardBg(key){const f=CARD_SVG[key]||FIELD_SVG[key];if(!f)return null;
   return uri;}
 // College presets reuse the football field / basketball court art.
 FIELD_SVG.ncaaf=FIELD_SVG.nfl; FIELD_SVG.ncaab=FIELD_SVG.nba; CARD_SVG.ncaaf=CARD_SVG.nfl;
-// Looping video backgrounds per theme (local-only — see .gitignore; the drawn SVG field
-// is the poster + deployed fallback). No ?query — file:// treats "x.mp4?v=2" as a literal filename and fails.
-const BG_VIDEOS={nba:"court.mp4",ncaab:"court.mp4",nhl:"rink.mp4",mlb:"baseball.mp4",nfl:"football.mp4",ncaaf:"football.mp4"};
-function setBgVideo(key){const v=$("bgvid");if(!v)return;const src=BG_VIDEOS[key];
-  if(src){ if(v.getAttribute("src")!==src){v.setAttribute("src",src);v.setAttribute("poster","data:image/svg+xml,"+encodeURIComponent((FIELD_SVG[key]||FIELD_SVG.nba)()));}
+const COURT_VIDEO="court.mp4";  // basketball video background (local; not committed — see .gitignore). No ?query — file:// treats "court.mp4?v=2" as a literal filename and fails.
+function setBgVideo(on){const v=$("bgvid");if(!v)return;
+  if(on){ if(v.getAttribute("src")!==COURT_VIDEO){v.setAttribute("src",COURT_VIDEO);v.setAttribute("poster","data:image/svg+xml,"+encodeURIComponent(FIELD_SVG.nba()));}
     v.style.display="block"; const p=v.play&&v.play(); if(p&&p.catch)p.catch(()=>{}); }
   else{ v.style.display="none"; try{v.pause();}catch(e){} }
 }
@@ -528,9 +495,9 @@ function setBgVideo(key){const v=$("bgvid");if(!v)return;const src=BG_VIDEOS[key
 // still falls back to it gracefully.
 const COURT_IMG="court.jpg";  // no ?query — see COURT_VIDEO note (file:// can't resolve a query on a real file)
 function applyThemeClass(key){document.body.className=document.body.className.replace(/theme-\w+/g,"").trim();document.body.classList.remove("pick");document.body.classList.add("themed","theme-"+key);if(isTV)document.body.classList.add("tv");
-  // Basketball + hockey play a looping VIDEO bg (per BG_VIDEOS); the SVG field is the poster + deployed fallback.
+  // Basketball plays the looping court VIDEO; the SVG court is the poster + deployed fallback.
   const svg=fieldBg(key);if(svg)document.body.style.setProperty("--bg",svg);else document.body.style.removeProperty("--bg");
-  setBgVideo(key);}
+  setBgVideo(key==="nba"||key==="ncaab");}
 
 /* ===== LIVE DATA (balldontlie.io) — browser-direct; key kept in localStorage only ===== */
 /* Default balldontlie key baked in per user request (repo is private).
@@ -621,7 +588,7 @@ async function liveTick(){
   renderHost();pushState();
   // player props (best-effort) — refresh occasionally; hide if the tier returns none
   S._pollN=(S._pollN||0)+1;
-  // Player-props strip removed from the TV (per user) — no longer fetched/displayed.
+  if(S._pollN===1||S._pollN%4===0){ fetchProps(S.live.sport,S.live.gameId).then(p=>{ if(p===null)return; S.props=p.length?p:null; renderHost(); pushState(); }); }
 }
 function liveAutoAward(g){
   const marks=(THEMES[S.live.sport]&&THEMES[S.live.sport].liveMarks)||[];
@@ -647,8 +614,8 @@ const SQ_STEPS=[
   {key:"final",name:"Winners",    next:null,                     hint:"All done! Start a new board or change the sport.", ptitle:"Final! 🏆", pmsg:"Thanks for playing!"},
 ];
 // Default team colors for generic/manual teams (away, home) + their secondary accents.
-const TEAM_COLORS=["#c8102e","#23478f"];   // primary: away = red (left axis), home = blue (top axis)
-const TEAM_COLORS2=["#8e0a1f","#16305f"];  // secondary accents (darker)
+const TEAM_COLORS=["#2f6fed","#e8772a"];   // primary: away = blue, home = orange
+const TEAM_COLORS2=["#16357a","#b8541c"];  // secondary accents
 // Real team colors [primary, secondary] for live games, per pro league, keyed by nickname
 // (matched within the picked sport so cross-league nicknames like Panthers/Kings/Jets don't collide).
 const TEAM_BRAND={
@@ -811,8 +778,8 @@ function gridHTML(th){
       const st=owner?`style="background:${o.color};--oc:${o.color}"`:"";const lab=owner?`<span class="sq-logo">${o.logo||"🏀"}</span><span class="sq-ini">${esc(o.ini||initialsOf(owner))}</span>`:((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
       cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}}
   _fx.numbersShown=numsNow;
-  return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)}</div>
-    <div class="gridrow"><div class="axisleft">${esc(S.away.name)}</div><div class="sqgrid">${cells}</div></div></div>`;
+  return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)} ▸ (across)</div>
+    <div class="gridrow"><div class="axisleft">${esc(S.away.name)} ▸</div><div class="sqgrid">${cells}</div></div></div>`;
 }
 /* Post-render effects: stage transition, score bump, award confetti + winner card.
    Diffs against _fx (which gridHTML keeps in sync for host/TV; reset here for phone). */
@@ -825,16 +792,10 @@ function fxAfterRender(state){
     document.querySelectorAll(".gridcard,.phone-wrap > .card").forEach(el=>{el.classList.remove("stagein");void el.offsetWidth;el.classList.add("stagein");});
   }
   _fx.step=st;
-  // score bump + "SCORE!" animation
+  // score bump
   const sc=G.score?(G.score.away+"-"+G.score.home):null;
   if(_fx.score!==null && _fx.score!==sc){
     document.querySelectorAll(".tvt .s,.tcol .sc,.tcol .sc-edit").forEach(el=>{el.classList.remove("bump");void el.offsetWidth;el.classList.add("bump");});
-    // Who scored? Celebrate only an INCREASE (not a correction/typo).
-    const prev=(_fx.score||"0-0").split("-").map(Number);
-    let side=null,delta=0;
-    if(G.score.away>prev[0]){side="away";delta=G.score.away-prev[0];}
-    else if(G.score.home>prev[1]){side="home";delta=G.score.home-prev[1];}
-    if(side){ if(isPhone) mini(`${G[side].name} scored! ${G.score.away}–${G.score.home}`); else scoreCelebrate(G,side,delta); }
   }
   _fx.score=sc;
   // newly awarded checks -> confetti + winner card
@@ -851,16 +812,6 @@ function celebrate(chk){
   card.innerHTML=`<div class="wf-trophy">🏆</div><div class="ttl">${esc(chk.lab)}</div><div class="who">${esc(chk.winner)}</div><div class="sub">wins this square!</div>`;
   card.classList.remove("show");void card.offsetWidth;card.classList.add("show");
   clearTimeout(window.__winfxT);window.__winfxT=setTimeout(()=>card.classList.remove("show"),3400);
-}
-// Big "SCORE!" takeover when a team's score goes up, in that team's colors, so everyone notices.
-function scoreCelebrate(G,side,delta){
-  const t=G[side]||{}; const col=t.color||"#2f6fed"; const col2=t.color2||col;
-  let o=$("scorefx"); if(!o){o=document.createElement("div");o.id="scorefx";o.className="scorefx";document.body.appendChild(o);}
-  o.style.setProperty("--sc",col); o.style.setProperty("--sc2",col2);
-  o.innerHTML=`<div class="sf-rays"></div><div class="sf-card"><div class="sf-team">${esc(t.name||"")}</div><div class="sf-big">SCORE!</div><div class="sf-pts">+${delta}</div></div>`;
-  o.classList.remove("show");void o.offsetWidth;o.classList.add("show");
-  confettiBurst(true);setTimeout(()=>confettiBurst(true),350);setTimeout(()=>confettiBurst(true),750);
-  clearTimeout(window.__sfxT);window.__sfxT=setTimeout(()=>o.classList.remove("show"),2800);
 }
 // Full-screen "YOU WON!" takeover for the winning player's phone (deduped per award).
 function phoneCelebrate(label){
@@ -949,27 +900,18 @@ function fitBoard(){
   const card=grid.closest('.gridcard'); if(!card) return;
   const wrap=card.parentElement; if(!wrap) return;
   const banner=card.querySelector('.slidebanner'), axis=card.querySelector('.axislabel'), aleft=card.querySelector('.axisleft');
-  const banH=banner?banner.offsetHeight:0;
-  const chromeV=6+(banH?banH+2:0)+(axis?axis.offsetHeight+2:0);
-  const chromeH=6+(aleft?aleft.offsetWidth+2:0);
-  const setSide=(s)=>{grid.style.width=s+"px";grid.style.height=s+"px";card.style.setProperty("--cell",Math.floor((s-40)/11)+"px");};
-  const BOARD_SCALE=0.9; // sized down 10% from the max fit
-  let side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)*BOARD_SCALE));
-  setSide(side);
-  // Self-correct: shrink so the whole card fits its container AND stays within the visible window
-  // (catches chrome mis-estimates, a scoreboard that grew at full font size, or a shorter window
-  // than the board was first sized for) — every row always shows, never spills off the bottom.
-  const rect=card.getBoundingClientRect();
-  const over=Math.max(card.offsetHeight-wrap.clientHeight, card.offsetWidth-wrap.clientWidth, rect.bottom-window.innerHeight+4);
-  if(over>0){side=Math.max(150,side-Math.ceil(over));setSide(side);}
+  const chromeV=30+(banner?banner.offsetHeight+8:0)+(axis?axis.offsetHeight+8:0);
+  const chromeH=30+(aleft?aleft.offsetWidth+8:0);
+  const side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)));
+  grid.style.width=side+"px"; grid.style.height=side+"px";
+  // publish the per-cell size on the gridcard so square text, drawn numbers AND the axis
+  // team labels (which live outside the grid) all inherit it and scale with the board.
+  card.style.setProperty("--cell", Math.floor((side-40)/11)+"px");
 }
 let __fitT=null;
 // Re-fit several times + after web fonts load, so the board sizes correctly even when
 // fonts load late on a fresh machine (otherwise the header grows after sizing -> overlap).
-function scheduleFit(){fitBoard();[70,200,450,800,1300].forEach(d=>setTimeout(fitBoard,d));
-  // Watch the board's container (which shrinks/grows as the scoreboard settles after font load)
-  // and refit — prevents a stale, oversized board that overflows the screen bottom.
-  if(!window.__fitRO && window.ResizeObserver){const wrap=document.querySelector('.tvboardwrap');if(wrap){window.__fitRO=new ResizeObserver(()=>{clearTimeout(window.__roT);window.__roT=setTimeout(fitBoard,40);});try{window.__fitRO.observe(wrap);}catch(e){}}}}
+function scheduleFit(){fitBoard();[70,200,450].forEach(d=>setTimeout(fitBoard,d));}
 function refitIfBoard(){if(document.body.classList.contains("boardview"))fitBoard();}
 window.addEventListener("resize",()=>{ if(document.body.classList.contains("boardview")){ clearTimeout(__fitT); __fitT=setTimeout(fitBoard,80); } });
 window.addEventListener("load",refitIfBoard);
@@ -1076,23 +1018,19 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
   $("root").innerHTML=`<div class="tvscreen">
     <div class="tvhead">
       <div class="tvscoreboard">
-        <div class="tvt"><div class="tvt-main"><span class="n" style="color:${S.away.color};border-bottom:5px solid ${S.away.color2||S.away.color};padding-bottom:3px">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div><div class="tvsub" id="tvTime">${nowTimeStr()}</div></div>
-        <div class="tvt"><div class="tvt-main"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color};border-bottom:5px solid ${S.home.color2||S.home.color};padding-bottom:3px">${esc(S.home.name)}</span></div>${periodLabel()?`<div class="tvsub">${esc(periodLabel())}</div>`:""}</div>
+        <div class="tvt"><span class="n" style="color:${S.away.color};border-bottom:5px solid ${S.away.color2||S.away.color};padding-bottom:3px">${esc(S.away.name)}</span><span class="s">${S.score.away}</span></div>
+        <div class="tvsep"></div>
+        <div class="tvt"><span class="s">${S.score.home}</span><span class="n" style="color:${S.home.color};border-bottom:5px solid ${S.home.color2||S.home.color};padding-bottom:3px">${esc(S.home.name)}</span></div>
       </div>
     </div>
     ${showJoin?`<div class="tvjoin"><div class="rl"><div class="l">Scan to<br>claim your<br>squares</div></div><div class="qr" id="qrBox"></div></div>`:""}
-    ${(S.winProb!=null)?`<div class="tvwp"><div class="wp-title">Win Probability</div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div><div class="wp-ends"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div></div>`:""}
+    ${(S.winProb!=null)?`<div class="tvwp"><div class="lab"><span>${esc(S.away.name)} ${Math.round((1-S.winProb)*100)}%</span><span>Win Probability</span><span>${Math.round(S.winProb*100)}% ${esc(S.home.name)}</span></div><div class="bar"><div class="a" style="width:${Math.round((1-S.winProb)*100)}%"></div><div class="h" style="width:${Math.round(S.winProb*100)}%"></div></div></div>`:""}
+    ${(S.props&&S.props.length)?`<div class="tvprops">${S.props.map(p=>`<div class="pchip"><span class="pn">${esc(p.name)}</span> ${esc(p.prop)} ${esc(String(p.line))} <span class="po">${(p.odds>0?"+":"")+(p.odds!=null?p.odds:"")}</span></div>`).join("")}</div>`:""}
     <div class="tvboardwrap">${gridHTML(th)}</div>
   </div>`;
   if(showJoin)showQR("qrBox",joinUrl(),460);
-  // Keep the scoreboard clock ticking even between renders.
-  if(!window.__tvClock)window.__tvClock=setInterval(()=>{const e=document.getElementById("tvTime");if(e)e.textContent=nowTimeStr();},15000);
   scheduleFit();
   fxAfterRender();}
-// Current wall-clock time for the scoreboard, e.g. "8:42 PM".
-function nowTimeStr(){try{const d=new Date();let h=d.getHours();const m=d.getMinutes();const ap=h>=12?"PM":"AM";h=h%12||12;return h+":"+(m<10?"0"+m:m)+" "+ap;}catch(e){return "";}}
-// Live game period label (inning / quarter / period) for the scoreboard.
-function periodLabel(){if(!S||!S.live)return "";if(S.liveState==="final")return "Final";const p=S.livePeriod||0;if(!p)return S.liveState==="pre"?"Pregame":"";const sp=S.live.sport;if(sp==="mlb")return "Inning "+p;if(sp==="nhl")return "Period "+p;return "Q"+p;}
 
 /* =====================================================================
    TV PREVIEW — self-running demo (no host, no Supabase, no room).
