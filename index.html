@@ -376,8 +376,8 @@
   body.boardview .stack:first-child{justify-content:center;align-items:center}
   body.boardview .sqgrid{margin:0 auto;flex:0 0 auto}
   /* ===== Clean TV view: scoreboard + big board only ===== */
-  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:0;width:100%}
-  .tvhead{display:flex;align-items:center;gap:18px;flex:0 0 auto}
+  .tvscreen{flex:1;display:flex;flex-direction:column;min-height:0;gap:0;width:100%;position:relative}
+  .tvhead{position:absolute;top:2px;left:0;right:0;z-index:30;pointer-events:none;display:flex;align-items:flex-start;gap:18px}
   .brandmini{display:flex;align-items:center;gap:12px;flex:0 0 auto}
   .brandmini .logo{width:54px;height:54px;border-radius:14px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:30px;box-shadow:var(--shadow);border:3px solid rgba(0,0,0,.08)}
   .brandmini .bt{font-family:var(--display);font-weight:700;font-size:22px;color:#fff;text-shadow:0 3px 0 rgba(0,0,0,.18);line-height:1.05}
