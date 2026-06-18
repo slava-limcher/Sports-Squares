@@ -344,7 +344,7 @@
   #ctl{position:fixed;left:14px;bottom:12px;z-index:130;display:flex;gap:8px}#ctl button{background:var(--card);border:none;color:var(--ink);border-radius:12px;padding:9px 13px;font-size:13px;font-weight:800;cursor:pointer;box-shadow:var(--shadow)}
   /* TV: hide host controls + go BIG for across-the-room legibility */
   body.tv .hostonly{display:none!important} body.tv #ctl{display:none}
-  body.tv .wrap{padding:2px 12px 4px}
+  body.tv .wrap{padding:0 12px 4px}
   body.tv .topbar,body.tv .main{max-width:1880px}
   body.tv .main{grid-template-columns:1.85fr 1fr;gap:22px}
   body.tv .logo{width:66px;height:66px;font-size:38px}
@@ -388,8 +388,8 @@
   .tvscoreboard .tvt:last-child{align-items:flex-end}
   .tvt-main{display:flex;align-items:center;gap:16px}
   .tvsub{font-family:var(--display);font-weight:700;font-size:clamp(12px,1.2vw,20px);color:#fff;letter-spacing:1px;text-transform:uppercase;opacity:.92;text-shadow:0 2px 5px rgba(0,0,0,.85);padding:0 6px}
-  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(26px,2.9vw,46px);background:rgba(255,255,255,.92);padding:2px 16px;border-radius:12px;text-shadow:none}
-  .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(38px,4.2vw,68px);color:#fff;min-width:52px;text-align:center;background:rgba(12,18,30,.55);border-radius:12px;padding:0 14px;text-shadow:0 2px 6px rgba(0,0,0,.7)}
+  .tvt .n{font-family:var(--display);font-weight:700;font-size:clamp(22px,2.4vw,40px);background:rgba(255,255,255,.92);padding:1px 14px;border-radius:11px;text-shadow:none}
+  .tvt .s{font-family:var(--display);font-weight:700;font-size:clamp(32px,3.5vw,56px);color:#fff;min-width:46px;text-align:center;background:rgba(12,18,30,.55);border-radius:11px;padding:0 12px;text-shadow:0 2px 6px rgba(0,0,0,.7)}
   .tvmid{font-family:var(--display);font-weight:700;font-size:20px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:2px}
   .tvsep{width:3px;align-self:stretch;margin:10px 0;border-radius:2px;background:rgba(255,255,255,.16);flex:0 0 auto}
   .tvqr{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:14px;padding:8px 8px 8px 16px;box-shadow:var(--shadow);flex:0 0 auto}
