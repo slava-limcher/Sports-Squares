@@ -415,27 +415,30 @@
   @media (max-height:840px){.tvjoin .qr{width:250px;height:250px}.tvjoin .rl .l{font-size:24px}.tvjoin{left:18px;bottom:18px;padding:14px 16px;gap:10px}}
   .tvboardwrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
   .tvboardwrap .sqgrid{margin:0 auto;flex:0 0 auto}
-  /* ===== Sidebar TV layout: logo + inning + stacked team scores + QR/ad on the LEFT, board on the RIGHT ===== */
-  .tvside-layout{flex-direction:row;gap:clamp(14px,1.6vw,30px);align-items:stretch}
-  .tvside{flex:0 0 clamp(230px,25vw,400px);display:flex;flex-direction:column;gap:clamp(10px,1.6vh,22px);min-height:0;min-width:0;padding:4px 0}
-  .tvbrand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
-  .tvbrand-logo{width:clamp(42px,4vw,68px);height:clamp(42px,4vw,68px);flex:0 0 auto}
+  /* ===== Sidebar TV layout: logo+time + stacked team scores + QR/ad on the LEFT; board slid to the LEFT edge ===== */
+  .tvside-layout{flex-direction:row;gap:clamp(12px,1.1vw,20px);align-items:stretch}
+  .tvside{flex:0 0 clamp(220px,22vw,360px);display:flex;flex-direction:column;gap:clamp(8px,1.4vh,18px);min-height:0;min-width:0;padding:4px 0}
+  /* Board hugs the sidebar (a little gap), leaving the open space on the right */
+  .tvside-layout .tvboardwrap{justify-content:flex-start}
+  .tvside-layout .tvboardwrap .sqgrid{margin:0}
+  .tvbrand{display:flex;align-items:center;gap:9px;flex:0 0 auto}
+  .tvbrand-logo{width:clamp(40px,3.6vw,58px);height:clamp(40px,3.6vw,58px);flex:0 0 auto;background:#fff;border-radius:10px;padding:5px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
   .tvbrand-logo svg{width:100%;height:100%;display:block}
-  .tvbrand-name{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(17px,1.7vw,30px);color:#fff;line-height:1;letter-spacing:1px;text-shadow:0 2px 4px rgba(0,0,0,.6)}
+  .tvbrand-name{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(15px,1.5vw,26px);color:#fff;line-height:1;letter-spacing:1px;text-shadow:0 2px 4px rgba(0,0,0,.6);flex:0 1 auto;min-width:0}
   .tvbrand-name span{display:block;color:var(--accent)}
-  .tvinning{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(22px,2.5vw,48px);color:#fff;text-transform:uppercase;letter-spacing:1px;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.75);flex:0 0 auto}
+  .tvinning{margin-left:auto;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(14px,1.5vw,30px);color:#fff;text-transform:uppercase;letter-spacing:1px;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.75);flex:0 0 auto;white-space:nowrap;text-align:right}
   .tvteams{display:flex;flex-direction:column;gap:clamp(8px,1.4vh,20px);flex:0 0 auto}
-  .tvteam{display:flex;align-items:center;gap:clamp(8px,0.9vw,16px);min-width:0}
-  .tvteam .tvlogo{width:clamp(42px,4.4vw,78px);height:clamp(42px,4.4vw,78px)}
-  .tvteam-nm{flex:1 1 auto;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(26px,3.4vw,62px);line-height:.95;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 2px 6px rgba(0,0,0,.7);min-width:0}
-  .tvteam-sc{flex:0 0 auto;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(38px,4.6vw,88px);color:#fff;line-height:.9;min-width:clamp(34px,3.4vw,62px);text-align:right;text-shadow:0 2px 8px rgba(0,0,0,.6)}
-  .tvadbox{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;background:rgba(10,16,28,.6);border:2px solid rgba(255,255,255,.2);border-radius:18px;padding:clamp(10px,1.4vw,20px);box-shadow:0 12px 30px rgba(0,0,0,.42);overflow:hidden}
-  .tvqr-box{display:flex;flex-direction:column;align-items:center;gap:clamp(6px,1.2vh,14px);max-width:100%}
-  .tvqr-box .qr{width:clamp(130px,15vw,250px);height:clamp(130px,15vw,250px);background:#fff;border-radius:14px;padding:8px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+  .tvteam{display:flex;align-items:center;gap:clamp(7px,0.8vw,14px);min-width:0}
+  .tvteam .tvlogo{width:clamp(38px,3.6vw,62px);height:clamp(38px,3.6vw,62px)}
+  .tvteam-nm{flex:1 1 auto;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(18px,2vw,40px);line-height:1;text-transform:uppercase;letter-spacing:.5px;white-space:normal;overflow-wrap:break-word;word-break:break-word;text-shadow:0 2px 6px rgba(0,0,0,.7);min-width:0}
+  .tvteam-sc{flex:0 0 auto;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(32px,3.8vw,72px);color:#fff;line-height:.9;min-width:clamp(28px,2.6vw,50px);text-align:right;text-shadow:0 2px 8px rgba(0,0,0,.6)}
+  .tvadbox{flex:0 0 auto;margin-top:auto;display:flex;align-items:center;justify-content:center;background:rgba(10,16,28,.6);border:2px solid rgba(255,255,255,.2);border-radius:16px;padding:clamp(8px,1vw,14px);box-shadow:0 12px 30px rgba(0,0,0,.42);overflow:hidden}
+  .tvqr-box{display:flex;flex-direction:column;align-items:center;gap:clamp(5px,1vh,10px);max-width:100%}
+  .tvqr-box .qr{width:clamp(118px,12vw,200px);height:clamp(118px,12vw,200px);background:#fff;border-radius:12px;padding:7px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
   .tvqr-box .qr img,.tvqr-box .qr canvas{display:block;width:100%!important;height:100%!important}
-  .tvqr-lbl{font-family:var(--display);font-weight:800;font-size:clamp(14px,1.3vw,24px);color:#fff;text-transform:uppercase;letter-spacing:1px;text-align:center}
-  .tvqr-code{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(22px,2.4vw,44px);color:var(--accent);letter-spacing:4px}
-  .tvad{width:100%;height:100%;min-height:120px;display:flex;align-items:center;justify-content:center;border:2px dashed rgba(255,255,255,.22);border-radius:12px}
+  .tvqr-lbl{font-family:var(--display);font-weight:800;font-size:clamp(13px,1.3vw,22px);color:#fff;text-transform:uppercase;letter-spacing:1px;text-align:center;order:-1}
+  .tvqr-code{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(20px,2.2vw,40px);color:var(--accent);letter-spacing:4px}
+  .tvad{width:100%;min-width:clamp(150px,15vw,240px);min-height:clamp(120px,16vh,200px);display:flex;align-items:center;justify-content:center;border:2px dashed rgba(255,255,255,.22);border-radius:12px}
   .tvad-lbl{font-family:var(--display);font-weight:800;font-size:clamp(13px,1.3vw,22px);color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:2px;text-align:center}
   /* Shorter TVs (720p): keep it big but fit without scrolling */
   @media (max-height:840px){
@@ -504,6 +507,8 @@ const SPORT_ORDER=["mlb","nfl","nba","nhl"];
 const SUBLEAGUES={nfl:["nfl","ncaaf"],nba:["nba","ncaab"]};
 // BarBoards "BB" retro-TV brand mark (inline SVG so it works on the deployed site)
 const BB_LOGO='<svg viewBox="0 0 100 100" width="40" height="40" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#15213c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="45" x2="32" y2="21"/><line x1="50" y1="45" x2="75" y2="11"/><path d="M46 46 L54 46 L52 41 L48 41 Z" fill="#15213c" stroke="none"/><rect x="18" y="46" width="64" height="40" rx="5"/><text x="50" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="30" fill="#15213c" stroke="none">BB</text></svg>';
+// Black-ink version of the brand mark (sits on a white rounded box on the TV) — white logo with black text.
+const BB_LOGO_INK='<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="45" x2="32" y2="21"/><line x1="50" y1="45" x2="75" y2="11"/><path d="M46 46 L54 46 L52 41 L48 41 Z" fill="#111" stroke="none"/><rect x="18" y="46" width="64" height="40" rx="5"/><text x="50" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="30" fill="#111" stroke="none">BB</text></svg>';
 /* ===== Top-down sport surfaces, drawn as SVG and applied via --bg ===== */
 const FIELD_SVG={
   nfl(){
@@ -994,14 +999,22 @@ function fitBoard(){
   if(over>0){side=Math.max(150,side-Math.ceil(over));setSide(side);}
 }
 let __fitT=null;
+// Shrink each sidebar team name to fit on ONE line at the biggest size that fits;
+// only if it can't fit even at the floor do we let it wrap (full title always shows, never clipped).
+function fitTeamNames(){document.querySelectorAll('.tvteam-nm').forEach(el=>{
+  el.style.whiteSpace='nowrap';el.style.fontSize='';
+  let fs=parseFloat(getComputedStyle(el).fontSize)||24;const min=13;let guard=60;
+  while(el.scrollWidth>el.clientWidth+1 && fs>min && guard-->0){fs-=1;el.style.fontSize=fs+'px';}
+  if(el.scrollWidth>el.clientWidth+1){el.style.whiteSpace='normal';}
+});}
 // Re-fit several times + after web fonts load, so the board sizes correctly even when
 // fonts load late on a fresh machine (otherwise the header grows after sizing -> overlap).
-function scheduleFit(){fitBoard();[70,200,450,800,1300].forEach(d=>setTimeout(fitBoard,d));
+function scheduleFit(){fitBoard();fitTeamNames();[70,200,450,800,1300].forEach(d=>setTimeout(()=>{fitBoard();fitTeamNames();},d));
   // Watch the board's container (which shrinks/grows as the scoreboard settles after font load)
   // and refit — prevents a stale, oversized board that overflows the screen bottom.
   if(!window.__fitRO && window.ResizeObserver){const wrap=document.querySelector('.tvboardwrap');if(wrap){window.__fitRO=new ResizeObserver(()=>{clearTimeout(window.__roT);window.__roT=setTimeout(fitBoard,40);});try{window.__fitRO.observe(wrap);}catch(e){}}}}
-function refitIfBoard(){if(document.body.classList.contains("boardview"))fitBoard();}
-window.addEventListener("resize",()=>{ if(document.body.classList.contains("boardview")){ clearTimeout(__fitT); __fitT=setTimeout(fitBoard,80); } });
+function refitIfBoard(){if(document.body.classList.contains("boardview")){fitBoard();fitTeamNames();}}
+window.addEventListener("resize",()=>{ if(document.body.classList.contains("boardview")){ clearTimeout(__fitT); __fitT=setTimeout(()=>{fitBoard();fitTeamNames();},80); } });
 window.addEventListener("load",refitIfBoard);
 try{ if(document.fonts&&document.fonts.ready) document.fonts.ready.then(refitIfBoard); }catch(e){}
 try{ if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListener("loadingdone",refitIfBoard); }catch(e){}
@@ -1106,14 +1119,13 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
   const awayTitle=titleColor(S.away.color,S.away.color2),homeTitle=titleColor(S.home.color,S.home.color2);
   $("root").innerHTML=`<div class="tvscreen tvside-layout">
     <aside class="tvside">
-      <div class="tvbrand"><div class="tvbrand-logo">${BB_LOGO}</div><div class="tvbrand-name">GAME DAY<span>SQUARES</span></div></div>
-      <div class="tvinning" id="tvInning">${periodLabel()||nowTimeStr()}</div>
+      <div class="tvbrand"><div class="tvbrand-logo">${BB_LOGO_INK}</div><div class="tvbrand-name">GAME DAY<span>SQUARES</span></div><div class="tvinning" id="tvInning">${periodLabel()||nowTimeStr()}</div></div>
       <div class="tvteams">
         <div class="tvteam"><div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.away),S.away.color)}</div><div class="tvteam-nm" style="color:${awayTitle}">${esc(S.away.name)}</div><div class="tvteam-sc">${S.score.away}</div></div>
         <div class="tvteam"><div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.home),S.home.color)}</div><div class="tvteam-nm" style="color:${homeTitle}">${esc(S.home.name)}</div><div class="tvteam-sc">${S.score.home}</div></div>
       </div>
       <div class="tvadbox">${st<=1
-        ? `<div class="tvqr-box"><div class="qr" id="qrBox"></div><div class="tvqr-lbl">📱 Scan to join</div>${live.code?`<div class="tvqr-code">${esc(live.code)}</div>`:""}</div>`
+        ? `<div class="tvqr-box"><div class="tvqr-lbl">Scan to join</div><div class="qr" id="qrBox"></div>${live.code?`<div class="tvqr-code">${esc(live.code)}</div>`:""}</div>`
         : `<div class="tvad"><div class="tvad-lbl">Your ad here</div></div>`}</div>
     </aside>
     <div class="tvboardwrap">${gridHTML(th)}</div>
