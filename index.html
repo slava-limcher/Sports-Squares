@@ -539,6 +539,16 @@ function makeRoomCode(){const c="ABCDEFGHJKMNPQRSTUVWXYZ23456789";let s="";for(l
 function joinUrl(){return location.origin+location.pathname+"?play&room="+encodeURIComponent(live.code||"");}
 function tvUrl(){return location.origin+location.pathname+"?tv&room="+encodeURIComponent(live.code||"");}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+// ---- Profanity filter: keeps player names + team names family-friendly (used at input AND on the host,
+//      so a tampered phone client can't inject a slur onto the public board). ----
+function _normProf(s){return String(s||"").toLowerCase()
+  .replace(/[@4]/g,"a").replace(/3/g,"e").replace(/[1!|]/g,"i").replace(/0/g,"o").replace(/[$5]/g,"s").replace(/7/g,"t").replace(/9/g,"g")
+  .replace(/[^a-z]/g,"")          // strip spaces/punctuation so "f.u c.k" etc. can't dodge it
+  .replace(/(.)\1{2,}/g,"$1");}   // collapse 3+ repeats → 1 (catches "fuuuck") but keeps doubles ("coon") so "Bacon"/"Connor" are safe
+// Curated to avoid common false positives — no bare "ass"/"cock"/"dick"/"hoe"/"tit"/"sex"/"cum"/"crap" (Class, Hancock, Dick=Richard, Shoe, Titan, Essex, Scum, Scrap).
+const PROFANITY=["fuck","motherfuck","shit","bullshit","bitch","cunt","pussy","dickhead","cocksuck","cockhead","asshole","dumbass","jackass","bastard","slut","whore","douche","prick","wanker","bollock","arsehole","twat","boner","dildo","blowjob","handjob","jizz","cumshot","titties","nutsack","ballsack","rape","rapist","molest","pedophile","faggot","fag","nigger","nigga","retard","spic","kike","chink","wetback","beaner","coon","gook","dyke","tranny","raghead","towelhead","queef","smegma","felch","skank","scumbag","penis","vagina"].map(_normProf);
+function isProfane(s){const n=_normProf(s);return !!n&&PROFANITY.some(w=>w&&n.indexOf(w)>=0);}
+function safeName(s,fb){return isProfane(s)?(fb||"Player"):s;}
 const $=id=>document.getElementById(id);
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
 
@@ -779,7 +789,8 @@ const Host={
   closePreview(){const m=$("previewModal");if(m){m.innerHTML="";m.style.display="none";}},
   copyLink(id,btn){const el=$(id);if(!el)return;el.select();let ok=false;try{ok=document.execCommand("copy");}catch(e){}if(navigator.clipboard){navigator.clipboard.writeText(el.value).catch(()=>{});ok=true;}if(btn){const t=btn.textContent;btn.textContent="✓ Copied";setTimeout(()=>{btn.textContent=t;},1400);}},
   closeLiveLink(){const m=$("liveLink");if(m)m.style.display="none";},
-  openRoom(){S.away.name=($("awayName")?$("awayName").value.trim():"")||S.away.name;S.home.name=($("homeName")?$("homeName").value.trim():"")||S.home.name;
+  openRoom(){const _an=($("awayName")?$("awayName").value.trim():""),_hn=($("homeName")?$("homeName").value.trim():"");
+    S.away.name=(_an&&!isProfane(_an))?_an:S.away.name;S.home.name=(_hn&&!isProfane(_hn))?_hn:S.home.name;
     S.maxPer=Math.max(1,Math.min(100,+($("maxPer")?$("maxPer").value:10)||10));goLive();
     if(S.live)S.step=1;
     renderHost();
@@ -812,7 +823,7 @@ const Host={
   back(){S.step=Math.max(0,S.step-1);renderHost();pushState(true);},
   score(side,v){S.score[side]=Math.max(0,S.score[side]+v);renderHost();pushStateThrottled();},
   setScore(side,v){S.score[side]=Math.max(0,Math.floor(+v||0));renderHost();pushState();},
-  renameTeam(side,v){const nm=(v||"").trim().slice(0,16);if(nm)S[side].name=nm;renderHost();pushState();},
+  renameTeam(side,v){const nm=(v||"").trim().slice(0,16);if(nm&&isProfane(nm)){mini("Let's keep team names clean 🙂");renderHost();return;}if(nm)S[side].name=nm;renderHost();pushState();},
   award(ci){if(!numbersOut(S)){mini("Draw the numbers first!");return;}const idx=liveCell();const chk=S.checks[ci];chk.done=true;chk.idx=idx;chk.winner=idx>=0?(S.grid[idx].owner||null):null;
     bigToast((chk.winner?chk.winner.toUpperCase():"NO WINNER")+" 🏆");
     if(chk.winner&&live.channel){try{live.channel.send({type:"broadcast",event:"win",payload:{winner:chk.winner,label:chk.lab}});}catch(e){}}
@@ -824,8 +835,10 @@ const Host={
     try{localStorage.removeItem(HOST_RESUME_KEY);}catch(e){}
     renderHost();},
 };
-function hostApplyClaim(p){if(!S||!canClaimSt(S))return;const owned=S.grid.filter(o=>o.owner===p.alias).length;let budget=Math.max(0,S.maxPer-owned);
-  (p.cells||[]).forEach(i=>{if(budget<=0)return;if(i>=0&&i<100&&!S.grid[i].owner){S.grid[i]={owner:p.alias,color:p.color,logo:p.logo||null,ini:p.ini||initialsOf(p.alias)};budget--;}});renderHost();pushState();}
+function hostApplyClaim(p){if(!S||!canClaimSt(S))return;
+  const alias=safeName(p.alias,"Player");const ini=isProfane(p.ini)?initialsOf(alias):(p.ini||initialsOf(alias));
+  const owned=S.grid.filter(o=>o.owner===alias).length;let budget=Math.max(0,S.maxPer-owned);
+  (p.cells||[]).forEach(i=>{if(budget<=0)return;if(i>=0&&i<100&&!S.grid[i].owner){S.grid[i]={owner:alias,color:p.color,logo:p.logo||null,ini:ini};budget--;}});renderHost();pushState();}
 
 /* ---- RENDER (host & tv share) ---- */
 function claimedCount(){return S.grid.filter(o=>o.owner).length;}
@@ -1005,7 +1018,7 @@ function ctlBar(){if(isTV){$("ctl").innerHTML="";return;}$("ctl").innerHTML=S?`<
 
 let toastT=null;
 function bigToast(t){if(isPhone)return;$("toastText").textContent=t;$("toast").classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>$("toast").classList.remove("show"),2000);}
-function mini(t){const e=$("miniToast");e.textContent=t;e.classList.add("show");clearTimeout(window.__mt);window.__mt=setTimeout(()=>e.classList.remove("show"),1800);}
+function mini(t){const e=$("miniToast");if(!e)return;e.textContent=t;e.classList.add("show");clearTimeout(window.__mt);window.__mt=setTimeout(()=>e.classList.remove("show"),1800);}
 function showQR(id,url,size){const b=$(id);if(!b||!window.QRCode)return;b.innerHTML="";new QRCode(b,{text:url,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});}
 // Pluckers-style "You're Live" panel: shows the uploaded room URL (copyable) + Open TV View + join QR.
 function showLiveLink(){
@@ -1108,7 +1121,7 @@ function openChannel(code){const sb=liveClient();if(live.channel){try{sb.removeC
 /* ---- PHONE ---- */
 // Curated, clean palette players choose from (blue-led, plus white) — not random.
 const PLAYER_COLORS=["#2f6fed","#19a7d6","#17b3a3","#36b24a","#e3a90f","#e8772a","#e8553e","#d6468f","#9b6bff","#ffffff"];
-let myName=(()=>{try{return localStorage.getItem("gameday-squares-name")||"";}catch(e){return"";}})();
+let myName=(()=>{try{const n=localStorage.getItem("gameday-squares-name")||"";return isProfane(n)?"":n;}catch(e){return"";}})();
 let myColor=(()=>{try{return localStorage.getItem("gameday-squares-color")||"";}catch(e){return"";}})();
 let myLogo=(()=>{try{return localStorage.getItem("gameday-squares-logo")||"";}catch(e){return"";}})();
 let myTeam=(()=>{try{return localStorage.getItem("gameday-squares-team")||"";}catch(e){return"";}})();
@@ -1177,7 +1190,7 @@ function renderPhone(){const root=$("root");
   if(canClaim){document.querySelectorAll("#pGrid .pcell").forEach(c=>{const i=+c.dataset.i;if(r.grid[i].owner)return;c.onclick=()=>{if(phone.sel.has(i))phone.sel.delete(i);else{if(phone.sel.size>=budget){mini(`Max ${r.maxPer} squares`);return;}phone.sel.add(i);}renderPhone();};});const cb=$("claimBtn");if(cb)cb.onclick=phoneClaim;}
   fxAfterRender(phone.remote);
 }
-function phoneSetName(){const v=$("nm").value.trim().slice(0,14);if(!v)return;phone.name=v;try{localStorage.setItem("gameday-squares-name",v);}catch(e){}renderPhone();}
+function phoneSetName(){const v=$("nm").value.trim().slice(0,14);if(!v)return;if(isProfane(v)){mini("Please pick a friendlier name 🙂");return;}phone.name=v;try{localStorage.setItem("gameday-squares-name",v);}catch(e){}renderPhone();}
 function phoneClaim(){if(!phone.sel.size)return;const cells=Array.from(phone.sel);if(live.channel){try{live.channel.send({type:"broadcast",event:"claim",payload:{alias:phone.name,color:phoneColor(),logo:phoneLogo(),ini:initialsOf(phone.name),cells}});}catch(e){}}mini(`Claiming ${cells.length} square${cells.length===1?"":"s"}…`);phone.sel.clear();renderPhone();}
 function phoneWin(p){if(p.winner===phone.name){phoneCelebrate(p.label);}}
 function applyRemote(row){const r=row.rounds;if(!r||r.kind!=="sports-squares")return;phone.remote=r;if(isTV){S=r;renderTV();}else renderPhone();}
