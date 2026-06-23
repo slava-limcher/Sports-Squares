@@ -440,6 +440,18 @@
   .tvqr-code{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(20px,2.2vw,40px);color:var(--accent);letter-spacing:4px}
   .tvad{width:100%;min-width:clamp(150px,15vw,240px);min-height:clamp(120px,16vh,200px);display:flex;align-items:center;justify-content:center;border:2px dashed rgba(255,255,255,.22);border-radius:12px}
   .tvad-lbl{font-family:var(--display);font-weight:800;font-size:clamp(13px,1.3vw,22px);color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:2px;text-align:center}
+  /* ===== PRE-GAME (lobby) sidebar: logo + matchup, big claim CTA, HUGE QR (BWW mockup) ===== */
+  .tvside-pre{justify-content:flex-start}
+  .tvmatch{white-space:nowrap;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(22px,2.8vw,56px);line-height:1;text-transform:uppercase;letter-spacing:1px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.7);flex:0 1 auto;min-width:0}
+  .tvmatch .vs{color:rgba(255,255,255,.6);margin:0 .35em;font-size:.66em}
+  .tvclaim{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,2.6vh,34px);min-height:0;width:100%}
+  .tvclaim-cta{font-family:var(--display);font-weight:800;font-size:clamp(20px,2.5vw,48px);line-height:1.05;color:#fff;text-transform:uppercase;letter-spacing:.5px;text-align:center;text-shadow:0 2px 6px rgba(0,0,0,.75)}
+  .tvclaim .qr{width:clamp(220px,25vw,440px);height:clamp(220px,25vw,440px);background:#fff;border-radius:18px;padding:clamp(10px,1.2vw,18px);box-shadow:0 14px 38px rgba(0,0,0,.55)}
+  .tvclaim .qr img,.tvclaim .qr canvas{display:block;width:100%!important;height:100%!important}
+  .tvclaim .tvqr-code{font-size:clamp(28px,3.2vw,60px)}
+  /* Wide board fills its area: drop the forced square + the slide banner (mockup has none) */
+  .tvside-layout .sqgrid{aspect-ratio:auto}
+  body.tv .tvside-layout .slidebanner{display:none}
   /* Shorter TVs (720p): keep it big but fit without scrolling */
   @media (max-height:840px){
     body.tv .wrap{padding:8px 20px 8px}
@@ -987,6 +999,17 @@ function fitBoard(){
   const banH=banner?banner.offsetHeight:0;
   const chromeV=6+(banH?banH+2:0)+(axis?axis.offsetHeight+2:0);
   const chromeH=6+(aleft?aleft.offsetWidth+2:0);
+  // TV sidebar layout: fill the whole board area (WIDE board, cells stretch to rectangles) instead of a square.
+  if(document.body.classList.contains('tv') && card.closest('.tvside-layout')){
+    const cs=getComputedStyle(grid);
+    const gap=parseFloat(cs.gap)||4, mR=parseFloat(cs.marginRight)||0, mL=parseFloat(cs.marginLeft)||0;
+    const availW=Math.max(240, wrap.clientWidth - chromeH - mR - mL);
+    const availH=Math.max(240, wrap.clientHeight - chromeV);
+    grid.style.width=availW+"px"; grid.style.height=availH+"px";
+    const cw=(availW-gap*10)/11, ch=(availH-gap*10)/11;
+    card.style.setProperty("--cell", Math.max(18,Math.floor(Math.min(cw,ch)))+"px");
+    return;
+  }
   const setSide=(s)=>{grid.style.width=s+"px";grid.style.height=s+"px";card.style.setProperty("--cell",Math.floor((s-40)/11)+"px");};
   const BOARD_SCALE=0.9; // sized down 10% from the max fit
   let side=Math.max(150,Math.floor(Math.min(wrap.clientHeight-chromeV, wrap.clientWidth-chromeH)*BOARD_SCALE));
@@ -1001,7 +1024,7 @@ function fitBoard(){
 let __fitT=null;
 // Shrink each sidebar team name to fit on ONE line at the biggest size that fits;
 // only if it can't fit even at the floor do we let it wrap (full title always shows, never clipped).
-function fitTeamNames(){document.querySelectorAll('.tvteam-nm').forEach(el=>{
+function fitTeamNames(){document.querySelectorAll('.tvteam-nm,.tvmatch').forEach(el=>{
   el.style.whiteSpace='nowrap';el.style.fontSize='';
   let fs=parseFloat(getComputedStyle(el).fontSize)||24;const min=13;let guard=60;
   while(el.scrollWidth>el.clientWidth+1 && fs>min && guard-->0){fs-=1;el.style.fontSize=fs+'px';}
@@ -1117,21 +1140,29 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
   document.documentElement.style.setProperty("--awayc2",S.away.color2||S.away.color);document.documentElement.style.setProperty("--homec2",S.home.color2||S.home.color);
   const th=curTheme();const st=stepOf(S);const showJoin=st<=1&&!!live.code;const emblemSport=(S.live&&S.live.sport)||S.theme;
   const awayTitle=titleColor(S.away.color,S.away.color2),homeTitle=titleColor(S.home.color,S.home.color2);
-  $("root").innerHTML=`<div class="tvscreen tvside-layout">
-    <aside class="tvside">
-      <div class="tvbrand"><div class="tvbrand-logo">${BB_LOGO_INK}</div><div class="tvbrand-name">GAME DAY<span>SQUARES</span></div><div class="tvinning" id="tvInning">${periodLabel()||nowTimeStr()}</div></div>
-      <div class="tvteams">
-        <div class="tvteam"><div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.away),S.away.color)}</div><div class="tvteam-nm" style="color:${awayTitle}">${esc(S.away.name)}</div><div class="tvteam-sc">${S.score.away}</div></div>
-        <div class="tvteam"><div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.home),S.home.color)}</div><div class="tvteam-nm" style="color:${homeTitle}">${esc(S.home.name)}</div><div class="tvteam-sc">${S.score.home}</div></div>
-      </div>
-      <div class="tvadbox">${st<=1
-        ? `<div class="tvqr-box"><div class="tvqr-lbl">Scan to join</div><div class="qr" id="qrBox"></div>${live.code?`<div class="tvqr-code">${esc(live.code)}</div>`:""}</div>`
-        : `<div class="tvad"><div class="tvad-lbl">Your ad here</div></div>`}</div>
-    </aside>
-    <div class="tvboardwrap">${gridHTML(th)}</div>
-  </div>`;
-  // QR shows during lobby/claim (step ≤ 1); once the game starts it's replaced by the ad slot.
-  if(st<=1)showQR("qrBox",joinUrl(),320);
+  const isPre=st<=1;
+  // PRE-GAME (lobby/claim): logo + matchup up top, then a big "scan to claim" CTA + huge QR (BWW-style mockup).
+  // IN-GAME: logo + brand + time, stacked team scores, ad slot.
+  const sidebar=isPre
+    ? `<aside class="tvside tvside-pre">
+        <div class="tvbrand"><div class="tvbrand-logo">${BB_LOGO_INK}</div><div class="tvmatch" id="tvMatch"><span style="color:${awayTitle}">${esc(S.away.name)}</span><span class="vs">vs</span><span style="color:${homeTitle}">${esc(S.home.name)}</span></div></div>
+        <div class="tvclaim">
+          <div class="tvclaim-cta">Scan now to claim<br>your squares &amp; win</div>
+          <div class="qr" id="qrBox"></div>
+          ${live.code?`<div class="tvqr-code">${esc(live.code)}</div>`:""}
+        </div>
+      </aside>`
+    : `<aside class="tvside">
+        <div class="tvbrand"><div class="tvbrand-logo">${BB_LOGO_INK}</div><div class="tvbrand-name">GAME DAY<span>SQUARES</span></div><div class="tvinning" id="tvInning">${periodLabel()||nowTimeStr()}</div></div>
+        <div class="tvteams">
+          <div class="tvteam"><div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.away),S.away.color)}</div><div class="tvteam-nm" style="color:${awayTitle}">${esc(S.away.name)}</div><div class="tvteam-sc">${S.score.away}</div></div>
+          <div class="tvteam"><div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.home),S.home.color)}</div><div class="tvteam-nm" style="color:${homeTitle}">${esc(S.home.name)}</div><div class="tvteam-sc">${S.score.home}</div></div>
+        </div>
+        <div class="tvadbox"><div class="tvad"><div class="tvad-lbl">Your ad here</div></div></div>
+      </aside>`;
+  $("root").innerHTML=`<div class="tvscreen tvside-layout">${sidebar}<div class="tvboardwrap">${gridHTML(th)}</div></div>`;
+  // Huge QR during lobby/claim; once the game starts the sidebar switches to scores + ad slot.
+  if(isPre)showQR("qrBox",joinUrl(),520);
   // Keep the time fresh between renders (only when not showing a live period in that slot).
   if(!window.__tvClock)window.__tvClock=setInterval(()=>{const e=document.getElementById("tvInning");if(e&&!periodLabel())e.textContent=nowTimeStr();},15000);
   scheduleFit();
