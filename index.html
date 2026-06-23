@@ -1026,9 +1026,9 @@ function fitBoard(){
     const bh=(banner&&getComputedStyle(banner).display!=='none')?banner.offsetHeight+2:0;
     // Keep the card STRICTLY inside the wrap (SAFE margin) so it never overflows and re-triggers the
     // ResizeObserver — that feedback loop made the board jitter/animate wider. Also size to whole px.
-    const SAFE=8;
-    const availW=Math.max(240, Math.floor(wrap.clientWidth - padX - mR - mL - SAFE));
-    const availH=Math.max(240, Math.floor(wrap.clientHeight - padY - bh - SAFE));
+    const SAFE=8, SCALE=0.9; // board sized to 90% of the available area (user: 10% smaller)
+    const availW=Math.max(240, Math.floor((wrap.clientWidth - padX - mR - mL - SAFE)*SCALE));
+    const availH=Math.max(240, Math.floor((wrap.clientHeight - padY - bh - SAFE)*SCALE));
     if(grid.style.width!==availW+"px") grid.style.width=availW+"px";
     if(grid.style.height!==availH+"px") grid.style.height=availH+"px";
     const cw=(availW-gap*10)/11, ch=(availH-gap*10)/11;
