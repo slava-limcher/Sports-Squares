@@ -454,7 +454,10 @@
   .tvteam .tvlogo{width:clamp(54px,5.2vw,102px);height:clamp(54px,5.2vw,102px)}
   .tvteam-nm{flex:1 1 auto;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(28px,3.6vw,78px);line-height:1;text-transform:uppercase;letter-spacing:.5px;white-space:normal;overflow-wrap:break-word;word-break:break-word;text-shadow:0 2px 6px rgba(0,0,0,.7);min-width:0}
   .tvteam-sc{flex:0 0 auto;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(48px,6vw,124px);color:#fff;line-height:.9;min-width:clamp(40px,4.2vw,90px);text-align:right;text-shadow:0 2px 8px rgba(0,0,0,.6)}
-  .tvadbox{flex:0 0 auto;margin-top:auto;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  /* In-game bottom block: innings label sitting right above the ad slot, anchored to the bottom */
+  .tvadwrap{margin-top:auto;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,1.4vh,18px);width:100%}
+  .tvinnings{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(20px,2.4vw,46px);color:#fff;text-transform:uppercase;letter-spacing:1px;text-align:center;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.75)}
+  .tvadbox{flex:0 0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden;width:100%}
   .tvqr-box{display:flex;flex-direction:column;align-items:center;gap:clamp(5px,1vh,10px);max-width:100%}
   .tvqr-box .qr{width:clamp(150px,15vw,280px);height:clamp(150px,15vw,280px);background:#fff;border-radius:14px;padding:8px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
   .tvqr-box .qr img,.tvqr-box .qr canvas{display:block;width:100%!important;height:100%!important}
@@ -468,7 +471,7 @@
   .tvmatch .vs{color:rgba(255,255,255,.6);margin:0 .35em;font-size:.66em}
   .tvclaim{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,2.6vh,34px);min-height:0;width:100%}
   .tvclaim-cta{font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(22px,2.7vw,52px);line-height:1.04;color:#fff;text-transform:uppercase;letter-spacing:.5px;text-align:center;text-shadow:0 3px 7px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4)}
-  .tvclaim .qr{width:clamp(240px,28vw,500px);height:clamp(240px,28vw,500px);background:#fff;border-radius:22px;padding:clamp(12px,1.4vw,22px);box-shadow:0 14px 38px rgba(0,0,0,.55)}
+  .tvclaim .qr{width:clamp(190px,22vw,400px);height:clamp(190px,22vw,400px);background:#fff;border-radius:20px;padding:clamp(10px,1.2vw,18px);box-shadow:0 14px 38px rgba(0,0,0,.55)}
   .tvclaim .qr img,.tvclaim .qr canvas{display:block;width:100%!important;height:100%!important}
   .tvclaim .tvqr-code{font-size:clamp(28px,3.2vw,60px)}
   /* Wide board fills its area: drop the forced square + the slide banner (mockup has none) */
@@ -1184,18 +1187,18 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
         </div>
       </aside>`
     : `<aside class="tvside">
-        <div class="tvbrand"><div class="tvbrand-logo">${BB_LOGO_INK}</div><div class="tvbrand-name">GAME DAY<span>SQUARES</span></div><div class="tvinning" id="tvInning">${periodLabel()||nowTimeStr()}</div></div>
+        <div class="tvbrand"><div class="tvbrand-logo">${BB_LOGO_INK}</div><div class="tvbrand-name">GAME DAY<span>SQUARES</span></div><div class="tvinning" id="tvInning">${nowTimeStr()}</div></div>
         <div class="tvteams">
           <div class="tvteam"><div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.away),S.away.color)}</div><div class="tvteam-nm" style="color:${awayTitle}">${esc(S.away.name)}</div><div class="tvteam-sc">${S.score.away}</div></div>
           <div class="tvteam"><div class="tvlogo">${teamEmblem(emblemSport,teamAbbr(S.home),S.home.color)}</div><div class="tvteam-nm" style="color:${homeTitle}">${esc(S.home.name)}</div><div class="tvteam-sc">${S.score.home}</div></div>
         </div>
-        <div class="tvadbox"><div class="tvad"><div class="tvad-lbl">Your ad here</div></div></div>
+        <div class="tvadwrap">${periodLabel()?`<div class="tvinnings">${esc(periodLabel())}</div>`:""}<div class="tvadbox"><div class="tvad"><div class="tvad-lbl">Your ad here</div></div></div></div>
       </aside>`;
   $("root").innerHTML=`<div class="tvscreen tvside-layout">${sidebar}<div class="tvboardwrap">${gridHTML(th)}</div></div>`;
   // Huge QR during lobby/claim; once the game starts the sidebar switches to scores + ad slot.
   if(isPre)showQR("qrBox",joinUrl(),600);
   // Keep the time fresh between renders (only when not showing a live period in that slot).
-  if(!window.__tvClock)window.__tvClock=setInterval(()=>{const e=document.getElementById("tvInning");if(e&&!periodLabel())e.textContent=nowTimeStr();},15000);
+  if(!window.__tvClock)window.__tvClock=setInterval(()=>{const e=document.getElementById("tvInning");if(e)e.textContent=nowTimeStr();},15000);
   scheduleFit();
   fxAfterRender();}
 // Current wall-clock time for the scoreboard, e.g. "8:42 PM".
