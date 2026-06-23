@@ -1046,7 +1046,7 @@ function fitBoard(){
     const gap=parseFloat(cs.gap)||4, mR=parseFloat(cs.marginRight)||0, mL=parseFloat(cs.marginLeft)||0;
     const bh=(banner&&getComputedStyle(banner).display!=='none')?banner.offsetHeight+2:0;
     const SAFE=8, SCALE=0.95;
-    const KW=0.92, KH=1.15, KS=0.14; // ×cell: left-bar width, top-bar thickness, bar↔squares gap (tight, mockup-matched)
+    const KW=0.92, KH=1.15, KS=0.28; // ×cell: left-bar width, top-bar thickness, bar↔squares gap (a bit more space, per user)
     const availW=Math.max(220,(wrap.clientWidth - padX - mR - mL - SAFE)*SCALE);
     const availH=Math.max(220,(wrap.clientHeight - padY - bh - SAFE)*SCALE);
     const gaps=gap*10; // 11 tracks → 10 gaps per axis
