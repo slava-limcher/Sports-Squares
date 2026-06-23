@@ -450,6 +450,10 @@
   /* Board slid to the RIGHT edge (a little gap from the screen edge), leaving the open space on the left */
   .tvside-layout .tvboardwrap{justify-content:flex-end;min-width:0;overflow:hidden}
   .tvside-layout .tvboardwrap .sqgrid{margin:0 clamp(24px,2.6vw,54px) 0 0}
+  /* TV: thick top bar (row 0 = --barh) + normal left bar (col 0 = --barw); play cells fill the rest equally */
+  .tvside-layout .sqgrid{grid-template-columns:var(--barw,1fr) repeat(10,1fr);grid-template-rows:var(--barh,1fr) repeat(10,1fr)}
+  /* TV: no translucent panel behind the squares — board sits directly on the background */
+  body.tv .gridcard{background:none;-webkit-backdrop-filter:none;backdrop-filter:none;box-shadow:none;border-radius:0}
   .tvbrand{display:flex;align-items:center;gap:clamp(9px,1vw,16px);flex:0 0 auto}
   .tvbrand-logo{width:clamp(54px,4.8vw,90px);height:clamp(54px,4.8vw,90px);flex:0 0 auto;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
   .tvbrand-logo svg{width:100%;height:100%;display:block}
@@ -1033,22 +1037,27 @@ function fitBoard(){
   const banH=banner?banner.offsetHeight:0;
   const chromeV=6+(banH?banH+2:0)+(axis?axis.offsetHeight+2:0);
   const chromeH=6+(aleft?aleft.offsetWidth+2:0);
-  // TV sidebar layout: fill the whole board area (WIDE board, cells stretch to rectangles) instead of a square.
+  // TV sidebar layout: WIDE board with a thick top bar, normal left bar, and a big gap between bars + squares.
+  // Solve everything in units of one play cell so bar thickness, the bar↔squares gap, and play size are independent.
   if(document.body.classList.contains('tv') && card.closest('.tvside-layout')){
     const gcs=getComputedStyle(card), cs=getComputedStyle(grid);
     const padX=(parseFloat(gcs.paddingLeft)||0)+(parseFloat(gcs.paddingRight)||0);
     const padY=(parseFloat(gcs.paddingTop)||0)+(parseFloat(gcs.paddingBottom)||0);
     const gap=parseFloat(cs.gap)||4, mR=parseFloat(cs.marginRight)||0, mL=parseFloat(cs.marginLeft)||0;
     const bh=(banner&&getComputedStyle(banner).display!=='none')?banner.offsetHeight+2:0;
-    // Keep the card STRICTLY inside the wrap (SAFE margin) so it never overflows and re-triggers the
-    // ResizeObserver — that feedback loop made the board jitter/animate wider. Also size to whole px.
-    const SAFE=8, SCALE=0.9; // board sized to 90% of the available area (user: 10% smaller)
-    const availW=Math.max(240, Math.floor((wrap.clientWidth - padX - mR - mL - SAFE)*SCALE));
-    const availH=Math.max(240, Math.floor((wrap.clientHeight - padY - bh - SAFE)*SCALE));
-    if(grid.style.width!==availW+"px") grid.style.width=availW+"px";
-    if(grid.style.height!==availH+"px") grid.style.height=availH+"px";
-    const cw=(availW-gap*10)/11, ch=(availH-gap*10)/11;
-    card.style.setProperty("--cell", Math.max(18,Math.floor(Math.min(cw,ch)))+"px");
+    const SAFE=8, SCALE=0.92;
+    const KW=1.0, KH=1.7, KS=0.6; // ×cell: left-bar width, top-bar (horizontal) thickness, bar↔squares gap
+    const availW=Math.max(220,(wrap.clientWidth - padX - mR - mL - SAFE)*SCALE);
+    const availH=Math.max(220,(wrap.clientHeight - padY - bh - SAFE)*SCALE);
+    const gaps=gap*10; // 11 tracks → 10 gaps per axis
+    const cell=Math.max(16, Math.floor(Math.min((availW-gaps)/(KW+KS+10),(availH-gaps)/(KH+KS+10))));
+    const barw=Math.round((KW+KS)*cell), barh=Math.round((KH+KS)*cell), barsp=Math.round(KS*cell);
+    const gw=barw+10*cell+gaps, gh=barh+10*cell+gaps; // ≤ avail (cell is floored) → fits inside wrap, no jitter
+    grid.style.width=gw+"px"; grid.style.height=gh+"px";
+    card.style.setProperty("--cell", cell+"px");
+    card.style.setProperty("--barw", barw+"px");
+    card.style.setProperty("--barh", barh+"px");
+    card.style.setProperty("--barsp", barsp+"px");
     return;
   }
   const setSide=(s)=>{grid.style.width=s+"px";grid.style.height=s+"px";card.style.setProperty("--cell",Math.floor((s-40)/11)+"px");};
