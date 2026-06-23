@@ -198,7 +198,7 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -3px 6px rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.3)}
   /* Number bars: ONE continuous glossy bar (round only the ENDS), BentonSans Black numerals, thin white dividers.
      No overflow:hidden — the divider pseudo-element extends into the grid gap. */
-  .cell.hdr{border:none;border-radius:0;font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(16px,calc(var(--cell,30px)*0.78),104px);color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.5)}
+  .cell.hdr{border:none;border-radius:0;overflow:visible;font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(16px,calc(var(--cell,30px)*0.78),104px);color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.5)}
   /* TOP bar = navy: base color + darkening toward the bottom edge + glassy top highlight */
   .cell.hdr.top{background:linear-gradient(180deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 34%,rgba(0,0,0,.26) 100%),var(--homec,#23478f);box-shadow:inset 0 2px 0 rgba(255,255,255,.30)}
   /* LEFT bar = red: base color + darkening toward the right edge + glassy left highlight */
