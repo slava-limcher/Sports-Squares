@@ -200,23 +200,26 @@
      No overflow:hidden — the divider pseudo-element extends into the grid gap. */
   .cell.hdr{border:none;border-radius:0;overflow:visible;font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(16px,calc(var(--cell,30px)*0.78),104px);color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.5)}
   /* TOP bar = navy: base color + darkening toward the bottom edge + glassy top highlight */
-  .cell.hdr.top{background:linear-gradient(180deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 34%,rgba(0,0,0,.26) 100%),var(--homec,#23478f);box-shadow:inset 0 2px 0 rgba(255,255,255,.30)}
+  .cell.hdr.top{background:linear-gradient(180deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 34%,rgba(0,0,0,.26) 100%),var(--homec,#12284b);box-shadow:inset 0 2px 0 rgba(255,255,255,.30)}
   /* LEFT bar = red: base color + darkening toward the right edge + glassy left highlight */
   .cell.hdr.left{background:linear-gradient(90deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 34%,rgba(0,0,0,.26) 100%),var(--awayc,#c6021f);box-shadow:inset 2px 0 0 rgba(255,255,255,.26)}
   /* Thin white divider lines: fill the grid gap with the bar color + a soft white core so the bar reads continuous */
   .cell.hdr.left:not(.barlast)::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;pointer-events:none;z-index:2;background:linear-gradient(180deg,var(--awayc,#c6021f),var(--awayc,#c6021f) 22%,rgba(255,255,255,.6) 50%,var(--awayc,#c6021f) 78%,var(--awayc,#c6021f))}
-  .cell.hdr.top:not(.barlast)::after{content:"";position:absolute;top:0;bottom:0;right:-4px;width:4px;pointer-events:none;z-index:2;background:linear-gradient(90deg,var(--homec,#23478f),var(--homec,#23478f) 22%,rgba(255,255,255,.6) 50%,var(--homec,#23478f) 78%,var(--homec,#23478f))}
+  .cell.hdr.top:not(.barlast)::after{content:"";position:absolute;top:0;bottom:0;right:-4px;width:4px;pointer-events:none;z-index:2;background:linear-gradient(90deg,var(--homec,#12284b),var(--homec,#12284b) 22%,rgba(255,255,255,.6) 50%,var(--homec,#12284b) 78%,var(--homec,#12284b))}
   /* Round just the four ends so each header column/row is one continuous bar */
   .cell.hdr.top.barfirst{border-top-left-radius:var(--barr,14px);border-bottom-left-radius:var(--barr,14px)}
   .cell.hdr.top.barlast{border-top-right-radius:var(--barr,14px);border-bottom-right-radius:var(--barr,14px)}
   .cell.hdr.left.barfirst{border-top-left-radius:var(--barr,14px);border-top-right-radius:var(--barr,14px)}
   .cell.hdr.left.barlast{border-bottom-left-radius:var(--barr,14px);border-bottom-right-radius:var(--barr,14px)}
-  .gridcard{--barr:clamp(8px,calc(var(--cell,40px)*0.22),18px)}
+  .gridcard{--barr:clamp(8px,calc(var(--cell,40px)*0.22),18px);--barsp:clamp(6px,calc(var(--cell,40px)*0.16),16px)}
+  /* Space between the number bars and the play squares (margin toward the play area) */
+  .cell.hdr.top{margin-bottom:var(--barsp,10px)}
+  .cell.hdr.left{margin-right:var(--barsp,10px)}
   /* Custom "?" glyph: sized by cell height, white, with the reference drop shadow */
   .cell.hdr .qm{height:clamp(14px,calc(var(--cell,30px)*0.74),96px);width:auto;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.32))}
   /* Drawn digits sit ~0.13em high (font has descender space digits don't use) — nudge down to optical center */
   .cell.hdr .hnum{display:inline-block;line-height:1;transform:translateY(0.13em)}
-  .cell.corner{background:transparent;border:none;box-shadow:none}
+  .cell.corner{background:transparent;border:none;box-shadow:none;margin-right:var(--barsp,10px);margin-bottom:var(--barsp,10px)}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 7px rgba(0,0,0,.32),0 2px 4px rgba(0,0,0,.28),0 0 12px -3px var(--oc,transparent)}
   /* Filled (claimed) square = glossy box: vertical sheen over the team color */
@@ -725,7 +728,7 @@ const SQ_STEPS=[
   {key:"final",name:"Winners",    next:null,                     hint:"All done! Start a new board or change the sport.", ptitle:"Final! 🏆", pmsg:"Thanks for playing!"},
 ];
 // Default team colors for generic/manual teams (away, home) + their secondary accents.
-const TEAM_COLORS=["#c6021f","#23478f"];   // primary: away = red (left axis), home = blue (top axis)
+const TEAM_COLORS=["#c6021f","#12284b"];   // primary: away = red (left axis), home = blue (top axis)
 const TEAM_COLORS2=["#8e0a1f","#16305f"];  // secondary accents (darker)
 // Real team colors [primary, secondary] for live games, per pro league, keyed by nickname
 // (matched within the picked sport so cross-league nicknames like Panthers/Kings/Jets don't collide).
