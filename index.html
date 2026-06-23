@@ -211,11 +211,17 @@
   .cell.corner{background:#0c1424;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 7px rgba(0,0,0,.32),0 2px 4px rgba(0,0,0,.28),0 0 12px -3px var(--oc,transparent)}
+  /* Filled (claimed) square = glossy box: vertical sheen over the team color */
+  .cell.owned::before{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,.06) 32%,rgba(0,0,0,.10) 66%,rgba(0,0,0,.32))}
+  .cell.owned .sq-logo{z-index:2}
+  .cell.owned .sq-ini{position:relative;z-index:2}
+  .cell .wtag{z-index:3}
   .cell.qmark{color:#b9c2b9;font-size:15px}
-  .cell.live{z-index:6;animation:lp 1.3s ease-in-out infinite}
-  .cell.won{box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 0 0 3px #ffce3a,0 0 18px rgba(255,200,60,.75);z-index:3;animation:wonpulse 1.5s ease-in-out infinite} .cell .wtag{position:absolute;top:0;right:2px;font-size:10px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
-  @keyframes wonpulse{0%,100%{box-shadow:inset 0 2px 0 rgba(255,255,255,.45),0 0 0 3px #ffce3a,0 0 18px rgba(255,200,60,.7);transform:scale(1)}50%{box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 0 0 5px #ffd957,0 0 34px rgba(255,210,70,1);transform:scale(1.06)}}
-  @keyframes lp{0%,100%{box-shadow:0 0 0 3px var(--accent),0 0 10px 2px rgba(255,207,51,.55),0 0 22px 6px rgba(255,207,51,.3);transform:scale(1)}50%{box-shadow:0 0 0 4px var(--accent),0 0 22px 6px rgba(255,207,51,1),0 0 42px 14px rgba(255,207,51,.5);transform:scale(1.07)}}
+  .cell.live{z-index:6;box-shadow:0 0 0 3px #f7a52a,0 0 22px 5px rgba(247,165,42,.6),0 0 44px 12px rgba(247,165,42,.3);animation:lp 1.3s ease-in-out infinite}
+  .cell.won{box-shadow:inset 0 2px 0 rgba(255,255,255,.25),0 0 0 4px #f7a52a,0 0 22px 3px rgba(247,165,42,.85),0 0 44px 10px rgba(247,165,42,.4);z-index:3;animation:wonpulse 1.5s ease-in-out infinite} .cell .wtag{position:absolute;top:0;right:2px;font-size:10px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.4))}
+  @keyframes wonpulse{0%,100%{box-shadow:inset 0 2px 0 rgba(255,255,255,.28),0 0 0 4px #f7a52a,0 0 22px 3px rgba(247,165,42,.7),0 0 44px 10px rgba(247,165,42,.32);transform:scale(1)}50%{box-shadow:inset 0 2px 0 rgba(255,255,255,.4),0 0 0 6px #ffb347,0 0 36px 7px rgba(255,170,60,1),0 0 60px 16px rgba(255,170,60,.5);transform:scale(1.06)}}
+  @keyframes lp{0%,100%{box-shadow:0 0 0 3px #f7a52a,0 0 10px 2px rgba(247,165,42,.55),0 0 24px 6px rgba(247,165,42,.32);transform:scale(1)}50%{box-shadow:0 0 0 4px #ffb347,0 0 24px 6px rgba(255,170,60,1),0 0 46px 14px rgba(255,170,60,.5);transform:scale(1.07)}}
 
   /* ===== FX: claim pop, number-draw reveal, score bump, stage transition, confetti, winner card ===== */
   @keyframes cellpop{0%{transform:scale(.35);opacity:0}62%{transform:scale(1.16)}100%{transform:scale(1);opacity:1}}
@@ -457,8 +463,8 @@
   .tvmatch{white-space:nowrap;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(22px,2.8vw,56px);line-height:1;text-transform:uppercase;letter-spacing:1px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.7);flex:0 1 auto;min-width:0}
   .tvmatch .vs{color:rgba(255,255,255,.6);margin:0 .35em;font-size:.66em}
   .tvclaim{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(14px,2.6vh,34px);min-height:0;width:100%}
-  .tvclaim-cta{font-family:var(--display);font-weight:800;font-size:clamp(20px,2.5vw,48px);line-height:1.05;color:#fff;text-transform:uppercase;letter-spacing:.5px;text-align:center;text-shadow:0 2px 6px rgba(0,0,0,.75)}
-  .tvclaim .qr{width:clamp(220px,25vw,440px);height:clamp(220px,25vw,440px);background:#fff;border-radius:18px;padding:clamp(10px,1.2vw,18px);box-shadow:0 14px 38px rgba(0,0,0,.55)}
+  .tvclaim-cta{font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(22px,2.7vw,52px);line-height:1.04;color:#fff;text-transform:uppercase;letter-spacing:.5px;text-align:center;text-shadow:0 3px 7px rgba(0,0,0,.55),0 1px 2px rgba(0,0,0,.4)}
+  .tvclaim .qr{width:clamp(240px,28vw,500px);height:clamp(240px,28vw,500px);background:#fff;border-radius:22px;padding:clamp(12px,1.4vw,22px);box-shadow:0 14px 38px rgba(0,0,0,.55)}
   .tvclaim .qr img,.tvclaim .qr canvas{display:block;width:100%!important;height:100%!important}
   .tvclaim .tvqr-code{font-size:clamp(28px,3.2vw,60px)}
   /* Wide board fills its area: drop the forced square + the slide banner (mockup has none) */
@@ -1181,7 +1187,7 @@ function renderTV(){if(!S){document.body.classList.remove("boardview");$("root")
       </aside>`;
   $("root").innerHTML=`<div class="tvscreen tvside-layout">${sidebar}<div class="tvboardwrap">${gridHTML(th)}</div></div>`;
   // Huge QR during lobby/claim; once the game starts the sidebar switches to scores + ad slot.
-  if(isPre)showQR("qrBox",joinUrl(),520);
+  if(isPre)showQR("qrBox",joinUrl(),600);
   // Keep the time fresh between renders (only when not showing a live period in that slot).
   if(!window.__tvClock)window.__tvClock=setInterval(()=>{const e=document.getElementById("tvInning");if(e&&!periodLabel())e.textContent=nowTimeStr();},15000);
   scheduleFit();
