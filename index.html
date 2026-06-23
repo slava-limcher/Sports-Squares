@@ -210,6 +210,8 @@
   .gridcard{--barr:clamp(8px,calc(var(--cell,40px)*0.34),22px)}
   /* Custom "?" glyph: sized by cell height, white, with the reference drop shadow */
   .cell.hdr .qm{height:clamp(14px,calc(var(--cell,30px)*0.74),96px);width:auto;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.32))}
+  /* Drawn digits sit ~0.13em high (font has descender space digits don't use) — nudge down to optical center */
+  .cell.hdr .hnum{display:inline-block;line-height:1;transform:translateY(0.13em)}
   .cell.corner{background:#0c1424;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 7px rgba(0,0,0,.32),0 2px 4px rgba(0,0,0,.28),0 0 12px -3px var(--oc,transparent)}
@@ -871,8 +873,8 @@ function gridHTML(th){
   if(_fx.theme!==S.theme){_fx.theme=S.theme;_fx.owners=Array(100).fill(null);_fx.numbersShown=false;_fx.score=null;_fx.step=null;_fx.done=[];}
   const numsNow=!!S.rowDigits, reveal=numsNow&&!_fx.numbersShown;
   let cells=`<div class="cell corner"></div>`;
-  for(let c=0;c<10;c++)cells+=`<div class="cell hdr top${c===0?' barfirst':''}${c===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${c*45}ms"`:''}>${S.colDigits?S.colDigits[c]:QMARK_SVG}</div>`;
-  for(let r=0;r<10;r++){cells+=`<div class="cell hdr left${r===0?' barfirst':''}${r===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${(10+r)*45}ms"`:''}>${S.rowDigits?S.rowDigits[r]:QMARK_SVG}</div>`;
+  for(let c=0;c<10;c++)cells+=`<div class="cell hdr top${c===0?' barfirst':''}${c===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${c*45}ms"`:''}>${S.colDigits?`<span class="hnum">${S.colDigits[c]}</span>`:QMARK_SVG}</div>`;
+  for(let r=0;r<10;r++){cells+=`<div class="cell hdr left${r===0?' barfirst':''}${r===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${(10+r)*45}ms"`:''}>${S.rowDigits?`<span class="hnum">${S.rowDigits[r]}</span>`:QMARK_SVG}</div>`;
     for(let c=0;c<10;c++){const i=r*10+c,o=S.grid[i];const wc=S.checks.find(ch=>ch.done&&ch.idx===i);
       const owner=o.owner||null;const isNew=owner&&_fx.owners[i]!==owner;
       const cls=["cell"];if(owner)cls.push("owned");if(isNew)cls.push("pop");if(liveSquareOn(S)&&i===lc)cls.push("live");if(wc)cls.push("won");
