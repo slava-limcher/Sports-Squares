@@ -13,6 +13,8 @@
 <style>
   /* Custom "Brega" font (embedded) for the board's drawn numbers */
   @font-face{font-family:'Brega';src:url('Brega.ttf') format('truetype');font-display:swap}
+  /* Board number/“?” font — drop BentonSans-Black.woff2/.ttf in this folder to activate (falls back to Brega until then). */
+  @font-face{font-family:'BentonSans Black';src:url('BentonSans-Black.woff2') format('woff2'),url('BentonSans-Black.woff') format('woff'),url('BentonSans-Black.ttf') format('truetype');font-weight:900;font-display:swap}
   :root{
     --primary:#2e8b57;--primary-dark:#1f6b41;--accent:#ffcf33;--accent-dark:#e3ab00;
     --cream:#fff7e8;--ink:#e9eef5;--ink-soft:#9fb2c4;--card:#1b2433;--line:#34425a;
@@ -191,11 +193,21 @@
   .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);color:var(--awayc,var(--ink));background:rgba(255,255,255,.92);padding:10px 3px;border-radius:10px;text-shadow:none;flex:0 0 auto;align-self:center}
   .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
-  .cell{border-radius:6px;background:rgba(14,22,40,.5);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.05),inset 0 -2px 3px rgba(0,0,0,.2)}
-  .cell.hdr{border:none;border-radius:9px;box-shadow:0 3px 0 rgba(0,0,0,.35),inset 0 2px 0 rgba(255,255,255,.22);overflow:hidden;font-family:'Brega',var(--display);font-weight:700;font-size:clamp(16px,calc(var(--cell,30px)*0.74),100px);color:#fff;text-shadow:0 2px 3px rgba(0,0,0,.45)}
-  .cell.hdr.top{background:var(--homec,#23478f)}
-  .cell.hdr.left{background:var(--awayc,#c8102e)}
+  /* Empty square: charcoal box, subtle top-down gradient + thin light border */
+  .cell{border-radius:8px;background:linear-gradient(180deg,rgba(60,62,67,.92),rgba(23,24,27,.95));border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -3px 6px rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.3)}
+  /* Number bars: continuous glossy bar look (round only the bar ENDS), BentonSans Black numerals */
+  .cell.hdr{border:none;border-radius:0;overflow:hidden;font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(16px,calc(var(--cell,30px)*0.78),104px);color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.5)}
+  /* TOP bar = navy, vertical gloss (identical per cell → reads as one horizontal bar) */
+  .cell.hdr.top{background:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,.05) 34%,rgba(0,0,0,.12) 72%,rgba(0,0,0,.32)),var(--homec,#23478f);box-shadow:inset 0 1px 0 rgba(255,255,255,.30),inset 0 -3px 7px rgba(0,0,0,.28),0 2px 5px rgba(0,0,0,.30)}
+  /* LEFT bar = red, horizontal gloss (identical per cell → reads as one vertical bar) */
+  .cell.hdr.left{background:linear-gradient(90deg,rgba(255,255,255,.22),rgba(255,255,255,.04) 34%,rgba(0,0,0,.10) 72%,rgba(0,0,0,.28)),var(--awayc,#c8102e);box-shadow:inset 1px 0 0 rgba(255,255,255,.26),inset -3px 0 7px rgba(0,0,0,.24),0 2px 5px rgba(0,0,0,.28)}
+  /* Round just the four ends so each header column/row is one continuous bar */
+  .cell.hdr.top.barfirst{border-top-left-radius:var(--barr,14px);border-bottom-left-radius:var(--barr,14px)}
+  .cell.hdr.top.barlast{border-top-right-radius:var(--barr,14px);border-bottom-right-radius:var(--barr,14px)}
+  .cell.hdr.left.barfirst{border-top-left-radius:var(--barr,14px);border-top-right-radius:var(--barr,14px)}
+  .cell.hdr.left.barlast{border-bottom-left-radius:var(--barr,14px);border-bottom-right-radius:var(--barr,14px)}
+  .gridcard{--barr:clamp(8px,calc(var(--cell,40px)*0.34),22px)}
   .cell.corner{background:#0c1424;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 7px rgba(0,0,0,.32),0 2px 4px rgba(0,0,0,.28),0 0 12px -3px var(--oc,transparent)}
@@ -353,7 +365,7 @@
   body.tv .roomtag .rl .c{font-size:46px}
   body.tv .roomtag .qr{width:208px;height:208px}
   body.tv .sqgrid{width:min(100%,60vh)}
-  body.tv .cell{border-radius:9px}
+  body.tv .cell:not(.hdr){border-radius:9px}
   body.tv .axislabel,body.tv .axisleft{display:none}
   body.tv .tcol{padding:16px}
   body.tv .tcol .nm{font-size:32px}
@@ -849,8 +861,8 @@ function gridHTML(th){
   if(_fx.theme!==S.theme){_fx.theme=S.theme;_fx.owners=Array(100).fill(null);_fx.numbersShown=false;_fx.score=null;_fx.step=null;_fx.done=[];}
   const numsNow=!!S.rowDigits, reveal=numsNow&&!_fx.numbersShown;
   let cells=`<div class="cell corner"></div>`;
-  for(let c=0;c<10;c++)cells+=`<div class="cell hdr top${reveal?' reveal':''}"${reveal?` style="animation-delay:${c*45}ms"`:''}>${S.colDigits?S.colDigits[c]:"?"}</div>`;
-  for(let r=0;r<10;r++){cells+=`<div class="cell hdr left${reveal?' reveal':''}"${reveal?` style="animation-delay:${(10+r)*45}ms"`:''}>${S.rowDigits?S.rowDigits[r]:"?"}</div>`;
+  for(let c=0;c<10;c++)cells+=`<div class="cell hdr top${c===0?' barfirst':''}${c===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${c*45}ms"`:''}>${S.colDigits?S.colDigits[c]:"?"}</div>`;
+  for(let r=0;r<10;r++){cells+=`<div class="cell hdr left${r===0?' barfirst':''}${r===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${(10+r)*45}ms"`:''}>${S.rowDigits?S.rowDigits[r]:"?"}</div>`;
     for(let c=0;c<10;c++){const i=r*10+c,o=S.grid[i];const wc=S.checks.find(ch=>ch.done&&ch.idx===i);
       const owner=o.owner||null;const isNew=owner&&_fx.owners[i]!==owner;
       const cls=["cell"];if(owner)cls.push("owned");if(isNew)cls.push("pop");if(liveSquareOn(S)&&i===lc)cls.push("live");if(wc)cls.push("won");
