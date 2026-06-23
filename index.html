@@ -419,7 +419,7 @@
   .tvside-layout{flex-direction:row;gap:clamp(12px,1.1vw,20px);align-items:stretch;padding-left:clamp(14px,2vw,40px)}
   .tvside{flex:0 0 clamp(300px,32vw,560px);display:flex;flex-direction:column;gap:clamp(14px,2vh,30px);min-height:0;min-width:0;padding:4px 0}
   /* Board slid to the RIGHT edge (a little gap from the screen edge), leaving the open space on the left */
-  .tvside-layout .tvboardwrap{justify-content:flex-end}
+  .tvside-layout .tvboardwrap{justify-content:flex-end;min-width:0;overflow:hidden}
   .tvside-layout .tvboardwrap .sqgrid{margin:0 clamp(24px,2.6vw,54px) 0 0}
   .tvbrand{display:flex;align-items:center;gap:clamp(9px,1vw,16px);flex:0 0 auto}
   .tvbrand-logo{width:clamp(54px,4.8vw,90px);height:clamp(54px,4.8vw,90px);flex:0 0 auto;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 6px rgba(0,0,0,.4)}
@@ -1001,11 +1001,18 @@ function fitBoard(){
   const chromeH=6+(aleft?aleft.offsetWidth+2:0);
   // TV sidebar layout: fill the whole board area (WIDE board, cells stretch to rectangles) instead of a square.
   if(document.body.classList.contains('tv') && card.closest('.tvside-layout')){
-    const cs=getComputedStyle(grid);
+    const gcs=getComputedStyle(card), cs=getComputedStyle(grid);
+    const padX=(parseFloat(gcs.paddingLeft)||0)+(parseFloat(gcs.paddingRight)||0);
+    const padY=(parseFloat(gcs.paddingTop)||0)+(parseFloat(gcs.paddingBottom)||0);
     const gap=parseFloat(cs.gap)||4, mR=parseFloat(cs.marginRight)||0, mL=parseFloat(cs.marginLeft)||0;
-    const availW=Math.max(240, wrap.clientWidth - chromeH - mR - mL);
-    const availH=Math.max(240, wrap.clientHeight - chromeV);
-    grid.style.width=availW+"px"; grid.style.height=availH+"px";
+    const bh=(banner&&getComputedStyle(banner).display!=='none')?banner.offsetHeight+2:0;
+    // Keep the card STRICTLY inside the wrap (SAFE margin) so it never overflows and re-triggers the
+    // ResizeObserver — that feedback loop made the board jitter/animate wider. Also size to whole px.
+    const SAFE=8;
+    const availW=Math.max(240, Math.floor(wrap.clientWidth - padX - mR - mL - SAFE));
+    const availH=Math.max(240, Math.floor(wrap.clientHeight - padY - bh - SAFE));
+    if(grid.style.width!==availW+"px") grid.style.width=availW+"px";
+    if(grid.style.height!==availH+"px") grid.style.height=availH+"px";
     const cw=(availW-gap*10)/11, ch=(availH-gap*10)/11;
     card.style.setProperty("--cell", Math.max(18,Math.floor(Math.min(cw,ch)))+"px");
     return;
