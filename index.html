@@ -208,6 +208,8 @@
   .cell.hdr.left.barfirst{border-top-left-radius:var(--barr,14px);border-top-right-radius:var(--barr,14px)}
   .cell.hdr.left.barlast{border-bottom-left-radius:var(--barr,14px);border-bottom-right-radius:var(--barr,14px)}
   .gridcard{--barr:clamp(8px,calc(var(--cell,40px)*0.34),22px)}
+  /* Custom "?" glyph: sized by cell height, white, with the reference drop shadow */
+  .cell.hdr .qm{height:clamp(14px,calc(var(--cell,30px)*0.74),96px);width:auto;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.32))}
   .cell.corner{background:#0c1424;border:none;box-shadow:none}
   .cell.owned{color:#fff;border-color:var(--oc);text-shadow:0 1px 2px rgba(0,0,0,.45);
     box-shadow:inset 0 2px 0 rgba(255,255,255,.4),inset 0 -4px 7px rgba(0,0,0,.32),0 2px 4px rgba(0,0,0,.28),0 0 12px -3px var(--oc,transparent)}
@@ -539,6 +541,8 @@ const SUBLEAGUES={nfl:["nfl","ncaaf"],nba:["nba","ncaab"]};
 const BB_LOGO='<svg viewBox="0 0 100 100" width="40" height="40" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#15213c" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="45" x2="32" y2="21"/><line x1="50" y1="45" x2="75" y2="11"/><path d="M46 46 L54 46 L52 41 L48 41 Z" fill="#15213c" stroke="none"/><rect x="18" y="46" width="64" height="40" rx="5"/><text x="50" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="30" fill="#15213c" stroke="none">BB</text></svg>';
 // Black-ink version of the brand mark (sits on a white rounded box on the TV) — white logo with black text.
 const BB_LOGO_INK='<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#111" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"><line x1="50" y1="45" x2="32" y2="21"/><line x1="50" y1="45" x2="75" y2="11"/><path d="M46 46 L54 46 L52 41 L48 41 Z" fill="#111" stroke="none"/><rect x="18" y="46" width="64" height="40" rx="5"/><text x="50" y="74" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="900" font-size="30" fill="#111" stroke="none">BB</text></svg>';
+// Custom "?" glyph for the number bars (user-provided shape; drop shadow applied via CSS, tight viewBox so it centers).
+const QMARK_SVG='<svg class="qm" viewBox="4 0 33 45.5" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M14.98 30.6C14.74 28.8 14.74 27.66 14.74 26.1C14.74 21.42 18.04 18.66 21.46 16.92C24.16 15.54 25.36 14.34 25.36 12.06C25.36 10.5 23.92 9.3 21.1 9.3C17.62 9.3 13.18 11.76 10.96 14.16L4 7.44C7.78 3.42 14.02 0 22.42 0C32.08 0 37 4.68 37 11.04C37 16.56 33.94 19.26 30.16 21.12C24.52 23.88 24.76 24.9 24.76 30.6H14.98ZM13.66 45.24V35.04H26.08V45.24H13.66Z" fill="white"/></svg>';
 /* ===== Top-down sport surfaces, drawn as SVG and applied via --bg ===== */
 const FIELD_SVG={
   nfl(){
@@ -867,8 +871,8 @@ function gridHTML(th){
   if(_fx.theme!==S.theme){_fx.theme=S.theme;_fx.owners=Array(100).fill(null);_fx.numbersShown=false;_fx.score=null;_fx.step=null;_fx.done=[];}
   const numsNow=!!S.rowDigits, reveal=numsNow&&!_fx.numbersShown;
   let cells=`<div class="cell corner"></div>`;
-  for(let c=0;c<10;c++)cells+=`<div class="cell hdr top${c===0?' barfirst':''}${c===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${c*45}ms"`:''}>${S.colDigits?S.colDigits[c]:"?"}</div>`;
-  for(let r=0;r<10;r++){cells+=`<div class="cell hdr left${r===0?' barfirst':''}${r===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${(10+r)*45}ms"`:''}>${S.rowDigits?S.rowDigits[r]:"?"}</div>`;
+  for(let c=0;c<10;c++)cells+=`<div class="cell hdr top${c===0?' barfirst':''}${c===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${c*45}ms"`:''}>${S.colDigits?S.colDigits[c]:QMARK_SVG}</div>`;
+  for(let r=0;r<10;r++){cells+=`<div class="cell hdr left${r===0?' barfirst':''}${r===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${(10+r)*45}ms"`:''}>${S.rowDigits?S.rowDigits[r]:QMARK_SVG}</div>`;
     for(let c=0;c<10;c++){const i=r*10+c,o=S.grid[i];const wc=S.checks.find(ch=>ch.done&&ch.idx===i);
       const owner=o.owner||null;const isNew=owner&&_fx.owners[i]!==owner;
       const cls=["cell"];if(owner)cls.push("owned");if(isNew)cls.push("pop");if(liveSquareOn(S)&&i===lc)cls.push("live");if(wc)cls.push("won");
