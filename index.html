@@ -957,7 +957,7 @@ function scoreCelebrate(G,side,delta){
   o.style.setProperty("--sc",col); o.style.setProperty("--sc2",col2);
   o.innerHTML=`<div class="sf-rays"></div><div class="sf-card"><div class="sf-team">${esc(t.name||"")}</div><div class="sf-big">SCORE!</div><div class="sf-pts">+${delta}</div></div>`;
   o.classList.remove("show");void o.offsetWidth;o.classList.add("show");
-  confettiBurst(true);setTimeout(()=>confettiBurst(true),350);setTimeout(()=>confettiBurst(true),750);
+  // No confetti on a score — confetti is reserved for winning a prize (see celebrate()/phoneCelebrate()).
   clearTimeout(window.__sfxT);window.__sfxT=setTimeout(()=>o.classList.remove("show"),2800);
 }
 // Full-screen "YOU WON!" takeover for the winning player's phone (deduped per award).
