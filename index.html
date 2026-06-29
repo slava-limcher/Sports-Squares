@@ -193,8 +193,8 @@
   .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);color:var(--awayc,var(--ink));background:rgba(255,255,255,.92);padding:10px 3px;border-radius:10px;text-shadow:none;flex:0 0 auto;align-self:center}
   .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
-  /* Empty square: charcoal box, subtle top-down gradient + thin light border */
-  .cell{border-radius:8px;background:linear-gradient(180deg,rgba(60,62,67,.92),rgba(23,24,27,.95));border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
+  /* Empty square: OPAQUE charcoal box (no transparency — so a bright bg, e.g. the football field, can't show through and make it look glossy/streaky); subtle top-down gradient + thin light border */
+  .cell{border-radius:8px;background:linear-gradient(180deg,#3a3c41,#1b1c20);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -3px 6px rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.3)}
   /* Number bars: ONE continuous glossy bar (round only the ENDS), BentonSans Black numerals, thin white dividers.
      No overflow:hidden — the divider pseudo-element extends into the grid gap. */
