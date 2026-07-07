@@ -196,22 +196,20 @@
   /* Empty square: OPAQUE charcoal box (no transparency — so a bright bg, e.g. the football field, can't show through and make it look glossy/streaky); subtle top-down gradient + thin light border */
   .cell{border-radius:8px;background:linear-gradient(180deg,#3a3c41,#1b1c20);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -3px 6px rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.3)}
-  /* Number bars: ONE continuous glossy bar (round only the ENDS), BentonSans Black numerals, thin white dividers.
+  /* Number bars per the color spec: red LEFT strip (#A81E1F, subtle top→bottom gradient, rounded TOP only),
+     navy TOP strip (#1A243C solid, all-square), thin dividers (red=white, navy=gray), BentonSans Black + under-glow.
      No overflow:hidden — the divider pseudo-element extends into the grid gap. */
-  .cell.hdr{border:none;border-radius:0;overflow:visible;font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(16px,calc(var(--cell,30px)*0.78),104px);color:#fff;text-shadow:0 2px 4px rgba(0,0,0,.5)}
-  /* TOP bar = navy: base color + darkening toward the bottom edge + glassy top highlight */
-  .cell.hdr.top{background:linear-gradient(180deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 34%,rgba(0,0,0,.26) 100%),var(--homec,#12284b);box-shadow:inset 0 2px 0 rgba(255,255,255,.30)}
-  /* LEFT bar = red: base color + darkening toward the right edge + glassy left highlight */
-  .cell.hdr.left{background:linear-gradient(90deg,rgba(255,255,255,.12) 0%,rgba(255,255,255,0) 34%,rgba(0,0,0,.26) 100%),var(--awayc,#c6021f);box-shadow:inset 2px 0 0 rgba(255,255,255,.26)}
-  /* Thin white divider lines: fill the grid gap with the bar color + a soft white core so the bar reads continuous */
-  .cell.hdr.left:not(.barlast)::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;pointer-events:none;z-index:2;background:linear-gradient(180deg,var(--awayc,#c6021f),var(--awayc,#c6021f) 22%,rgba(255,255,255,.6) 50%,var(--awayc,#c6021f) 78%,var(--awayc,#c6021f))}
-  .cell.hdr.top:not(.barlast)::after{content:"";position:absolute;top:0;bottom:0;right:-4px;width:4px;pointer-events:none;z-index:2;background:linear-gradient(90deg,var(--homec,#12284b),var(--homec,#12284b) 22%,rgba(255,255,255,.6) 50%,var(--homec,#12284b) 78%,var(--homec,#12284b))}
-  /* Round just the four ends so each header column/row is one continuous bar */
-  .cell.hdr.top.barfirst{border-top-left-radius:var(--barr,14px);border-bottom-left-radius:var(--barr,14px)}
-  .cell.hdr.top.barlast{border-top-right-radius:var(--barr,14px);border-bottom-right-radius:var(--barr,14px)}
-  .cell.hdr.left.barfirst{border-top-left-radius:var(--barr,14px);border-top-right-radius:var(--barr,14px)}
-  .cell.hdr.left.barlast{border-bottom-left-radius:var(--barr,14px);border-bottom-right-radius:var(--barr,14px)}
-  .gridcard{--barr:clamp(8px,calc(var(--cell,40px)*0.22),18px);--barsp:clamp(6px,calc(var(--cell,40px)*0.16),16px)}
+  .cell.hdr{border:none;border-radius:0;overflow:visible;font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(16px,calc(var(--cell,30px)*0.78),104px);color:#fff;text-shadow:1px 1px 1px rgba(255,255,255,.4),-1px -1px 2px rgba(0,0,0,.5)}
+  /* TOP bar = navy #1A243C, solid (spec: minimal gradient) */
+  .cell.hdr.top{background:var(--homec,#1a243c)}
+  /* LEFT bar = red #A81E1F, subtle top→bottom gradient: lighter/warmer top → deeper/cooler bottom (3D metallic) */
+  .cell.hdr.left{background:linear-gradient(180deg,rgba(255,255,255,.07) 0%,rgba(0,0,0,.16) 100%),var(--awayc,#a81e1f)}
+  /* Dividers fill the grid gap with the bar color + a thin line so the strip reads continuous — red=white, navy=gray */
+  .cell.hdr.left:not(.barlast)::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;pointer-events:none;z-index:2;background:linear-gradient(180deg,var(--awayc,#a81e1f),var(--awayc,#a81e1f) 24%,rgba(255,255,255,.35) 50%,var(--awayc,#a81e1f) 76%,var(--awayc,#a81e1f))}
+  .cell.hdr.top:not(.barlast)::after{content:"";position:absolute;top:0;bottom:0;right:-4px;width:4px;pointer-events:none;z-index:2;background:linear-gradient(90deg,var(--homec,#1a243c),var(--homec,#1a243c) 24%,#7d828d 50%,var(--homec,#1a243c) 76%,var(--homec,#1a243c))}
+  /* Corners: red strip rounded on TOP only (bottom square); navy strip fully square (no rules → radius 0) */
+  .cell.hdr.left.barfirst{border-top-left-radius:var(--barr,18px);border-top-right-radius:var(--barr,18px)}
+  .gridcard{--barr:clamp(10px,calc(var(--cell,40px)*0.26),20px);--barsp:clamp(6px,calc(var(--cell,40px)*0.16),16px)}
   /* Space between the number bars and the play squares (margin toward the play area) */
   .cell.hdr.top{margin-bottom:var(--barsp,10px)}
   .cell.hdr.left{margin-right:var(--barsp,10px)}
@@ -742,7 +740,7 @@ const SQ_STEPS=[
   {key:"final",name:"Winners",    next:null,                     hint:"All done! Start a new board or change the sport.", ptitle:"Final! 🏆", pmsg:"Thanks for playing!"},
 ];
 // Default team colors for generic/manual teams (away, home) + their secondary accents.
-const TEAM_COLORS=["#c6021f","#12284b"];   // primary: away = red (left axis), home = blue (top axis)
+const TEAM_COLORS=["#a81e1f","#1a243c"];   // primary: away = red (#A81E1F left axis), home = navy (#1A243C top axis) — per color spec
 const TEAM_COLORS2=["#8e0a1f","#16305f"];  // secondary accents (darker)
 // Real team colors [primary, secondary] for live games, per pro league, keyed by nickname
 // (matched within the picked sport so cross-league nicknames like Panthers/Kings/Jets don't collide).
