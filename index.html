@@ -61,7 +61,7 @@
   /* Looping video background (basketball themes only); SVG court is the poster/fallback */
   #bgvid{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;display:none;pointer-events:none}
   /* Dark-mode scrim: dims every sport field background so the screen is easy on the eyes (not blinding) */
-  body.themed::after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(9,13,22,.24),rgba(9,13,22,.36)),radial-gradient(1000px 800px at 50% 120%,rgba(0,0,0,.4),transparent 60%);z-index:-1;pointer-events:none}
+  body.themed::after{content:"";position:fixed;inset:0;background:linear-gradient(180deg,rgba(11,18,38,.60),rgba(7,11,24,.78)),radial-gradient(1100px 850px at 50% 115%,rgba(0,0,0,.45),transparent 60%);z-index:-1;pointer-events:none}
   /* Top-down SVG fields (set via --bg in JS): stretch to fill, no diagonal sheen over them */
   body.theme-mlb::before,body.theme-nfl::before,body.theme-nba::before,body.theme-nhl::before,body.theme-ncaaf::before,body.theme-ncaab::before{background-size:100% 100%;background-repeat:no-repeat;background-position:center}
   body.theme-mlb.boardview .wrap::before,body.theme-nfl.boardview .wrap::before,body.theme-nba.boardview .wrap::before,body.theme-nhl.boardview .wrap::before,body.theme-ncaaf.boardview .wrap::before,body.theme-ncaab.boardview .wrap::before{display:none}
@@ -193,9 +193,10 @@
   .axisleft{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--display);font-weight:700;font-size:clamp(13px,calc(var(--cell,28px)*0.4),34px);color:var(--awayc,var(--ink));background:rgba(255,255,255,.92);padding:10px 3px;border-radius:10px;text-shadow:none;flex:0 0 auto;align-self:center}
   .sqgrid{display:grid;grid-template-columns:repeat(11,1fr);grid-template-rows:repeat(11,1fr);gap:4px;width:min(100%,72vh);aspect-ratio:1/1;margin:0 auto}
   .sqgrid{perspective:900px}
-  /* Empty square: OPAQUE charcoal box (no transparency — so a bright bg, e.g. the football field, can't show through and make it look glossy/streaky); subtle top-down gradient + thin light border */
-  .cell{border-radius:8px;background:linear-gradient(180deg,#3a3c41,#1b1c20);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -3px 6px rgba(0,0,0,.28),0 1px 2px rgba(0,0,0,.3)}
+  /* Empty square: OPAQUE neutral-charcoal box (no transparency — a bright bg can't show through & look glossy);
+     subtle top→bottom gradient (lighter top), crisp light edge, soft drop shadow — per the empty-squares reference. */
+  .cell{border-radius:10px;background:linear-gradient(180deg,#34363b 0%,#1b1c20 100%);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 -3px 6px rgba(0,0,0,.30),0 2px 5px rgba(0,0,0,.40)}
   /* Number bars per the color spec: red LEFT strip (#A81E1F, subtle top→bottom gradient, rounded TOP only),
      navy TOP strip (#1A243C solid, all-square), thin dividers (red=white, navy=gray), BentonSans Black + under-glow.
      No overflow:hidden — the divider pseudo-element extends into the grid gap. */
@@ -210,6 +211,8 @@
   /* Corners: red strip rounded on TOP only (bottom square); navy strip fully square (no rules → radius 0) */
   .cell.hdr.left.barfirst{border-top-left-radius:var(--barr,18px);border-top-right-radius:var(--barr,18px)}
   .cell.hdr.left.barlast{border-bottom-left-radius:var(--barr,18px);border-bottom-right-radius:var(--barr,18px)}
+  .cell.hdr.top.barfirst{border-top-left-radius:var(--barr,18px);border-bottom-left-radius:var(--barr,18px)}
+  .cell.hdr.top.barlast{border-top-right-radius:var(--barr,18px);border-bottom-right-radius:var(--barr,18px)}
   .gridcard{--barr:clamp(10px,calc(var(--cell,40px)*0.26),20px);--barsp:clamp(6px,calc(var(--cell,40px)*0.16),16px)}
   /* Space between the number bars and the play squares (margin toward the play area) */
   .cell.hdr.top{margin-bottom:var(--barsp,10px)}
