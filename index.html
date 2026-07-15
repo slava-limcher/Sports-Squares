@@ -209,6 +209,7 @@
   .cell.hdr.top:not(.barlast)::after{content:"";position:absolute;top:0;bottom:0;right:-4px;width:4px;pointer-events:none;z-index:2;background:linear-gradient(90deg,var(--homec,#1a243c),var(--homec,#1a243c) 24%,#7d828d 50%,var(--homec,#1a243c) 76%,var(--homec,#1a243c))}
   /* Corners: red strip rounded on TOP only (bottom square); navy strip fully square (no rules → radius 0) */
   .cell.hdr.left.barfirst{border-top-left-radius:var(--barr,18px);border-top-right-radius:var(--barr,18px)}
+  .cell.hdr.left.barlast{border-bottom-left-radius:var(--barr,18px);border-bottom-right-radius:var(--barr,18px)}
   .gridcard{--barr:clamp(10px,calc(var(--cell,40px)*0.26),20px);--barsp:clamp(6px,calc(var(--cell,40px)*0.16),16px)}
   /* Space between the number bars and the play squares (margin toward the play area) */
   .cell.hdr.top{margin-bottom:var(--barsp,10px)}
