@@ -195,30 +195,17 @@
   .sqgrid{perspective:900px}
   /* Empty square: OPAQUE neutral-charcoal box (no transparency — a bright bg can't show through & look glossy);
      subtle top→bottom gradient (lighter top), crisp light edge, soft drop shadow — per the empty-squares reference. */
-  .cell{border-radius:10px;background:linear-gradient(180deg,#34363b 0%,#1b1c20 100%);border:1px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.10),inset 0 -3px 6px rgba(0,0,0,.30),0 2px 5px rgba(0,0,0,.40)}
-  /* Number bars per the color spec: red LEFT strip (#A81E1F, subtle top→bottom gradient, rounded TOP only),
-     navy TOP strip (#1A243C solid, all-square), thin dividers (red=white, navy=gray), BentonSans Black + under-glow.
-     No overflow:hidden — the divider pseudo-element extends into the grid gap. */
-  .cell.hdr{border:none;border-radius:0;overflow:visible;font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;font-size:clamp(16px,calc(var(--cell,30px)*0.78),104px);color:#fff;text-shadow:1px 1px 1px rgba(255,255,255,.4),-1px -1px 2px rgba(0,0,0,.5)}
-  /* TOP bar = navy #1A243C, solid (spec: minimal gradient) */
-  .cell.hdr.top{background:var(--homec,#1a243c)}
-  /* LEFT bar = red #A81E1F, subtle top→bottom gradient: lighter/warmer top → deeper/cooler bottom (3D metallic) */
-  .cell.hdr.left{background:linear-gradient(180deg,rgba(255,255,255,.07) 0%,rgba(0,0,0,.16) 100%),var(--awayc,#a81e1f)}
-  /* Dividers fill the grid gap with the bar color + a thin line so the strip reads continuous — red=white, navy=gray */
-  .cell.hdr.left:not(.barlast)::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:4px;pointer-events:none;z-index:2;background:linear-gradient(180deg,var(--awayc,#a81e1f),var(--awayc,#a81e1f) 24%,rgba(255,255,255,.35) 50%,var(--awayc,#a81e1f) 76%,var(--awayc,#a81e1f))}
-  .cell.hdr.top:not(.barlast)::after{content:"";position:absolute;top:0;bottom:0;right:-4px;width:4px;pointer-events:none;z-index:2;background:linear-gradient(90deg,var(--homec,#1a243c),var(--homec,#1a243c) 24%,#7d828d 50%,var(--homec,#1a243c) 76%,var(--homec,#1a243c))}
-  /* Corners: red strip rounded on TOP only (bottom square); navy strip fully square (no rules → radius 0) */
-  .cell.hdr.left.barfirst{border-top-left-radius:var(--barr,18px);border-top-right-radius:var(--barr,18px)}
-  .cell.hdr.left.barlast{border-bottom-left-radius:var(--barr,18px);border-bottom-right-radius:var(--barr,18px)}
-  .cell.hdr.top.barfirst{border-top-left-radius:var(--barr,18px);border-bottom-left-radius:var(--barr,18px)}
-  .cell.hdr.top.barlast{border-top-right-radius:var(--barr,18px);border-bottom-right-radius:var(--barr,18px)}
+  /* Empty square = the user's square PNG (owned cells override the bg with the team color) */
+  .cell{border-radius:10px;background:url("square-empty.png") center/100% 100% no-repeat;border:none;display:flex;align-items:center;justify-content:center;font-size:clamp(11px,calc(var(--cell,30px)*0.40),42px);font-weight:800;color:var(--ink);overflow:hidden;text-align:center;line-height:0.9;word-break:break-word;padding:2px;position:relative;box-shadow:0 2px 5px rgba(0,0,0,.4)}
   .gridcard{--barr:clamp(10px,calc(var(--cell,40px)*0.26),20px);--barsp:clamp(6px,calc(var(--cell,40px)*0.16),16px)}
-  /* Space between the number bars and the play squares (margin toward the play area) */
-  .cell.hdr.top{margin-bottom:var(--barsp,10px)}
-  .cell.hdr.left{margin-right:var(--barsp,10px)}
+  /* Number bars = the user's PNG images (ONE image per bar, spanning its row/column); live numbers overlaid on top. */
+  .barimg{position:relative;display:flex;background-repeat:no-repeat;background-position:center;background-size:100% 100%;overflow:visible}
+  .topbar-img{flex-direction:row;background-image:url("bar-top.png");margin-bottom:var(--barsp,10px)}
+  .leftbar-img{flex-direction:column;background-image:url("bar-left.png");margin-right:var(--barsp,10px)}
+  .barnum{flex:1 1 0;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;font-family:'BentonSans Black','BentonSans',Brega,var(--display);font-weight:900;color:#fff;font-size:clamp(16px,calc(var(--cell,30px)*0.78),104px);line-height:1;text-shadow:1px 1px 1px rgba(255,255,255,.4),-1px -1px 2px rgba(0,0,0,.5)}
+  .barnum .hnum{display:inline-block;line-height:1;transform:translateY(0.13em)}
   /* Custom "?" glyph: sized by cell height, white, with the reference drop shadow */
-  .cell.hdr .qm{height:clamp(14px,calc(var(--cell,30px)*0.74),96px);width:auto;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.32))}
+  .cell.hdr .qm,.barnum .qm{height:clamp(14px,calc(var(--cell,30px)*0.74),96px);width:auto;display:block;filter:drop-shadow(0 3px 3px rgba(0,0,0,.32))}
   /* Drawn digits sit ~0.13em high (font has descender space digits don't use) — nudge down to optical center */
   .cell.hdr .hnum{display:inline-block;line-height:1;transform:translateY(0.13em)}
   .cell.corner{background:transparent;border:none;box-shadow:none;margin-right:var(--barsp,10px);margin-bottom:var(--barsp,10px)}
@@ -901,15 +888,21 @@ function gridHTML(th){
   const lc=liveCell();const meta=SQ_STEPS[stepOf(S)];
   if(_fx.theme!==S.theme){_fx.theme=S.theme;_fx.owners=Array(100).fill(null);_fx.numbersShown=false;_fx.score=null;_fx.step=null;_fx.done=[];}
   const numsNow=!!S.rowDigits, reveal=numsNow&&!_fx.numbersShown;
-  let cells=`<div class="cell corner"></div>`;
-  for(let c=0;c<10;c++)cells+=`<div class="cell hdr top${c===0?' barfirst':''}${c===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${c*45}ms"`:''}>${S.colDigits?`<span class="hnum">${S.colDigits[c]}</span>`:QMARK_SVG}</div>`;
-  for(let r=0;r<10;r++){cells+=`<div class="cell hdr left${r===0?' barfirst':''}${r===9?' barlast':''}${reveal?' reveal':''}"${reveal?` style="animation-delay:${(10+r)*45}ms"`:''}>${S.rowDigits?`<span class="hnum">${S.rowDigits[r]}</span>`:QMARK_SVG}</div>`;
-    for(let c=0;c<10;c++){const i=r*10+c,o=S.grid[i];const wc=S.checks.find(ch=>ch.done&&ch.idx===i);
-      const owner=o.owner||null;const isNew=owner&&_fx.owners[i]!==owner;
-      const cls=["cell"];if(owner)cls.push("owned");if(isNew)cls.push("pop");if(liveSquareOn(S)&&i===lc)cls.push("live");if(wc)cls.push("won");
-      _fx.owners[i]=owner;
-      const st=owner?`style="background:${o.color};--oc:${o.color}"`:"";const lab=owner?`<span class="sq-logo">${o.logo||"🏀"}</span><span class="sq-ini">${esc(o.ini||initialsOf(owner))}</span>`:((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
-      cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}}
+  // Bars are the user's PNG images (one image per bar, spanning the row/column); numbers are overlaid live.
+  let cells=`<div class="cell corner" style="grid-area:1/1/2/2"></div>`;
+  cells+=`<div class="barimg topbar-img" style="grid-area:1/2/2/12">`;
+  for(let c=0;c<10;c++)cells+=`<span class="barnum${reveal?' reveal':''}"${reveal?` style="animation-delay:${c*45}ms"`:''}>${S.colDigits?`<span class="hnum">${S.colDigits[c]}</span>`:QMARK_SVG}</span>`;
+  cells+=`</div><div class="barimg leftbar-img" style="grid-area:2/1/12/2">`;
+  for(let r=0;r<10;r++)cells+=`<span class="barnum${reveal?' reveal':''}"${reveal?` style="animation-delay:${(10+r)*45}ms"`:''}>${S.rowDigits?`<span class="hnum">${S.rowDigits[r]}</span>`:QMARK_SVG}</span>`;
+  cells+=`</div>`;
+  for(let r=0;r<10;r++)for(let c=0;c<10;c++){const i=r*10+c,o=S.grid[i];const wc=S.checks.find(ch=>ch.done&&ch.idx===i);
+    const owner=o.owner||null;const isNew=owner&&_fx.owners[i]!==owner;
+    const cls=["cell"];if(owner)cls.push("owned");if(isNew)cls.push("pop");if(liveSquareOn(S)&&i===lc)cls.push("live");if(wc)cls.push("won");
+    _fx.owners[i]=owner;
+    const pos=`grid-area:${r+2}/${c+2}`;
+    const st=owner?`style="${pos};background:${o.color};--oc:${o.color}"`:`style="${pos}"`;
+    const lab=owner?`<span class="sq-logo">${o.logo||"🏀"}</span><span class="sq-ini">${esc(o.ini||initialsOf(owner))}</span>`:((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
+    cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}
   _fx.numbersShown=numsNow;
   return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)}</div>
     <div class="gridrow"><div class="axisleft">${esc(S.away.name)}</div><div class="sqgrid">${cells}</div></div></div>`;
