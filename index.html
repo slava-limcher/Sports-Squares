@@ -348,10 +348,10 @@
   .legend .you-logo{font-size:15px;vertical-align:-2px}
   /* Square contents: chosen logo (emoji) stacked over initials */
   .cell.owned{line-height:1}
-  .cell .sq-logo{position:absolute;top:2px;left:3px;font-size:clamp(9px,calc(var(--cell,30px)*0.34),34px);line-height:1}
+  .cell .sq-logo{font-size:clamp(16px,calc(var(--cell,30px)*0.62),70px);line-height:1}
   .cell .sq-ini{font-family:'Brega',var(--display);font-weight:700;font-size:clamp(12px,calc(var(--cell,30px)*0.56),60px);line-height:1;letter-spacing:.5px}
   .pcell{flex-direction:column;gap:0}
-  .pcell .psq-logo{font-size:14px;line-height:1}
+  .pcell .psq-logo{font-size:clamp(13px,3.2vw,22px);line-height:1}
   .pcell .psq-ini{font-size:8px;font-weight:800;line-height:1;letter-spacing:.3px}
 
   #toast{position:fixed;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:200}#toast.show{display:flex}
@@ -900,7 +900,7 @@ function gridHTML(th){
     _fx.owners[i]=owner;
     const pos=`grid-area:${r+2}/${c+2}`;
     const st=owner?`style="${pos};--oc:${o.color}"`:`style="${pos}"`;
-    const lab=owner?`<span class="sq-logo">${o.logo||"🏀"}</span><span class="sq-ini">${esc(o.ini||initialsOf(owner))}</span>`:((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
+    const lab=owner?`<span class="sq-logo">${o.logo||"🏀"}</span>`:((canClaimSt(S)&&!isTV)?'<span class="qmark">+</span>':"");
     cells+=`<div class="${cls.join(" ")}" ${st}>${wc?'<span class="wtag">🏆</span>':""}${lab}</div>`;}
   _fx.numbersShown=numsNow;
   return `<div class="gridcard"><div class="slidebanner">${esc(isTV?meta.name:(meta.ptitle||meta.name))}</div><div class="axislabel">${esc(S.home.name)}</div>
@@ -1162,7 +1162,7 @@ function renderPhone(){const root=$("root");
       else if(o.owner)cls.push("taken");
       if(canClaim&&phone.sel.has(i))cls.push("sel");if(liveSquareOn(r)&&i===lc)cls.push("live");
       _fxP.owners[i]=o.owner||null;
-      const pc=o.owner?`<span class="psq-logo">${o.logo||"🏀"}</span><span class="psq-ini">${esc(o.ini||initialsOf(o.owner))}</span>`:"";
+      const pc=o.owner?`<span class="psq-logo">${o.logo||"🏀"}</span>`:"";
       cells+=`<div class="${cls.join(" ")}" ${o.owner?`style="background:${o.color};--oc:${o.color}"`:""} data-i="${i}">${pc}</div>`;}
     if(st===4){ // WINNERS slide
       const wins=r.checks.filter(c=>c.done);const youWon=wins.filter(c=>c.winner===phone.name).map(c=>c.lab);
